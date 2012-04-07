@@ -1,0 +1,44 @@
+package no.arcticdrakefox.wolfbot.roles;
+
+import no.arcticdrakefox.wolfbot.management.*;
+
+public class Mason extends Player {
+	
+	public Mason(String name){
+		super(name);
+	}
+	
+	@Override
+	public boolean isWolf() {
+		return false;
+	}
+
+	@Override
+	public Role getRole() {
+		return Role.mason;
+	}
+
+	@Override
+	public String roleInfo(PlayerList players) {
+		return String.format("Since childhood, you have had close friends."
+				+"Ones you know you can absolutely depend upon even in situations like this"
+				+"The masons are %s",
+				StringHandler.listToString(players.getRole(Role.mason))
+		);
+	}
+
+	@Override
+	public String nightStart() {
+		return null;
+	}
+
+	@Override
+	public String nightAction(String message, PlayerList players) {
+		return "There is nothing for you to do at night but rest and hope for the best.";
+	}
+	
+	@Override
+	public String nightEnd() {
+		return null;
+	}
+}
