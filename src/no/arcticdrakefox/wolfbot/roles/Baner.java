@@ -1,11 +1,14 @@
 package no.arcticdrakefox.wolfbot.roles;
 
 import no.arcticdrakefox.wolfbot.management.*;
+import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.Team;
 
 public class Baner extends Player {
 	
 	public Baner(String name){
 		super(name);
+		setTeam(Team.Villagers);
 	}
 	
 	@Override

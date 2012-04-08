@@ -2,7 +2,8 @@ package no.arcticdrakefox.wolfbot.management;
 
 import java.util.*;
 
-import no.arcticdrakefox.wolfbot.management.Player.Role;
+import no.arcticdrakefox.wolfbot.model.Role;
+
 
 public class VoteTable {
 	private HashMap<Player, List<Player>> votes = new HashMap<Player, List<Player>>();
