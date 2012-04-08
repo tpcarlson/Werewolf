@@ -281,6 +281,15 @@ public class PlayerList {
 	public void autoRole(int players){
 		clearRoles();
 		switch (players){
+		case 0:
+			roleCount[Role.wolf.ordinal()] = 1;
+			break;
+		case 1:
+			roleCount[Role.wolf.ordinal()] = 1;
+			break;
+		case 2:
+			roleCount[Role.wolf.ordinal()] = 1;
+			break;
 		case 3:
 			roleCount[Role.wolf.ordinal()] = 1;
 			roleCount[Role.mason.ordinal()] = 1;
