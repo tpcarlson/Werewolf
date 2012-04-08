@@ -464,7 +464,13 @@ public class WolfBot extends PircBot {
 		} else if (state !=  State.Day){
 			sendIrcMessage(channel, "You can only view lynchvotes at day.");
 		} else {
+			String nonVoters = players.nonvotersToString();
 			sendIrcMessage(channel, players.votesToString());
+			
+			if (! nonVoters.isEmpty())
+			{
+				sendIrcMessage (channel, "Not voted: " + players.nonvotersToString());
+			}
 		}
 	}
 	
@@ -540,7 +546,7 @@ public class WolfBot extends PircBot {
 	// By default, send notices.
 	public void sendIrcMessage (String target, String message)
 	{
-		if (enableNotices)
+		if (enableNotices && target.equalsIgnoreCase(channel))
 		{
 			sendNotice (target, message);
 		}

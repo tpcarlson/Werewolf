@@ -17,7 +17,7 @@ public class StringHandler {
 	
 	public static String listToString(List list){
 		if (list.size() < 1)
-			return "Noone ;_;";
+			return BotConstants.NO_VOTES;
 		String ret = list.get(0).toString();
 		if (list.size() < 2)
 			return ret;

@@ -17,6 +17,8 @@ import no.arcticdrakefox.wolfbot.roles.Vigilante;
 import no.arcticdrakefox.wolfbot.roles.Villager;
 import no.arcticdrakefox.wolfbot.roles.Wolf;
 
+import com.google.common.collect.Lists;
+
 public class PlayerList {
 	public List<Player> players = new ArrayList<Player>();
 	private int[] roleCount = new int[Role.values().length];
@@ -42,6 +44,27 @@ public class PlayerList {
 		return StringHandler.listToString(new VoteTable(getLivingPlayers()).getSortedStringList());
 	}
 	
+	public String nonvotersToString ()
+	{
+		List<Player> playersNotVoted = Lists.newArrayList ();
+		for (Player player : getLivingPlayers())
+		{
+			if (player.getVote() == null)
+			{
+				playersNotVoted.add(player);
+			}
+		}
+		
+		String nonVoters = StringHandler.listToString(playersNotVoted);
+		if (nonVoters.equals(BotConstants.NO_VOTES))
+		{
+			return "";
+		}
+		else
+		{
+			return nonVoters;
+		}
+	}
 	
 	public List<Player> getWolves(){
 		List<Player> ret = new ArrayList<Player>();
@@ -78,16 +101,9 @@ public class PlayerList {
 		System.out.println(players.size());
 		for (Player player : players)
 		{
-			if (player != null)
+			if (player.isAlive())
 			{
-				if (player.isAlive())
-				{
-					ret.add(player);
-				}
-			}
-			else
-			{
-				System.out.println("Player null? WTF.");
+				ret.add(player);
 			}
 		}	
 		return ret;
