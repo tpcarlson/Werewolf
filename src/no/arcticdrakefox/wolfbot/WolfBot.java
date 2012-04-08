@@ -65,21 +65,21 @@ public class WolfBot extends PircBot {
 			break;
 		case "!set":
 			if (args.length == 3){
-				if (data.getState() != State.None || data.getState() != State.Starting){
-					sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
-				} else {
+				if (data.getState() == State.None || data.getState() == State.Starting){
 					setCount(args[1], args[2].trim());
+				} else {
+					sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 				}
 					
 			} else
 				sendIrcMessage(channel, "Correct usage is:  !set <role> <amount>");
 			break;
 		case "!autorole":
-			if (data.getState() != State.None || data.getState() != State.Starting){
-				sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
-			} else {
+			if (data.getState() == State.None || data.getState() == State.Starting){
 				data.getPlayers().autoRole();
 				sendIrcMessage(channel, data.getPlayers().roleCountToString());
+			} else {
+				sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 			}
 			break;
 		case "!list":
