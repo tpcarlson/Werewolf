@@ -318,13 +318,13 @@ public class WolfBot extends PircBot {
 		Player vote = players.getVote();
 		if (vote.isWolf()){
 			vote.die(String.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-					+ "A voulenteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
+					+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
 					+ "A werewolf was lynched today, and the village is a little safer. %s the %s is dead!",
 					vote.getName(), vote.getRole())
 			);
 		} else {
 			vote.die(String.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-					+ "A voulenteer plunges the village's treasured silver dagger into their heart. "
+					+ "A volunteer plunges the village's treasured silver dagger into their heart. "
 					+ "They scream in agony as life and blood leave their body. %s the %s is dead!",
 					vote.getName(), vote.getRole())
 			);
@@ -479,7 +479,7 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(channel, String.format("%s, you may not vote for %s as they are currently dead.", senderS, targetS));
 		} else {
 			sender.vote(target);
-			sendIrcMessage(channel, String.format("%s, has voted for %s.", senderS, targetS));
+			sendIrcMessage(channel, String.format("%s has voted for %s.", senderS, targetS));
 		}
 		if (checkLynchMajority())
 			endDay();
