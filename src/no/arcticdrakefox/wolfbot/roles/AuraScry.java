@@ -31,7 +31,7 @@ public class AuraScry extends Player {
 	@Override
 	public String nightStart() {
 		isReady = false;
-		return "The moon is in alignment. You may !scry a person or just !rest";
+		return "The stars smile on you tonight. You may !scry a person or just !rest";
 	}
 
 	@Override
