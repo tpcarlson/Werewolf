@@ -23,7 +23,7 @@ public class Wolf extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return String.format("You're a wolf! The wolves are %s",
+		return String.format("You're a wolf! The other wolves are %s",
 				StringHandler.listToString(players.getWolves())
 		);
 	}
@@ -31,7 +31,7 @@ public class Wolf extends Player {
 	@Override
 	public String nightStart() {
 		isReady = false;
-		return "As a wolf, !kill someone tonight or just !rest";
+		return "As a wolf, you can !kill someone tonight or just !rest";
 	}
 
 	@Override
