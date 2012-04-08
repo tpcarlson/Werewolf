@@ -212,12 +212,12 @@ public class WolfBot extends PircBot {
 	
 	@Override
 	protected void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason){
-		Player player = data.getPlayers().getPlayer(sourceNick);
+		Player player = data.getPlayers().getPlayer(sourceLogin);
 		if (player != null){
 			// ie. We're in day or night ...
-			if (data.getState() != State.None || data.getState() != State.Starting)
+			if (! (data.getState() == State.None || data.getState() == State.Starting))
 			{
-				sendIrcMessage(data.getChannel(), String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
+				sendIrcMessage(data.getChannel(), String.format("%s has fled, they were a %s", sourceLogin, player.getRole()));
 			}
 			drop(player.getName());
 		}
@@ -229,7 +229,7 @@ public class WolfBot extends PircBot {
 	}
 		
 	private void join(String name){
-		if (data.getState() != State.None){
+		if (! (data.getState() == State.None || data.getState() == State.Starting)){
 			sendIrcMessage(data.getChannel(), name  + " cannot join now, game is in progress.");
 		} else if (data.getPlayers().addPlayer(name)){
 			sendIrcMessage(data.getChannel(), name + " has joined the game!");
@@ -239,6 +239,13 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void drop(String name){
+		if (data.getState() == State.None)
+		{
+			// We still need to remove from the game:
+			data.getPlayers().removePlayer(name);
+			return;
+		}
+		
 		if (data.getPlayers().removePlayer(name)){
 			sendIrcMessage(data.getChannel(), name + " has retired from the game!");
 		} else {
