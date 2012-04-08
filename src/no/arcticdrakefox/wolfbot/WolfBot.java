@@ -1,12 +1,16 @@
 package no.arcticdrakefox.wolfbot;
 
+import java.awt.Color;
 import java.util.List;
 
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.VoteTable;
+import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.Team;
 
+import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 
 public class WolfBot extends PircBot {
@@ -361,7 +365,20 @@ public class WolfBot extends PircBot {
 		for (Player player : playerList){
 			String message = player.roleInfo(players);
 			if (message != null)
+			{
 				sendIrcMessage(player.getName(), message);
+			}
+			
+			Team team = player.getTeam();
+			switch (team)
+			{
+				case Wolves:
+					sendIrcMessage (player.getName(), "You are on the " + Colors.RED + "wolf" + Colors.NORMAL + " team. You must attempt to eat the " + Colors.BLUE + " villagers!");
+				case Villagers:
+					sendIrcMessage (player.getName(), "You are on the " + Colors.BLUE + "villager" + Colors.NORMAL + " team. Defend against the invading " + Colors.RED + "wolf" + Colors.NORMAL + " incursion!");
+				default:
+					sendIrcMessage (player.getName(), "You are on an unknown team. Something has probably gone wrong here.");
+			}
 		}
 	}
 	
@@ -375,13 +392,13 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void sendNightEndMessages(){
-		sendNightEndMessages(Player.Role.vigilante, false);
-		sendNightEndMessages(Player.Role.devil, false);
-		sendNightEndMessages(Player.Role.scry, false);
-		sendNightEndMessages(Player.Role.ghost, true);
+		sendNightEndMessages(Role.vigilante, false);
+		sendNightEndMessages(Role.devil, false);
+		sendNightEndMessages(Role.scry, false);
+		sendNightEndMessages(Role.ghost, true);
 	}
 	
-	private void sendNightEndMessages(Player.Role role, boolean publicMessage){
+	private void sendNightEndMessages(Role role, boolean publicMessage){
 		List<Player> playerList = players.getLivingPlayers();
 		for (Player player : playerList){
 			if (player.getRole() != role)
@@ -395,7 +412,7 @@ public class WolfBot extends PircBot {
 	private void killWolfVote(){
 		Player wolfVote = players.getVote(true);
 		if (wolfVote != null){
-			 Player baner = players.getPlayerTargeting(wolfVote, Player.Role.baner);
+			 Player baner = players.getPlayerTargeting(wolfVote, Role.baner);
 			 if (baner != null){
 				 wolfVote = null;
 				 if (baner.getVote().equals(baner)){
@@ -419,7 +436,7 @@ public class WolfBot extends PircBot {
 				 }
 			 }
 		}
-		if (wolfVote == null || players.getPlayerTargeting(wolfVote, Player.Role.baner) != null){
+		if (wolfVote == null || players.getPlayerTargeting(wolfVote, Role.baner) != null){
 			sendIrcMessage(channel, "It appears the wolves didn't kill anybody tonight.");
 		} else {
 			wolfVote.die(String.format(

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import no.arcticdrakefox.wolfbot.management.Player.Role;
+import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.roles.Baner;
 import no.arcticdrakefox.wolfbot.roles.Devil;
 import no.arcticdrakefox.wolfbot.roles.Ghost;
@@ -74,10 +74,10 @@ public class PlayerList {
 		return ret;
 	}
 	
-	public List<Player> getRole(Player.Role role){
+	public List<Player> getRole(Role role){
 		List<Player> ret = new ArrayList<Player>();
 		for (Player player : players){
-			Player.Role playerRole = player.getRole();
+			Role playerRole = player.getRole();
 			if (playerRole == role && player.isAlive())
 				ret.add(player);
 		}
@@ -92,7 +92,7 @@ public class PlayerList {
 		List<String> roleCountList = new ArrayList<String>(roleCount.length-1);
 		for (int i = 1; i < roleCount.length; ++i)
 			if (roleCount[i] > 0)
-				roleCountList.add(String.format("%s: %d", Player.Role.values()[i].toString(), roleCount[i]));
+				roleCountList.add(String.format("%s: %d", Role.values()[i].toString(), roleCount[i]));
 		return StringHandler.listToString(roleCountList);
 	}
 	
@@ -138,7 +138,7 @@ public class PlayerList {
 	//Setting list data
 	
 		public boolean setRoleCount(String roleS, int amount){
-			Player.Role role = Player.Role.valueOf(roleS.toLowerCase());
+			Role role = Role.valueOf(roleS.toLowerCase());
 			if (role == null)
 				return false;
 			roleCount[role.ordinal()] = amount;
@@ -172,7 +172,7 @@ public class PlayerList {
 		return null;
 	}
 	
-	public Player makePlayer(String name, Player.Role role){
+	public Player makePlayer(String name, Role role){
 		switch (role){
 			case villager:
 				return new Villager(name);
@@ -224,12 +224,12 @@ public class PlayerList {
 		return getLivingPlayers().get(new Random().nextInt(players.size()));
 	}
 	
-	public Player getRandomPlayer(Player.Role role){
+	public Player getRandomPlayer(Role role){
 		List<Player> players = getRole(role); 
 		return players.get(new Random().nextInt(players.size()));
 	}
 	
-	public Player getPlayerTargeting(Player target, Player.Role role){
+	public Player getPlayerTargeting(Player target, Role role){
 		for (Player player : getRole(role))
 			if (target.equals(player.getVote()))
 				return player;
@@ -260,9 +260,9 @@ public class PlayerList {
 	public void assignRoles(){
 		for (int i = 0; i < roleCount.length; ++i){
 			for (int j = 0; j < roleCount[i]; ++j){
-				Player player = getRandomPlayer(Player.Role.villager);
+				Player player = getRandomPlayer(Role.villager);
 				int index = players.indexOf(player);
-				players.set(index, makePlayer(player.getName(), Player.Role.values()[i]));
+				players.set(index, makePlayer(player.getName(), Role.values()[i]));
 			}
 		}
 	}
@@ -282,47 +282,47 @@ public class PlayerList {
 		clearRoles();
 		switch (players){
 		case 3:
-			roleCount[Player.Role.wolf.ordinal()] = 1;
-			roleCount[Player.Role.mason.ordinal()] = 1;
+			roleCount[Role.wolf.ordinal()] = 1;
+			roleCount[Role.mason.ordinal()] = 1;
 			break;
 		case 4:
-			roleCount[Player.Role.wolf.ordinal()] = 1;
+			roleCount[Role.wolf.ordinal()] = 1;
 			addWarrior();
 			break;
 		case 6:
 			addWarrior();
 			//break intentionally omitted
 		case 5:
-			roleCount[Player.Role.wolf.ordinal()] = 1;
-			roleCount[Player.Role.scry.ordinal()] = 1;
+			roleCount[Role.wolf.ordinal()] = 1;
+			roleCount[Role.scry.ordinal()] = 1;
 			break;
 		case 7:
-			roleCount[Player.Role.wolf.ordinal()] = 2;
-			roleCount[Player.Role.vigilante.ordinal()] = 1;
+			roleCount[Role.wolf.ordinal()] = 2;
+			roleCount[Role.vigilante.ordinal()] = 1;
 			addWarrior();
 			break;
 		case 8:
 		case 9:
-			roleCount[Player.Role.wolf.ordinal()] = 2;
-			roleCount[Player.Role.scry.ordinal()] = 1;
+			roleCount[Role.wolf.ordinal()] = 2;
+			roleCount[Role.scry.ordinal()] = 1;
 			addWarrior();
 		default:
-			roleCount[Player.Role.mason.ordinal()]++;
-			roleCount[Player.Role.wolf.ordinal()]++;
+			roleCount[Role.mason.ordinal()]++;
+			roleCount[Role.wolf.ordinal()]++;
 		case 17:
 		case 16:
 		case 15:
 		case 14:
-			roleCount[Player.Role.mason.ordinal()] += 2;
-			roleCount[Player.Role.wolf.ordinal()]++;
+			roleCount[Role.mason.ordinal()] += 2;
+			roleCount[Role.wolf.ordinal()]++;
 		case 13:
 			addWarrior();
 		case 12:
 		case 10:
 		case 11:
-			roleCount[Player.Role.wolf.ordinal()]++;
-			roleCount[Player.Role.devil.ordinal()] = 1;
-			roleCount[Player.Role.scry.ordinal()] = 1;
+			roleCount[Role.wolf.ordinal()]++;
+			roleCount[Role.devil.ordinal()] = 1;
+			roleCount[Role.scry.ordinal()] = 1;
 			addWarrior();
 			break;
 		}
@@ -330,8 +330,8 @@ public class PlayerList {
 	
 	public void addWarrior(){
 		if (new Random().nextBoolean())
-			roleCount[Player.Role.baner.ordinal()]++;
+			roleCount[Role.baner.ordinal()]++;
 		else
-			roleCount[Player.Role.vigilante.ordinal()]++;
+			roleCount[Role.vigilante.ordinal()]++;
 	}
 }

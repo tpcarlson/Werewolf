@@ -1,11 +1,14 @@
 package no.arcticdrakefox.wolfbot.roles;
 
 import no.arcticdrakefox.wolfbot.management.*;
+import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.Team;
 
 public class Wolf extends Player {
 	
 	public Wolf(String name){
 		super(name);
+		setTeam (Team.Wolves);
 	}
 	
 	@Override
