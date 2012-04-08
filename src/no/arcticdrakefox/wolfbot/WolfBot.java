@@ -21,7 +21,7 @@ public class WolfBot extends PircBot {
 	private State state = State.None;
 
 	public static void main(String[] args) throws Exception {
-		PircBot bot = new WolfBot("WolfBot", "[removed]");
+		PircBot bot = new WolfBot("WolfBot", "ruffruff");
 		bot.setVerbose(true);
 		bot.connect("irc.lessthan3.net");
 		bot.joinChannel("#wolfbot");
@@ -57,34 +57,34 @@ public class WolfBot extends PircBot {
 			else if (args.length == 1)
 				drop(sender);
 			else {
-				sendMessage(channel, "Correct usage is:  !drop [player]");
+				sendIrcMessage(channel, "Correct usage is:  !drop [player]");
 				return;
 			}
 			break;
 		case "!set":
 			if (args.length == 3){
 				if (state != State.None){
-					sendMessage(channel, "Don't mess with rolecount during the game. :/");
+					sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 				} else {
 					setCount(args[1], args[2].trim());
 				}
 					
 			} else
-				sendMessage(channel, "Correct usage is:  !set <role> <amount>");
+				sendIrcMessage(channel, "Correct usage is:  !set <role> <amount>");
 			break;
 		case "!autorole":
 			if (state != State.None){
-				sendMessage(channel, "Don't mess with rolecount during the game. :/");
+				sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 			} else {
 				players.autoRole();
-				sendMessage(channel, players.roleCountToString());
+				sendIrcMessage(channel, players.roleCountToString());
 			}
 			break;
 		case "!list":
-			sendMessage(channel, StringHandler.listToString(players.getLivingPlayers()));
+			sendIrcMessage(channel, StringHandler.listToString(players.getLivingPlayers()));
 			break;
 		case "!rolecount":
-			sendMessage(channel, players.roleCountToString());
+			sendIrcMessage(channel, players.roleCountToString());
 			break;
 		case "!start":
 			startGame();
@@ -103,28 +103,47 @@ public class WolfBot extends PircBot {
 			if (args.length == 2)
 				lynchVote(sender, args[1]);
 			else
-				sendMessage(channel, "Correct usage is: !lynch <target>");
+				sendIrcMessage(channel, "Correct usage is: !lynch <target>");
 			break;
 		case "!votes":
 			listVotes();
 			break;
 		case "!time":
-			sendMessage(channel, "It is currently " + state);
+			sendIrcMessage(channel, "It is currently " + state);
 			break;
 		case "!help":
 			if (args.length == 2)
-				sendMessage(channel, help(args[1]));
+				sendIrcMessage(channel, help(args[1]));
 			else 
-				sendMessage(channel,
+				sendIrcMessage(channel,
 						"!join, !drop [player], !start, !end, !set <role> <count>, "
 						+ "!list, !rolecount, !lynch/!vote/!kill, !votes, !time, !help"
 				);
 			break;
 		case "!test":
-			sendMessage(channel, String.format("Bluh"));
+			sendIrcMessage(channel, String.format("Bluh"));
 			break;
+		case "!notices":
+			if (args.length == 2)
+			{
+				if (args[1].equalsIgnoreCase("on"))
+				{
+					enableNotices = true;
+					sendIrcMessage (channel, "Notices enabled");
+					break;
+				}
+				else if (args[1].equalsIgnoreCase("off"))
+				{
+					enableNotices = false;
+					sendIrcMessage (channel, "Notices disabled");
+					break;
+				}
+			}
+			
+			// Usage:
+			sendIrcMessage(channel, "Correct usage is:  !notices on|off");
 		default:
-			sendMessage(channel, "Unknown command.");
+			sendIrcMessage(channel, "Unknown command.");
 		}
 	}
 	
@@ -140,7 +159,7 @@ public class WolfBot extends PircBot {
 			return;
 		switch (command.toLowerCase()){
 			case "!role":
-				sendMessage(sender, String.format("You are a %s", player.getRole()));
+				sendIrcMessage(sender, String.format("You are a %s", player.getRole()));
 				break;
 			case "!join":
 				join(sender);
@@ -151,19 +170,19 @@ public class WolfBot extends PircBot {
 				checkVictory();
 				break;
 			case "!list":
-				sendMessage(sender, StringHandler.listToString(players.getLivingPlayers()));
+				sendIrcMessage(sender, StringHandler.listToString(players.getLivingPlayers()));
 				break;
 			case "!rolecount":
-				sendMessage(sender, players.roleCountToString());
+				sendIrcMessage(sender, players.roleCountToString());
 				break;
 			case "!time":
-				sendMessage(sender, "It is currently " + state);
+				sendIrcMessage(sender, "It is currently " + state);
 				break;
 			case "!help":
 				if (args.length == 2)
-					sendMessage(sender, help(args[1]));
+					sendIrcMessage(sender, help(args[1]));
 				else
-					sendMessage(sender,
+					sendIrcMessage(sender,
 							"!join, !drop, !list, !role, !rolecount, "
 							+ "!time, !help, !ghost, !kill, !bane, !scry"
 					);
@@ -173,12 +192,12 @@ public class WolfBot extends PircBot {
 					if (player.isAlive()){
 						String msg = player.nightAction(message, players);
 						if (msg != null)
-							sendMessage(sender, msg);
+							sendIrcMessage(sender, msg);
 						if (players.allReady())
 							endNight();	
 					}
 				} else
-					sendMessage(sender, "Can only do actions at night.");
+					sendIrcMessage(sender, "Can only do actions at night.");
 		}
 	}
 	
@@ -193,7 +212,7 @@ public class WolfBot extends PircBot {
 	protected void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason){
 		Player player = players.getPlayer(sourceNick);
 		if (player != null){
-			sendMessage(channel, String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
+			sendIrcMessage(channel, String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
 			drop(player.getName());
 		}
 	}
@@ -205,19 +224,19 @@ public class WolfBot extends PircBot {
 		
 	private void join(String name){
 		if (state != State.None){
-			sendMessage(channel, name  + " cannot join now, game is in progress.");
+			sendIrcMessage(channel, name  + " cannot join now, game is in progress.");
 		} else if (players.addPlayer(name)){
-			sendMessage(channel, name + " has joined the game!");
+			sendIrcMessage(channel, name + " has joined the game!");
 		} else {
-			sendMessage(channel, name + " is already entered.");
+			sendIrcMessage(channel, name + " is already entered.");
 		}
 	}
 	
 	private void drop(String name){
 		if (players.removePlayer(name)){
-			sendMessage(channel, name + " has retired from the game!");
+			sendIrcMessage(channel, name + " has retired from the game!");
 		} else {
-			sendMessage(channel, name + " wasn't found among the entered players.");
+			sendIrcMessage(channel, name + " wasn't found among the entered players.");
 		}
 		if (state != State.None)
 			checkVictory();
@@ -226,32 +245,32 @@ public class WolfBot extends PircBot {
 	private void setCount(String role, String amountS){
 		int amount;
 		if (role.toLowerCase().equals("villager")){
-			sendMessage(channel, "Villagers are automatically adjusted.");
+			sendIrcMessage(channel, "Villagers are automatically adjusted.");
 		} else if (StringHandler.isInt(amountS)){
 			amount = StringHandler.parseInt(amountS);
 			if (players.setRoleCount(role, amount))
-				sendMessage(channel, String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
+				sendIrcMessage(channel, String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
 			else
-				sendMessage(channel, String.format("Failed. Could not resolve %s to a role", role));
+				sendIrcMessage(channel, String.format("Failed. Could not resolve %s to a role", role));
 		} else {
-			sendMessage(channel, amountS + " cannot be parsed to an int.");
+			sendIrcMessage(channel, amountS + " cannot be parsed to an int.");
 		}
 	}
 	
 	private boolean checkVictory(){
 		int wolfCount = players.wolfCount();
 		if (wolfCount < 1){
-			sendMessage(channel, "With all wolves exterminated, the village is safe once again.");
+			sendIrcMessage(channel, "With all wolves exterminated, the village is safe once again.");
 			endGame();
 			return true;
 		} else if (wolfCount * 2 >= players.playerCount()){
 			if (wolfCount == 1)
-				sendMessage(channel, String.format(
+				sendIrcMessage(channel, String.format(
 						"After turning on the last remaining villager, %s prowls on to terrorize somewhere else.",
 						StringHandler.listToString(players.getWolves()))
 				);
 			else
-				sendMessage(channel, String.format(
+				sendIrcMessage(channel, String.format(
 						"%s turn on the last villagers. With all food depleted, they leave the village behind to find fresh meat elsewhere.",
 						StringHandler.listToString(players.getWolves()))
 				);
@@ -264,10 +283,10 @@ public class WolfBot extends PircBot {
 	private void startGame(){
 		int playerCount = players.getList().size(); 
 		if (playerCount < 3){
-			sendMessage(channel, "Need at least three players to go.");
+			sendIrcMessage(channel, "Need at least three players to go.");
 			return;
 		} else if (playerCount < players.totalRoleCount()){
-			sendMessage(channel, "There are more special roles than players!");
+			sendIrcMessage(channel, "There are more special roles than players!");
 			return;
 		}
 		players.reset();
@@ -278,7 +297,7 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void startDay(){
-		sendMessage(channel, "It is now day. Vote for someone to lynch!");
+		sendIrcMessage(channel, "It is now day. Vote for someone to lynch!");
 		state = State.Day;
 		voiceAll();
 		players.clearVotes();
@@ -307,7 +326,7 @@ public class WolfBot extends PircBot {
 	private void startNight(){
 		state = State.Night;
 		deVoiceAll();
-		sendMessage(channel, "It is now night, and most villagers can only sleep. Some forces are busily at work, however...");
+		sendIrcMessage(channel, "It is now night, and most villagers can only sleep. Some forces are busily at work, however...");
 		players.clearVotes();
 		sendNightStartMessages();
 	}
@@ -323,7 +342,7 @@ public class WolfBot extends PircBot {
 	private void checkDead(){
 		List<Player> deceased = players.getRecentlyDead();
 		for (Player player : deceased){
-			sendMessage(channel, player.getCauseOfDeath());
+			sendIrcMessage(channel, player.getCauseOfDeath());
 			deVoice(channel, player.getName());
 		}
 		players.clearRecentlyDead();
@@ -334,7 +353,7 @@ public class WolfBot extends PircBot {
 		players.reset();
 		setMode(channel, "-m");
 		deVoiceAll();
-		sendMessage(channel, "Thanks for playing! Say !start to go again!");
+		sendIrcMessage(channel, "Thanks for playing! Say !start to go again!");
 	}
 	
 	private void sendRoleMessages(){
@@ -342,7 +361,7 @@ public class WolfBot extends PircBot {
 		for (Player player : playerList){
 			String message = player.roleInfo(players);
 			if (message != null)
-				sendMessage(player.getName(), message);
+				sendIrcMessage(player.getName(), message);
 		}
 	}
 	
@@ -351,7 +370,7 @@ public class WolfBot extends PircBot {
 		for (Player player : playerList){
 			String message = player.nightStart();
 			if (message != null)
-				sendMessage(player.getName(), message);
+				sendIrcMessage(player.getName(), message);
 		}
 	}
 	
@@ -369,7 +388,7 @@ public class WolfBot extends PircBot {
 				continue;
 			String message = player.nightEnd();
 			if (message != null)
-				sendMessage(publicMessage ? channel : player.getName(), message);
+				sendIrcMessage(publicMessage ? channel : player.getName(), message);
 		}
 	}
 	
@@ -380,14 +399,14 @@ public class WolfBot extends PircBot {
 			 if (baner != null){
 				 wolfVote = null;
 				 if (baner.getVote().equals(baner)){
-					 sendMessage(
+					 sendIrcMessage(
 							baner.getName(),
 							"You hear a wolf yelp as they step in your cleverly concealed beartrap. "
 							+ "You rush out trying to finish the job, but the monster has already escaped! "
 							+ "It seems as if you will both live to fight another day."
 					);
 				 } else { 
-					 sendMessage(
+					 sendIrcMessage(
 							 baner.getName(),
 							 String.format(
 									 "Your detective skills have paid off!"
@@ -401,7 +420,7 @@ public class WolfBot extends PircBot {
 			 }
 		}
 		if (wolfVote == null || players.getPlayerTargeting(wolfVote, Player.Role.baner) != null){
-			sendMessage(channel, "It appears the wolves didn't kill anybody tonight.");
+			sendIrcMessage(channel, "It appears the wolves didn't kill anybody tonight.");
 		} else {
 			wolfVote.die(String.format(
 					"As the villagers gather, they notice someone missing. "
@@ -415,25 +434,25 @@ public class WolfBot extends PircBot {
 	
 	private void lynchVote(String senderS, String targetS){
 		if (state == State.None){
-			sendMessage(channel, "The game hasn't even started yet!");
+			sendIrcMessage(channel, "The game hasn't even started yet!");
 			return;
 		} else if (state !=  State.Day){
-			sendMessage(channel, "You can only cast lynchvotes at day.");
+			sendIrcMessage(channel, "You can only cast lynchvotes at day.");
 			return;
 		}
 		Player sender = players.getPlayer(senderS);
 		Player target = players.getPlayer(targetS);
 		if (sender == null){
-			sendMessage(channel, String.format("%s, you are not enterd in the game.", senderS));
+			sendIrcMessage(channel, String.format("%s, you are not enterd in the game.", senderS));
 		} else if (!sender.isAlive()){
-			sendMessage(channel, String.format("%s, you are currently dead..", senderS));
+			sendIrcMessage(channel, String.format("%s, you are currently dead..", senderS));
 		} else if (target == null){
-			sendMessage(channel, String.format("%s, you may not vote for %s as they aren't enterd in the game.", senderS, targetS));
+			sendIrcMessage(channel, String.format("%s, you may not vote for %s as they aren't enterd in the game.", senderS, targetS));
 		} else if (!target.isAlive()){
-			sendMessage(channel, String.format("%s, you may not vote for %s as they are currently dead.", senderS, targetS));
+			sendIrcMessage(channel, String.format("%s, you may not vote for %s as they are currently dead.", senderS, targetS));
 		} else {
 			sender.vote(target);
-			sendMessage(channel, String.format("%s, has voted for %s.", senderS, targetS));
+			sendIrcMessage(channel, String.format("%s, has voted for %s.", senderS, targetS));
 		}
 		if (checkLynchMajority())
 			endDay();
@@ -441,11 +460,11 @@ public class WolfBot extends PircBot {
 	
 	private void listVotes(){
 		if (state == State.None){
-			sendMessage(channel, "The game hasn't even started yet!");
+			sendIrcMessage(channel, "The game hasn't even started yet!");
 		} else if (state !=  State.Day){
-			sendMessage(channel, "You can only view lynchvotes at day.");
+			sendIrcMessage(channel, "You can only view lynchvotes at day.");
 		} else {
-			sendMessage(channel, players.votesToString());
+			sendIrcMessage(channel, players.votesToString());
 		}
 	}
 	
@@ -509,8 +528,25 @@ public class WolfBot extends PircBot {
 			return "!bane <player>: Selects a target to protect from wolves. You can protect yourself. (PM only)";
 		case "rest":
 			return "!rest <players>: Opts out of night action. (PM only)";
+		case "notices":
+			return "!notices on|off: Enable or disable notice messaging";
 		default:
 			return "Unknown command";
+		}
+	}
+	
+	boolean enableNotices = true;
+	// This will allow for the bot to be customised at runtime to either send notices or messages
+	// By default, send notices.
+	public void sendIrcMessage (String target, String message)
+	{
+		if (enableNotices)
+		{
+			sendNotice (target, message);
+		}
+		else
+		{
+			sendMessage(target, message);
 		}
 	}
 }
