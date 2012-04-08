@@ -65,7 +65,7 @@ public class WolfBot extends PircBot {
 			break;
 		case "!set":
 			if (args.length == 3){
-				if (data.getState() != State.None){
+				if (data.getState() != State.None || data.getState() != State.Starting){
 					sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 				} else {
 					setCount(args[1], args[2].trim());
@@ -75,7 +75,7 @@ public class WolfBot extends PircBot {
 				sendIrcMessage(channel, "Correct usage is:  !set <role> <amount>");
 			break;
 		case "!autorole":
-			if (data.getState() != State.None){
+			if (data.getState() != State.None || data.getState() != State.Starting){
 				sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 			} else {
 				data.getPlayers().autoRole();
@@ -215,7 +215,7 @@ public class WolfBot extends PircBot {
 		Player player = data.getPlayers().getPlayer(sourceNick);
 		if (player != null){
 			// ie. We're in day or night ...
-			if (data.getState() != State.None)
+			if (data.getState() != State.None || data.getState() != State.Starting)
 			{
 				sendIrcMessage(data.getChannel(), String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
 			}
@@ -244,7 +244,7 @@ public class WolfBot extends PircBot {
 		} else {
 			sendIrcMessage(data.getChannel(), name + " wasn't found among the entered players.");
 		}
-		if (data.getState() != State.None)
+		if (data.getState() != State.None || data.getState() != State.Starting)
 			checkVictory();
 	}
 	
@@ -294,6 +294,12 @@ public class WolfBot extends PircBot {
 			return;
 		}
 		
+		if (data.getState() == State.Starting)
+		{
+			sendIrcMessage(data.getChannel(), "The game is already starting. Use !end to stop starting.");
+			return;
+		}
+		
 		int playerCount = data.getPlayers().getList().size(); 
 		if (playerCount < 3){
 			sendIrcMessage(data.getChannel(), "Need at least three players to go.");
@@ -306,6 +312,7 @@ public class WolfBot extends PircBot {
 		// Fire off a 30s timer:
 		data.getStartGameTimer().schedule(new StartGameTask (this, data.getPlayers()), 30*1000); // 30s
 		sendIrcMessage (data.getChannel(), "The game will begin in " + Colors.BOLD + "30 seconds." + Colors.NORMAL + " Type !join to join!");
+		data.setState(State.Starting);
 	}
 	
 	public void startDay(){
@@ -407,6 +414,7 @@ public class WolfBot extends PircBot {
 		sendNightEndMessages(Role.devil, false);
 		sendNightEndMessages(Role.scry, false);
 		sendNightEndMessages(Role.ghost, true);
+		sendNightEndMessages(Role.aura_scry, false);
 	}
 	
 	private void sendNightEndMessages(Role role, boolean publicMessage){
@@ -461,7 +469,7 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void lynchVote(String senderS, String targetS){
-		if (data.getState() == State.None){
+		if (data.getState() == State.None || data.getState() == State.Starting){
 			sendIrcMessage(data.getChannel(), "The game hasn't even started yet!");
 			return;
 		} else if (data.getState() !=  State.Day){
@@ -487,7 +495,7 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void listVotes(){
-		if (data.getState() == State.None){
+		if (data.getState() == State.None || data.getState() == State.Starting){
 			sendIrcMessage(data.getChannel(), "The game hasn't even started yet!");
 		} else if (data.getState() !=  State.Day){
 			sendIrcMessage(data.getChannel(), "You can only view lynchvotes at day.");
