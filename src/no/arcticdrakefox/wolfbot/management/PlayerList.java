@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.roles.AuraScry;
 import no.arcticdrakefox.wolfbot.roles.Baner;
 import no.arcticdrakefox.wolfbot.roles.Devil;
 import no.arcticdrakefox.wolfbot.roles.Ghost;
@@ -196,6 +197,8 @@ public class PlayerList {
 				return new OldMan(name, wolfCount());
 			case mayor:
 				return new Mayor (name);
+			case aura_scry:
+				return new AuraScry(name);
 			default:
 				return null;
 		}
