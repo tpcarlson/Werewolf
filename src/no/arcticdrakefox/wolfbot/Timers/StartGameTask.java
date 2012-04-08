@@ -22,7 +22,7 @@ public class StartGameTask extends TimerTask {
 		players.reset();
 		players.assignRoles();
 		parent.sendRoleMessages();
-		parent.setMode(parent.getChannel (), "+m");
+		parent.setMode(parent.getModel ().getChannel (), "+m");
 		parent.startDay();
 	}
 

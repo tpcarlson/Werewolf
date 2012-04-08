@@ -11,17 +11,13 @@ import no.arcticdrakefox.wolfbot.management.VoteTable;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 
 public class WolfBot extends PircBot {
-	private String channel;
-	private String password;
-	private PlayerList players = new PlayerList();
 	
-	private State state = State.None;
-
 	public static void main(String[] args) throws Exception {
 		PircBot bot = new WolfBot("WolfBot", "ruffruff");
 		bot.setVerbose(true);
@@ -29,17 +25,20 @@ public class WolfBot extends PircBot {
 		bot.joinChannel("#wolfbot");
 	}
 	
+	WolfBotModel data = new WolfBotModel(new PlayerList(), State.None,
+			new Timer (), true);
+	
 	private WolfBot(String name, String password){
 		super();
 		setMessageDelay(200);
 		this.setName(name);
-		this.password = password;
+		this.data.setPassword(password);
 	}
 	
 	@Override
 	protected void onJoin(String channel, String sender, String login, String hostname){
-		identify(password);
-		this.channel = channel;
+		identify(data.getPassword());
+		this.data.setChannel(channel);
 	}
 	
 	@Override
@@ -66,7 +65,7 @@ public class WolfBot extends PircBot {
 			break;
 		case "!set":
 			if (args.length == 3){
-				if (state != State.None){
+				if (data.getState() != State.None){
 					sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 				} else {
 					setCount(args[1], args[2].trim());
@@ -76,18 +75,18 @@ public class WolfBot extends PircBot {
 				sendIrcMessage(channel, "Correct usage is:  !set <role> <amount>");
 			break;
 		case "!autorole":
-			if (state != State.None){
+			if (data.getState() != State.None){
 				sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 			} else {
-				players.autoRole();
-				sendIrcMessage(channel, players.roleCountToString());
+				data.getPlayers().autoRole();
+				sendIrcMessage(channel, data.getPlayers().roleCountToString());
 			}
 			break;
 		case "!list":
-			sendIrcMessage(channel, StringHandler.listToString(players.getLivingPlayers()));
+			sendIrcMessage(channel, StringHandler.listToString(data.getPlayers().getLivingPlayers()));
 			break;
 		case "!rolecount":
-			sendIrcMessage(channel, players.roleCountToString());
+			sendIrcMessage(channel, data.getPlayers().roleCountToString());
 			break;
 		case "!start":
 			startGame();
@@ -112,7 +111,7 @@ public class WolfBot extends PircBot {
 			listVotes();
 			break;
 		case "!time":
-			sendIrcMessage(channel, "It is currently " + state);
+			sendIrcMessage(channel, "It is currently " + data.getState());
 			break;
 		case "!help":
 			if (args.length == 2)
@@ -131,13 +130,13 @@ public class WolfBot extends PircBot {
 			{
 				if (args[1].equalsIgnoreCase("on"))
 				{
-					enableNotices = true;
+					data.setEnableNotices(true);
 					sendIrcMessage (channel, "Notices enabled");
 					break;
 				}
 				else if (args[1].equalsIgnoreCase("off"))
 				{
-					enableNotices = false;
+					data.setEnableNotices(false);
 					sendIrcMessage (channel, "Notices disabled");
 					break;
 				}
@@ -157,7 +156,7 @@ public class WolfBot extends PircBot {
 			return;
 		String[] args = message.split(" ");
 		String command = args[0];
-		Player player = players.getPlayer(sender);
+		Player player = data.getPlayers().getPlayer(sender);
 		if (player == null)
 			return;
 		switch (command.toLowerCase()){
@@ -173,13 +172,13 @@ public class WolfBot extends PircBot {
 				checkVictory();
 				break;
 			case "!list":
-				sendIrcMessage(sender, StringHandler.listToString(players.getLivingPlayers()));
+				sendIrcMessage(sender, StringHandler.listToString(data.getPlayers().getLivingPlayers()));
 				break;
 			case "!rolecount":
-				sendIrcMessage(sender, players.roleCountToString());
+				sendIrcMessage(sender, data.getPlayers().roleCountToString());
 				break;
 			case "!time":
-				sendIrcMessage(sender, "It is currently " + state);
+				sendIrcMessage(sender, "It is currently " + data.getState());
 				break;
 			case "!help":
 				if (args.length == 2)
@@ -191,12 +190,12 @@ public class WolfBot extends PircBot {
 					);
 				break;
 			default:
-				if (state == State.Night){
+				if (data.getState() == State.Night){
 					if (player.isAlive()){
-						String msg = player.nightAction(message, players);
+						String msg = player.nightAction(message, data.getPlayers());
 						if (msg != null)
 							sendIrcMessage(sender, msg);
-						if (players.allReady())
+						if (data.getPlayers().allReady())
 							endNight();	
 					}
 				} else
@@ -206,19 +205,19 @@ public class WolfBot extends PircBot {
 	
 	@Override
 	protected void onNickChange(String oldNick, String login, String hostname, String newNick){
-		Player player = players.getPlayer(oldNick);
+		Player player = data.getPlayers().getPlayer(oldNick);
 		if (player != null)
 			player.rename(newNick);
 	}
 	
 	@Override
 	protected void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason){
-		Player player = players.getPlayer(sourceNick);
+		Player player = data.getPlayers().getPlayer(sourceNick);
 		if (player != null){
 			// ie. We're in day or night ...
-			if (state != State.None)
+			if (data.getState() != State.None)
 			{
-				sendIrcMessage(channel, String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
+				sendIrcMessage(data.getChannel(), String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
 			}
 			drop(player.getName());
 		}
@@ -230,56 +229,56 @@ public class WolfBot extends PircBot {
 	}
 		
 	private void join(String name){
-		if (state != State.None){
-			sendIrcMessage(channel, name  + " cannot join now, game is in progress.");
-		} else if (players.addPlayer(name)){
-			sendIrcMessage(channel, name + " has joined the game!");
+		if (data.getState() != State.None){
+			sendIrcMessage(data.getChannel(), name  + " cannot join now, game is in progress.");
+		} else if (data.getPlayers().addPlayer(name)){
+			sendIrcMessage(data.getChannel(), name + " has joined the game!");
 		} else {
-			sendIrcMessage(channel, name + " is already entered.");
+			sendIrcMessage(data.getChannel(), name + " is already entered.");
 		}
 	}
 	
 	private void drop(String name){
-		if (players.removePlayer(name)){
-			sendIrcMessage(channel, name + " has retired from the game!");
+		if (data.getPlayers().removePlayer(name)){
+			sendIrcMessage(data.getChannel(), name + " has retired from the game!");
 		} else {
-			sendIrcMessage(channel, name + " wasn't found among the entered players.");
+			sendIrcMessage(data.getChannel(), name + " wasn't found among the entered players.");
 		}
-		if (state != State.None)
+		if (data.getState() != State.None)
 			checkVictory();
 	}
 	
 	private void setCount(String role, String amountS){
 		int amount;
 		if (role.toLowerCase().equals("villager")){
-			sendIrcMessage(channel, "Villagers are automatically adjusted.");
+			sendIrcMessage(data.getChannel(), "Villagers are automatically adjusted.");
 		} else if (StringHandler.isInt(amountS)){
 			amount = StringHandler.parseInt(amountS);
-			if (players.setRoleCount(role, amount))
-				sendIrcMessage(channel, String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
+			if (data.getPlayers().setRoleCount(role, amount))
+				sendIrcMessage(data.getChannel(), String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
 			else
-				sendIrcMessage(channel, String.format("Failed. Could not resolve %s to a role", role));
+				sendIrcMessage(data.getChannel(), String.format("Failed. Could not resolve %s to a role", role));
 		} else {
-			sendIrcMessage(channel, amountS + " cannot be parsed to an int.");
+			sendIrcMessage(data.getChannel(), amountS + " cannot be parsed to an int.");
 		}
 	}
 	
 	private boolean checkVictory(){
-		int wolfCount = players.wolfCount();
+		int wolfCount = data.getPlayers().wolfCount();
 		if (wolfCount < 1){
-			sendIrcMessage(channel, "With all wolves exterminated, the village is safe once again.");
+			sendIrcMessage(data.getChannel(), "With all wolves exterminated, the village is safe once again.");
 			endGame();
 			return true;
-		} else if (wolfCount * 2 >= players.playerCount()){
+		} else if (wolfCount * 2 >= data.getPlayers().playerCount()){
 			if (wolfCount == 1)
-				sendIrcMessage(channel, String.format(
+				sendIrcMessage(data.getChannel(), String.format(
 						"After turning on the last remaining villager, %s prowls on to terrorize somewhere else.",
-						StringHandler.listToString(players.getWolves()))
+						StringHandler.listToString(data.getPlayers().getWolves()))
 				);
 			else
-				sendIrcMessage(channel, String.format(
+				sendIrcMessage(data.getChannel(), String.format(
 						"%s turn on the last villagers. With all food depleted, they leave the village behind to find fresh meat elsewhere.",
-						StringHandler.listToString(players.getWolves()))
+						StringHandler.listToString(data.getPlayers().getWolves()))
 				);
 			endGame();
 			return true;
@@ -287,39 +286,37 @@ public class WolfBot extends PircBot {
 		return false;
 	}
 	
-	private Timer startGameTimer = new Timer ();
-	
 	private void startGame(){
 		
 		// Drop any starts that happen after the game has started
-		if (state != State.None)
+		if (data.getState() != State.None)
 		{
 			return;
 		}
 		
-		int playerCount = players.getList().size(); 
+		int playerCount = data.getPlayers().getList().size(); 
 		if (playerCount < 3){
-			sendIrcMessage(channel, "Need at least three players to go.");
+			sendIrcMessage(data.getChannel(), "Need at least three players to go.");
 			return;
-		} else if (playerCount < players.totalRoleCount()){
-			sendIrcMessage(channel, "There are more special roles than players!");
+		} else if (playerCount < data.getPlayers().totalRoleCount()){
+			sendIrcMessage(data.getChannel(), "There are more special roles than players!");
 			return;
 		}
-		startGameTimer = new Timer (); // Make a new timer every time
+		data.setStartGameTimer(new Timer ()); // Make a new timer every time
 		// Fire off a 30s timer:
-		startGameTimer.schedule(new StartGameTask (this, players), 30*1000); // 30s
-		sendIrcMessage (channel, "The game will begin in " + Colors.BOLD + "30 seconds." + Colors.NORMAL + " Type !join to join!");
+		data.getStartGameTimer().schedule(new StartGameTask (this, data.getPlayers()), 30*1000); // 30s
+		sendIrcMessage (data.getChannel(), "The game will begin in " + Colors.BOLD + "30 seconds." + Colors.NORMAL + " Type !join to join!");
 	}
 	
 	public void startDay(){
-		sendIrcMessage(channel, "It is now day. Vote for someone to lynch!");
-		state = State.Day;
+		sendIrcMessage(data.getChannel(), "It is now day. Vote for someone to lynch!");
+		data.setState(State.Day);
 		voiceAll();
-		players.clearVotes();
+		data.getPlayers().clearVotes();
 	}
 	
 	private void endDay(){
-		Player vote = players.getVote();
+		Player vote = data.getPlayers().getVote();
 		if (vote.isWolf()){
 			vote.die(String.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
 					+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
@@ -339,10 +336,10 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void startNight(){
-		state = State.Night;
+		data.setState(State.Night);
 		deVoiceAll();
-		sendIrcMessage(channel, "It is now night, and most villagers can only sleep. Some forces are busily at work, however...");
-		players.clearVotes();
+		sendIrcMessage(data.getChannel(), "It is now night, and most villagers can only sleep. Some forces are busily at work, however...");
+		data.getPlayers().clearVotes();
 		sendNightStartMessages();
 	}
 	
@@ -355,27 +352,27 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void checkDead(){
-		List<Player> deceased = players.getRecentlyDead();
+		List<Player> deceased = data.getPlayers().getRecentlyDead();
 		for (Player player : deceased){
-			sendIrcMessage(channel, player.getCauseOfDeath());
-			deVoice(channel, player.getName());
+			sendIrcMessage(data.getChannel(), player.getCauseOfDeath());
+			deVoice(data.getChannel(), player.getName());
 		}
-		players.clearRecentlyDead();
+		data.getPlayers().clearRecentlyDead();
 	}
 	
 	private void endGame(){
-		startGameTimer.cancel(); // Kill the existing timer, if we have one
-		state = State.None;
-		players.reset();
-		setMode(channel, "-m");
+		data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
+		data.setState(State.None);
+		data.getPlayers().reset();
+		setMode(data.getChannel(), "-m");
 		deVoiceAll();
-		sendIrcMessage(channel, "Thanks for playing! Say !start to go again!");
+		sendIrcMessage(data.getChannel(), "Thanks for playing! Say !start to go again!");
 	}
 	
 	public void sendRoleMessages(){
-		List<Player> playerList = players.getLivingPlayers();
+		List<Player> playerList = data.getPlayers().getLivingPlayers();
 		for (Player player : playerList){
-			String message = player.roleInfo(players);
+			String message = player.roleInfo(data.getPlayers());
 			if (message != null)
 			{
 				sendIrcMessage(player.getName(), message);
@@ -397,7 +394,7 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void sendNightStartMessages(){
-		List<Player> playerList = players.getLivingPlayers();
+		List<Player> playerList = data.getPlayers().getLivingPlayers();
 		for (Player player : playerList){
 			String message = player.nightStart();
 			if (message != null)
@@ -413,20 +410,20 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void sendNightEndMessages(Role role, boolean publicMessage){
-		List<Player> playerList = players.getLivingPlayers();
+		List<Player> playerList = data.getPlayers().getLivingPlayers();
 		for (Player player : playerList){
 			if (player.getRole() != role)
 				continue;
 			String message = player.nightEnd();
 			if (message != null)
-				sendIrcMessage(publicMessage ? channel : player.getName(), message);
+				sendIrcMessage(publicMessage ? data.getChannel() : player.getName(), message);
 		}
 	}
 	
 	private void killWolfVote(){
-		Player wolfVote = players.getVote(true);
+		Player wolfVote = data.getPlayers().getVote(true);
 		if (wolfVote != null){
-			 Player baner = players.getPlayerTargeting(wolfVote, Role.baner);
+			 Player baner = data.getPlayers().getPlayerTargeting(wolfVote, Role.baner);
 			 if (baner != null){
 				 wolfVote = null;
 				 if (baner.getVote().equals(baner)){
@@ -450,8 +447,8 @@ public class WolfBot extends PircBot {
 				 }
 			 }
 		}
-		if (wolfVote == null || players.getPlayerTargeting(wolfVote, Role.baner) != null){
-			sendIrcMessage(channel, "It appears the wolves didn't kill anybody tonight.");
+		if (wolfVote == null || data.getPlayers().getPlayerTargeting(wolfVote, Role.baner) != null){
+			sendIrcMessage(data.getChannel(), "It appears the wolves didn't kill anybody tonight.");
 		} else {
 			wolfVote.die(String.format(
 					"As the villagers gather, they notice someone missing. "
@@ -464,59 +461,59 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void lynchVote(String senderS, String targetS){
-		if (state == State.None){
-			sendIrcMessage(channel, "The game hasn't even started yet!");
+		if (data.getState() == State.None){
+			sendIrcMessage(data.getChannel(), "The game hasn't even started yet!");
 			return;
-		} else if (state !=  State.Day){
-			sendIrcMessage(channel, "You can only cast lynchvotes at day.");
+		} else if (data.getState() !=  State.Day){
+			sendIrcMessage(data.getChannel(), "You can only cast lynchvotes at day.");
 			return;
 		}
-		Player sender = players.getPlayer(senderS);
-		Player target = players.getPlayer(targetS);
+		Player sender = data.getPlayers().getPlayer(senderS);
+		Player target = data.getPlayers().getPlayer(targetS);
 		if (sender == null){
-			sendIrcMessage(channel, String.format("%s, you are not enterd in the game.", senderS));
+			sendIrcMessage(data.getChannel(), String.format("%s, you are not enterd in the game.", senderS));
 		} else if (!sender.isAlive()){
-			sendIrcMessage(channel, String.format("%s, you are currently dead..", senderS));
+			sendIrcMessage(data.getChannel(), String.format("%s, you are currently dead..", senderS));
 		} else if (target == null){
-			sendIrcMessage(channel, String.format("%s, you may not vote for %s as they aren't enterd in the game.", senderS, targetS));
+			sendIrcMessage(data.getChannel(), String.format("%s, you may not vote for %s as they aren't enterd in the game.", senderS, targetS));
 		} else if (!target.isAlive()){
-			sendIrcMessage(channel, String.format("%s, you may not vote for %s as they are currently dead.", senderS, targetS));
+			sendIrcMessage(data.getChannel(), String.format("%s, you may not vote for %s as they are currently dead.", senderS, targetS));
 		} else {
 			sender.vote(target);
-			sendIrcMessage(channel, String.format("%s has voted for %s.", senderS, targetS));
+			sendIrcMessage(data.getChannel(), String.format("%s has voted for %s.", senderS, targetS));
 		}
 		if (checkLynchMajority())
 			endDay();
 	}
 	
 	private void listVotes(){
-		if (state == State.None){
-			sendIrcMessage(channel, "The game hasn't even started yet!");
-		} else if (state !=  State.Day){
-			sendIrcMessage(channel, "You can only view lynchvotes at day.");
+		if (data.getState() == State.None){
+			sendIrcMessage(data.getChannel(), "The game hasn't even started yet!");
+		} else if (data.getState() !=  State.Day){
+			sendIrcMessage(data.getChannel(), "You can only view lynchvotes at day.");
 		} else {
-			String nonVoters = players.nonvotersToString();
-			sendIrcMessage(channel, players.votesToString());
+			String nonVoters = data.getPlayers().nonvotersToString();
+			sendIrcMessage(data.getChannel(), data.getPlayers().votesToString());
 			
 			if (! nonVoters.isEmpty())
 			{
-				sendIrcMessage (channel, "Not voted: " + players.nonvotersToString());
+				sendIrcMessage (data.getChannel(), "Not voted: " + data.getPlayers().nonvotersToString());
 			}
 		}
 	}
 	
 	private boolean checkLynchMajority(){
-		List<Player> livingPlayers = players.getLivingPlayers();
+		List<Player> livingPlayers = data.getPlayers().getLivingPlayers();
 		VoteTable table = new VoteTable(livingPlayers);
 		return (table.getHighestVote() > livingPlayers.size() / 2);
 	}
 	
 	private void voiceAll(){
-		massMode (players.getLivingPlayers(), true, "v");
+		massMode (data.getPlayers().getLivingPlayers(), true, "v");
 	}
 	
 	private void deVoiceAll(){
-		massMode (players.getList(), false, "v");
+		massMode (data.getPlayers().getList(), false, "v");
 	}
 	
 	private void massMode (List<Player> toChange, boolean add, String mode)
@@ -525,7 +522,7 @@ public class WolfBot extends PircBot {
 		if (add) { modeToApply += "+"; } else { modeToApply+= "-"; }
 		for (int i = 0; i < toChange.size(); ++i)
 			modeToApply += mode;
-		setMode(channel, modeToApply + " " + StringHandler.listToStringSimplePlayers(toChange));		
+		setMode(data.getChannel(), modeToApply + " " + StringHandler.listToStringSimplePlayers(toChange));		
 	}
 	
 	private String help(String command){
@@ -574,12 +571,11 @@ public class WolfBot extends PircBot {
 		}
 	}
 	
-	boolean enableNotices = true;
 	// This will allow for the bot to be customised at runtime to either send notices or messages
 	// By default, send notices.
 	public void sendIrcMessage (String target, String message)
 	{
-		if (enableNotices && target.equalsIgnoreCase(channel)) // Note that we always send straight-up messages for PMs.
+		if (data.isEnableNotices() && target.equalsIgnoreCase(data.getChannel())) // Note that we always send straight-up messages for PMs.
 		{
 			sendNotice (target, message);
 		}
@@ -589,9 +585,7 @@ public class WolfBot extends PircBot {
 		}
 	}
 
-	// @author tpcarlson
-	// TODO: Refactor so we have a real model and controller here ...
-	public String getChannel() {
-		return channel;
+	public WolfBotModel getModel() {
+		return data;
 	}
 }
