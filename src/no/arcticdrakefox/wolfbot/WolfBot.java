@@ -21,7 +21,7 @@ public class WolfBot extends PircBot {
 	private State state = State.None;
 
 	public static void main(String[] args) throws Exception {
-		PircBot bot = new WolfBot("WolfBot", "[password-removed]");
+		PircBot bot = new WolfBot("WolfBot", "[removed]");
 		bot.setVerbose(true);
 		bot.connect("irc.lessthan3.net");
 		bot.joinChannel("#wolfbot");
@@ -456,19 +456,20 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void voiceAll(){
-		List<Player> livingPlayers = players.getLivingPlayers();
-		String mode = "+";
-		for (int i = 0; i < livingPlayers.size(); ++i)
-			mode += "v";
-		setMode(channel, mode + " " + StringHandler.listToStringSimple(livingPlayers));
+		massMode (players.getLivingPlayers(), true, "v");
 	}
 	
 	private void deVoiceAll(){
-		List<Player> playerList = players.getList();
-		String mode = "-";
-		for (int i = 0; i < playerList.size(); ++i)
-			mode += "v";
-		deVoice(channel, mode + " " + StringHandler.listToStringSimple(playerList));
+		massMode (players.getList(), false, "v");
+	}
+	
+	private void massMode (List<Player> toChange, boolean add, String mode)
+	{
+		String modeToApply = "";
+		if (add) { modeToApply += "+"; } else { modeToApply+= "-"; }
+		for (int i = 0; i < toChange.size(); ++i)
+			modeToApply += mode;
+		setMode(channel, modeToApply + " " + StringHandler.listToStringSimplePlayers(toChange));		
 	}
 	
 	private String help(String command){

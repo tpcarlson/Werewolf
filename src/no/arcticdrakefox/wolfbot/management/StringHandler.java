@@ -33,4 +33,11 @@ public class StringHandler {
 			ret += " " + list.get(i);
 		return ret;
 	}
+	
+	public static String listToStringSimplePlayers(List<Player> list){
+		String ret = "";
+		for (int i = 0; i < list.size(); ++i) 
+			ret += " " + list.get(i).getName();
+		return ret;
+	}
 }
