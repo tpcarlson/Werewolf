@@ -308,14 +308,13 @@ public class PlayerList {
 			roleCount[Role.vigilante.ordinal()]++;
 	}
 	public void addOther(){
-		switch (new Random().nextInteger(3)){
+		switch (new Random().nextInt(3)){
 		case 0: 
-			roleCount[Role.oldguy.ordinal()]++;
+			roleCount[Role.oldman.ordinal()]++;
 		case 1: 
 			roleCount[Role.toughguy.ordinal()]++;
 		case 2: 
-			roleCount[Role.mason.ordinal())]++;
+			roleCount[Role.mason.ordinal()]++;
 		}
-						
 	}
 }
