@@ -186,7 +186,7 @@ public class WolfBot extends PircBot {
 					sendIrcMessage(sender, help(args[1]));
 				else
 					sendIrcMessage(sender,
-							"!join, !drop, !list, !role, !rolecount, "
+							"!join, !drop, !list, !role, !rolecount, !autorole"
 							+ "!time, !help, !ghost, !kill, !bane, !scry"
 					);
 				break;
