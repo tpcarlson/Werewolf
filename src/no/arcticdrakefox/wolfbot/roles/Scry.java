@@ -35,8 +35,10 @@ public class Scry extends Player {
 						return player.getRole() == Role.apprentice_scry;
 					}
 				});
-		ApprenticeScry ap = (ApprenticeScry) Iterables.getFirst(aps, null);
-		ap.setActive();
+		if (!aps.isEmpty()) {
+			ApprenticeScry ap = (ApprenticeScry) Iterables.getFirst(aps, null);
+			ap.setActive();
+		}
 	}
 
 	@Override
