@@ -120,7 +120,7 @@ public class WolfBot extends PircBot {
 			else 
 				sendIrcMessage(channel,
 						"!join, !drop [player], !start, !end, !set <role> <count>, "
-						+ "!list, !rolecount, !lynch/!vote/!kill, !votes, !time, !help"
+						+ "!list, !rolecount, !autorole, !lynch/!vote/!kill, !votes, !time, !help"
 				);
 			break;
 		case "!test":
@@ -186,7 +186,7 @@ public class WolfBot extends PircBot {
 					sendIrcMessage(sender, help(args[1]));
 				else
 					sendIrcMessage(sender,
-							"!join, !drop, !list, !role, !rolecount, !autorole"
+							"!join, !drop, !list, !role, !rolecount, !autorole, "
 							+ "!time, !help, !ghost, !kill, !bane, !scry"
 					);
 				break;
@@ -563,6 +563,8 @@ public class WolfBot extends PircBot {
 			return "!rest <players>: Opts out of night action. (PM only)";
 		case "notices":
 			return "!notices on|off: Enable or disable notice messaging";
+		case "autorole": 
+			return "!autorole sets a standard set of roles for the current number of players. Use just before !start."
 		default:
 			return "Unknown command";
 		}
