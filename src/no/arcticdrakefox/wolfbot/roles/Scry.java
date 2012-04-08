@@ -23,7 +23,7 @@ public class Scry extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are a scry. Every night you may check a person for lycantrophy. Beware, for you are the wolves primary target.";
+		return "You are a scry. Every night you may check a person for lycanthropy. Beware, for you are the wolves primary target.";
 	}
 
 	@Override
@@ -67,8 +67,8 @@ public class Scry extends Player {
 			return null;
 		} else {
 			return vote.isWolf() ?
-				String.format("%s shows all the signs of lycantropy. They are undoubtedly a wolf, but do you dare to tell anyone?", vote)
-				: String.format("%s, though certainly not an innocent person, do not appear to be a werewolf.", vote);
+				String.format("%s shows all the signs of lycanthropy. They are undoubtedly a wolf, but do you dare to tell anyone?", vote)
+				: String.format("%s, though certainly not an innocent person, does not appear to be a werewolf.", vote);
 		}
 	}
 }
