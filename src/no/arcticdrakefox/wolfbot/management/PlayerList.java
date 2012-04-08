@@ -326,7 +326,7 @@ public class PlayerList {
 		case 2:
 		case 1:
 		case 0:
-			roleCount[Role.wolf.ordinal()] = 1
+			roleCount[Role.wolf.ordinal()] = 1;
 			break;
 		}
 	}

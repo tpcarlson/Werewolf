@@ -564,7 +564,7 @@ public class WolfBot extends PircBot {
 		case "notices":
 			return "!notices on|off: Enable or disable notice messaging";
 		case "autorole": 
-			return "!autorole sets a standard set of roles for the current number of players. Use just before !start."
+			return "!autorole sets a standard set of roles for the current number of players. Use just before !start.";
 		default:
 			return "Unknown command";
 		}
