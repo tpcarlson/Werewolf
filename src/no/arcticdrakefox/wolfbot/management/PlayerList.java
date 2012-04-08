@@ -258,6 +258,7 @@ public class PlayerList {
 			roleCount[Role.wolf.ordinal()]++;
 		case 17:
 		case 16:
+			addOther();
 		case 15:
 		case 14:
 			roleCount[Role.mason.ordinal()] += 2;
@@ -305,5 +306,16 @@ public class PlayerList {
 			roleCount[Role.baner.ordinal()]++;
 		else
 			roleCount[Role.vigilante.ordinal()]++;
+	}
+	public void addOther(){
+		switch (new Random().nextInteger(3)){
+		case 0: 
+			roleCount[Role.oldguy.ordinal()]++;
+		case 1: 
+			roleCount[Role.toughguy.ordinal()]++;
+		case 2: 
+			roleCount[Role.mason.ordinal())]++;
+		}
+						
 	}
 }
