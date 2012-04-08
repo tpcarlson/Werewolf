@@ -5,22 +5,11 @@ import java.util.List;
 import java.util.Random;
 
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.roles.AuraScry;
-import no.arcticdrakefox.wolfbot.roles.Baner;
-import no.arcticdrakefox.wolfbot.roles.Devil;
-import no.arcticdrakefox.wolfbot.roles.Ghost;
-import no.arcticdrakefox.wolfbot.roles.Mason;
-import no.arcticdrakefox.wolfbot.roles.Mayor;
-import no.arcticdrakefox.wolfbot.roles.OldMan;
-import no.arcticdrakefox.wolfbot.roles.Scry;
-import no.arcticdrakefox.wolfbot.roles.ToughGuy;
-import no.arcticdrakefox.wolfbot.roles.Vigilante;
 import no.arcticdrakefox.wolfbot.roles.Villager;
-import no.arcticdrakefox.wolfbot.roles.Wolf;
 
 import com.google.common.collect.Lists;
 
-public class PlayerList {
+public class PlayerList{
 	public List<Player> players = new ArrayList<Player>();
 	private int[] roleCount = new int[Role.values().length];
 	

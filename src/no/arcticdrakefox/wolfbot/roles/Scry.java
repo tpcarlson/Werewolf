@@ -1,19 +1,44 @@
 package no.arcticdrakefox.wolfbot.roles;
 
-import no.arcticdrakefox.wolfbot.management.*;
+import java.util.Collection;
+
+import no.arcticdrakefox.wolfbot.management.Player;
+import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.Team;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 
 public class Scry extends Player {
 
-	public Scry(String name){
+	public Scry(String name) {
 		super(name);
-		setTeam (Team.Villagers);
+		setTeam(Team.Villagers);
 	}
-	
+
 	@Override
 	public boolean isWolf() {
 		return false;
+	}
+
+	@Override
+	public void die(String causeOfDeath) {
+		super.die(causeOfDeath);
+		Collection<Player> aps =
+		Collections2.filter(WolfBotModel.getInstance().getPlayers().players,
+				new Predicate<Player>() {
+					@Override
+					public boolean apply(Player player) {
+						return player.getRole() == Role.apprentice_scry;
+					}
+				});
+		if (!aps.isEmpty()) {
+			ApprenticeScry ap = (ApprenticeScry) Iterables.getFirst(aps, null);
+			ap.setActive();
+		}
 	}
 
 	@Override
@@ -35,7 +60,7 @@ public class Scry extends Player {
 	@Override
 	public String nightAction(String message, PlayerList players) {
 		String[] args = message.trim().split(" ", 2);
-		if (args[0].equals("!scry")){
+		if (args[0].equals("!scry")) {
 			if (args.length != 2)
 				return "Correct usage: !scry <someone>";
 			if (isReady)
@@ -44,31 +69,36 @@ public class Scry extends Player {
 			if (target == null)
 				return targetNotFound(args[1]);
 			else {
-				if (target.equals(this)){
+				if (target.equals(this)) {
 					return "You don't need your special powers to know that you are a scry.";
-				} else if (target.isAlive()){
+				} else if (target.isAlive()) {
 					isReady = true;
 					vote = target;
-					return String.format("You set up your array of candles, orbs and artifacts, concentrating your efforts on %s", target);
+					return String
+							.format("You set up your array of candles, orbs and artifacts, concentrating your efforts on %s",
+									target);
 				} else
 					return String.format("%s is already dead.", target);
 			}
-		} else if (args[0].equals("!rest")){
+		} else if (args[0].equals("!rest")) {
 			isReady = true;
 			vote = null;
 			return "You rest for tonight, confident that you already know all you need.";
 		} else
 			return null;
 	}
-	
+
 	@Override
 	public String nightEnd() {
-		if (vote == null){
+		if (vote == null) {
 			return null;
 		} else {
-			return vote.isWolf() ?
-				String.format("%s shows all the signs of lycanthropy. They are undoubtedly a wolf, but do you dare to tell anyone?", vote)
-				: String.format("%s, though certainly not an innocent person, does not appear to be a werewolf.", vote);
+			return vote.isWolf() ? String
+					.format("%s shows all the signs of lycanthropy. They are undoubtedly a wolf, but do you dare to tell anyone?",
+							vote)
+					: String.format(
+							"%s, though certainly not an innocent person, does not appear to be a werewolf.",
+							vote);
 		}
 	}
 }
