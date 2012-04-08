@@ -240,10 +240,12 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void drop(String name){
-		if (data.getState() == State.None)
+		if (data.getState() == State.None || data.getState() == State.Starting)
 		{
 			// We still need to remove from the game:
 			data.getPlayers().removePlayer(name);
+			// And send a neutral message:
+			sendIrcMessage (data.getChannel(), name + " has retired from the game - before it even started! What a coward.");
 			return;
 		}
 		
@@ -252,7 +254,7 @@ public class WolfBot extends PircBot {
 		} else {
 			sendIrcMessage(data.getChannel(), name + " wasn't found among the entered players.");
 		}
-		if (data.getState() != State.None || data.getState() != State.Starting)
+		if (data.getState() != State.None && data.getState() != State.Starting)
 			checkVictory();
 	}
 	
@@ -383,12 +385,15 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void endGame(){
-		data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
+		if (data.getState() != State.None && data.getState() != State.Starting) // Night or day
+		{
+			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
+			data.getPlayers().reset();
+			setMode(data.getChannel(), "-m");
+			deVoiceAll();
+			sendIrcMessage(data.getChannel(), "Thanks for playing! Say !start to go again!");
+		}
 		data.setState(State.None);
-		data.getPlayers().reset();
-		setMode(data.getChannel(), "-m");
-		deVoiceAll();
-		sendIrcMessage(data.getChannel(), "Thanks for playing! Say !start to go again!");
 	}
 	
 	public void sendRoleMessages(){
