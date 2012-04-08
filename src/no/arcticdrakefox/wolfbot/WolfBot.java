@@ -1,23 +1,21 @@
 package no.arcticdrakefox.wolfbot;
 
-import java.awt.Color;
 import java.util.List;
+import java.util.Timer;
 
+import no.arcticdrakefox.wolfbot.Timers.StartGameTask;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.VoteTable;
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 
 public class WolfBot extends PircBot {
-	public enum State {
-		None, Day, Night
-	}
-	
 	private String channel;
 	private String password;
 	private PlayerList players = new PlayerList();
@@ -33,6 +31,7 @@ public class WolfBot extends PircBot {
 	
 	private WolfBot(String name, String password){
 		super();
+		setMessageDelay(200);
 		this.setName(name);
 		this.password = password;
 	}
@@ -187,7 +186,7 @@ public class WolfBot extends PircBot {
 					sendIrcMessage(sender, help(args[1]));
 				else
 					sendIrcMessage(sender,
-							"!join, !drop, !list, !role, !rolecount, "
+							"!join, !drop, !list, !role, !rolecount, !autorole"
 							+ "!time, !help, !ghost, !kill, !bane, !scry"
 					);
 				break;
@@ -284,7 +283,16 @@ public class WolfBot extends PircBot {
 		return false;
 	}
 	
+	private Timer startGameTimer = new Timer ();
+	
 	private void startGame(){
+		
+		// Drop any starts that happen after the game has started
+		if (state != State.None)
+		{
+			return;
+		}
+		
 		int playerCount = players.getList().size(); 
 		if (playerCount < 3){
 			sendIrcMessage(channel, "Need at least three players to go.");
@@ -293,14 +301,13 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(channel, "There are more special roles than players!");
 			return;
 		}
-		players.reset();
-		players.assignRoles();
-		sendRoleMessages();
-		setMode(channel, "+m");
-		startDay();
+		startGameTimer = new Timer (); // Make a new timer every time
+		// Fire off a 30s timer:
+		startGameTimer.schedule(new StartGameTask (this, players), 30*1000); // 30s
+		sendIrcMessage (channel, "The game will begin in " + Colors.BOLD + "30 seconds." + Colors.NORMAL + " Type !join to join!");
 	}
 	
-	private void startDay(){
+	public void startDay(){
 		sendIrcMessage(channel, "It is now day. Vote for someone to lynch!");
 		state = State.Day;
 		voiceAll();
@@ -311,13 +318,13 @@ public class WolfBot extends PircBot {
 		Player vote = players.getVote();
 		if (vote.isWolf()){
 			vote.die(String.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-					+ "A voulenteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
+					+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
 					+ "A werewolf was lynched today, and the village is a little safer. %s the %s is dead!",
 					vote.getName(), vote.getRole())
 			);
 		} else {
 			vote.die(String.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-					+ "A voulenteer plunges the village's treasured silver dagger into their heart. "
+					+ "A volunteer plunges the village's treasured silver dagger into their heart. "
 					+ "They scream in agony as life and blood leave their body. %s the %s is dead!",
 					vote.getName(), vote.getRole())
 			);
@@ -353,6 +360,7 @@ public class WolfBot extends PircBot {
 	}
 	
 	private void endGame(){
+		startGameTimer.cancel(); // Kill the existing timer, if we have one
 		state = State.None;
 		players.reset();
 		setMode(channel, "-m");
@@ -360,7 +368,7 @@ public class WolfBot extends PircBot {
 		sendIrcMessage(channel, "Thanks for playing! Say !start to go again!");
 	}
 	
-	private void sendRoleMessages(){
+	public void sendRoleMessages(){
 		List<Player> playerList = players.getLivingPlayers();
 		for (Player player : playerList){
 			String message = player.roleInfo(players);
@@ -374,8 +382,10 @@ public class WolfBot extends PircBot {
 			{
 				case Wolves:
 					sendIrcMessage (player.getName(), "You are on the " + Colors.RED + "wolf" + Colors.NORMAL + " team. You must attempt to eat the " + Colors.BLUE + " villagers!");
+					break;
 				case Villagers:
 					sendIrcMessage (player.getName(), "You are on the " + Colors.BLUE + "villager" + Colors.NORMAL + " team. Defend against the invading " + Colors.RED + "wolf" + Colors.NORMAL + " incursion!");
+					break;
 				default:
 					sendIrcMessage (player.getName(), "You are on an unknown team. Something has probably gone wrong here.");
 			}
@@ -469,7 +479,7 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(channel, String.format("%s, you may not vote for %s as they are currently dead.", senderS, targetS));
 		} else {
 			sender.vote(target);
-			sendIrcMessage(channel, String.format("%s, has voted for %s.", senderS, targetS));
+			sendIrcMessage(channel, String.format("%s has voted for %s.", senderS, targetS));
 		}
 		if (checkLynchMajority())
 			endDay();
@@ -563,7 +573,7 @@ public class WolfBot extends PircBot {
 	// By default, send notices.
 	public void sendIrcMessage (String target, String message)
 	{
-		if (enableNotices && target.equalsIgnoreCase(channel))
+		if (enableNotices && target.equalsIgnoreCase(channel)) // Note that we always send straight-up messages for PMs.
 		{
 			sendNotice (target, message);
 		}
@@ -571,5 +581,11 @@ public class WolfBot extends PircBot {
 		{
 			sendMessage(target, message);
 		}
+	}
+
+	// @author tpcarlson
+	// TODO: Refactor so we have a real model and controller here ...
+	public String getChannel() {
+		return channel;
 	}
 }
