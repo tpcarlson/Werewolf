@@ -172,38 +172,7 @@ public class PlayerList {
 				return player;
 		return null;
 	}
-	
-	public Player makePlayer(String name, Role role){
-		switch (role){
-			case villager:
-				return new Villager(name);
-			case wolf:
-				return new Wolf(name);
-			case scry:
-				return new Scry(name);
-			case baner:
-				return new Baner(name);
-			case devil:
-				return new Devil(name);
-			case vigilante:
-				return new Vigilante(name);
-			case ghost:
-				return new Ghost(name);
-			case mason:
-				return new Mason(name);
-			case toughguy:
-				return new ToughGuy(name);
-			case oldman:
-				return new OldMan(name, wolfCount());
-			case mayor:
-				return new Mayor (name);
-			case aura_scry:
-				return new AuraScry(name);
-			default:
-				return null;
-		}
-	};
-	
+		
 	public Player getVote(){
 		return getVote(false);
 	}
@@ -265,7 +234,7 @@ public class PlayerList {
 			for (int j = 0; j < roleCount[i]; ++j){
 				Player player = getRandomPlayer(Role.villager);
 				int index = players.indexOf(player);
-				players.set(index, makePlayer(player.getName(), Role.values()[i]));
+				players.set(index, PlayerFactory.makePlayer(player.getName(), Role.values()[i]));
 			}
 		}
 	}

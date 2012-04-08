@@ -12,8 +12,22 @@ public class WolfBotModel {
 	private Timer startGameTimer;
 	private boolean enableNotices;
 
+	private static WolfBotModel instance;
+	public static WolfBotModel getInstance ()
+	{
+		return instance;
+	}
+	
 	public WolfBotModel(PlayerList players, State state, Timer startGameTimer,
 			boolean enableNotices) {
+		if (instance != null)
+		{
+			throw new RuntimeException ("May not instantiate model twice");
+		}
+		else
+		{
+			instance = this;
+		}
 		this.players = players;
 		this.state = state;
 		this.startGameTimer = startGameTimer;
