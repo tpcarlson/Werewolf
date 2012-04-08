@@ -69,8 +69,7 @@ public class AuraScry extends Player {
 			return null;
 		} else {
 			Role r = vote.getRole();
-			// tpcarlson: Is this correct?
-			return (r == Role.villager) || (r==Role.wolf) ?
+			return (r != Role.villager) && (r!=Role.wolf) ?
 				String.format("%s has an aura. They are undoubtedly a special, but do you dare to tell anyone?", vote)
 				: String.format("%s, though certainly not an innocent person, do not appear to have any powers.", vote);
 		}
