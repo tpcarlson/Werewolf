@@ -5,6 +5,7 @@ import com.google.common.collect.Collections2;
 
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+import no.arcticdrakefox.wolfbot.roles.ApprenticeScry;
 import no.arcticdrakefox.wolfbot.roles.AuraScry;
 import no.arcticdrakefox.wolfbot.roles.Baner;
 import no.arcticdrakefox.wolfbot.roles.Devil;
@@ -52,6 +53,8 @@ public class PlayerFactory
 				return new Mayor (name);
 			case aura_scry:
 				return new AuraScry(name);
+			case apprentice_scry:
+				return new ApprenticeScry(name);
 			default:
 				return null;
 		}
