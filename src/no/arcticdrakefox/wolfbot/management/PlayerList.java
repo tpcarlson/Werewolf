@@ -281,31 +281,6 @@ public class PlayerList {
 	public void autoRole(int players){
 		clearRoles();
 		switch (players){
-		case 3:
-			roleCount[Role.wolf.ordinal()] = 1;
-			roleCount[Role.mason.ordinal()] = 1;
-			break;
-		case 4:
-			roleCount[Role.wolf.ordinal()] = 1;
-			addWarrior();
-			break;
-		case 6:
-			addWarrior();
-			//break intentionally omitted
-		case 5:
-			roleCount[Role.wolf.ordinal()] = 1;
-			roleCount[Role.scry.ordinal()] = 1;
-			break;
-		case 7:
-			roleCount[Role.wolf.ordinal()] = 2;
-			roleCount[Role.vigilante.ordinal()] = 1;
-			addWarrior();
-			break;
-		case 8:
-		case 9:
-			roleCount[Role.wolf.ordinal()] = 2;
-			roleCount[Role.scry.ordinal()] = 1;
-			addWarrior();
 		default:
 			roleCount[Role.mason.ordinal()]++;
 			roleCount[Role.wolf.ordinal()]++;
@@ -318,12 +293,37 @@ public class PlayerList {
 		case 13:
 			addWarrior();
 		case 12:
-		case 10:
 		case 11:
+		case 10:
 			roleCount[Role.wolf.ordinal()]++;
 			roleCount[Role.devil.ordinal()] = 1;
 			roleCount[Role.scry.ordinal()] = 1;
 			addWarrior();
+			break;
+		case 9:
+			roleCount[Role.scry.ordinal()] = 1;
+		case 8:
+		case 7:
+			roleCount[Role.wolf.ordinal()] = 2;
+			roleCount[Role.vigilante.ordinal()] = 1;
+			addWarrior();
+			break;
+		case 6:
+			addWarrior();
+		case 5:
+			roleCount[Role.wolf.ordinal()] = 1;
+			roleCount[Role.scry.ordinal()] = 1;
+			break;
+		case 4:
+			roleCount[Role.wolf.ordinal()] = 1;
+			addWarrior();
+			break;
+		case 3:
+			roleCount[Role.mason.ordinal()] = 1;
+		case 2:
+		case 1:
+		case 0:
+			roleCount[Role.wolf.ordinal()] = 1
 			break;
 		}
 	}
