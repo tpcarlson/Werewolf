@@ -8,6 +8,7 @@ import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.VoteTable;
+import no.arcticdrakefox.wolfbot.management.WerewolfException;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
@@ -261,10 +262,17 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(data.getChannel(), "Villagers are automatically adjusted.");
 		} else if (StringHandler.isInt(amountS)){
 			amount = StringHandler.parseInt(amountS);
-			if (data.getPlayers().setRoleCount(role, amount))
-				sendIrcMessage(data.getChannel(), String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
-			else
+			try
+			{
+				if (data.getPlayers().setRoleCount(role, amount))
+					sendIrcMessage(data.getChannel(), String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
+				else // Should never get here
+					throw new WerewolfException ("Meep");
+			}
+			catch (WerewolfException wolfy)
+			{
 				sendIrcMessage(data.getChannel(), String.format("Failed. Could not resolve %s to a role", role));
+			}
 		} else {
 			sendIrcMessage(data.getChannel(), amountS + " cannot be parsed to an int.");
 		}
