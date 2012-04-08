@@ -215,7 +215,11 @@ public class WolfBot extends PircBot {
 	protected void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason){
 		Player player = players.getPlayer(sourceNick);
 		if (player != null){
-			sendIrcMessage(channel, String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
+			// ie. We're in day or night ...
+			if (state != State.None)
+			{
+				sendIrcMessage(channel, String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
+			}
 			drop(player.getName());
 		}
 	}
