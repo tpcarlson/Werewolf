@@ -104,7 +104,6 @@ public class Scry extends Player {
 
 	@Override
 	public String helpText() {
-		// TODO Auto-generated method stub
-		return null;
+		return "The scry can use his psychic talents to stare into someone's soul at night - if they are a wolf, he will know!";
 	}
 }
