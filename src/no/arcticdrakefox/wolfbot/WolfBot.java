@@ -213,12 +213,12 @@ public class WolfBot extends PircBot {
 	
 	@Override
 	protected void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason){
-		Player player = data.getPlayers().getPlayer(sourceLogin);
+		Player player = data.getPlayers().getPlayer(sourceNick);
 		if (player != null){
 			// ie. We're in day or night ...
 			if (! (data.getState() == State.None || data.getState() == State.Starting))
 			{
-				sendIrcMessage(data.getChannel(), String.format("%s has fled, they were a %s", sourceLogin, player.getRole()));
+				sendIrcMessage(data.getChannel(), String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
 			}
 			drop(player.getName());
 		}
@@ -226,7 +226,7 @@ public class WolfBot extends PircBot {
 	
 	@Override
 	protected void onPart(String sourceNick, String sourceLogin, String sourceHostname, String reason){
-		onQuit(sourceNick, sourceLogin, sourceHostname, reason);
+		onQuit(sourceLogin, sourceNick, sourceHostname, reason);
 	}
 		
 	private void join(String name){
