@@ -280,8 +280,18 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(data.getChannel(), name
 					+ " wasn't found among the entered players.");
 		}
-		if (data.getState() != State.None && data.getState() != State.Starting)
-			checkVictory();
+		
+		// Two stages here - we want to check the lynch majority to 
+		// see whether to go to night
+		// We also need to checkVictory
+		if (data.getState() == State.Day) // If we're in daytime (ie. voting)
+		{
+			if (checkLynchMajority())
+				endDay();
+		}
+		
+		// In both day and night, we check victory:
+		checkVictory();
 	}
 
 	private void setCount(String role, String amountS) {
