@@ -79,4 +79,9 @@ public class Devil extends Player {
 			return String.format("%s is a %s", vote, vote.getRole());
 		}
 	}
+
+	@Override
+	public String helpText() {
+		return "The devil is an evil scry, they work with the werewolves. Each night they scry to find someones role.";
+	}
 }

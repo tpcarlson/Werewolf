@@ -11,7 +11,16 @@ public class WolfBotModel {
 	private State state;
 	private Timer startGameTimer;
 	private boolean enableNotices;
-
+	private boolean silentMode = false;
+	
+	public void setSilentMode (boolean silentMode) {
+		this.silentMode = silentMode;
+	}
+	
+	public boolean getSilentMode() {
+		return silentMode;
+	}
+	
 	private static WolfBotModel instance;
 	public static WolfBotModel getInstance ()
 	{

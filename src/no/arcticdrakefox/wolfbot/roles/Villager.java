@@ -40,4 +40,10 @@ public class Villager extends Player {
 	public String nightEnd() {
 		return null;
 	}
+
+	@Override
+	public String helpText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

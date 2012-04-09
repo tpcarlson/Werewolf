@@ -75,4 +75,9 @@ public class AuraScry extends Player {
 		}
 	}
 
+	@Override
+	public String helpText() {
+		return "The aura scry is woken each night to check if a user has powers (i.e. is not a standard wolf of viligar)";
+	}
+
 }

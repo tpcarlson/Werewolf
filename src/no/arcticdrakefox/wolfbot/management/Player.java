@@ -53,4 +53,6 @@ public abstract class Player {
 	public abstract String nightStart();
 	public abstract String nightAction(String message, PlayerList players);
 	public abstract String nightEnd();
+	
+	public abstract String helpText();
 }
