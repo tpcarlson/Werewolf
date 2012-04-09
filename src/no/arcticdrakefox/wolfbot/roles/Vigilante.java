@@ -83,7 +83,6 @@ public class Vigilante extends Player {
 
 	@Override
 	public String helpText() {
-		// TODO Auto-generated method stub
-		return null;
+		return "The vigilante can attempt to !kill someone at night - hopefully a wolf, if they guess right. If not, then the villagers die even faster!";
 	}
 }
