@@ -106,6 +106,15 @@ public class WolfBot extends PircBot {
 		/*
 		 * case "!thatwillbeallthankyou": disconnect(); break;
 		 */
+			
+		case "!anondeath":
+			if (args.length == 2 && args[1] == "off")
+				WolfBotModel.getInstance().setSilentMode(false);
+			if (args.length == 2 && args[1] == "on")
+				WolfBotModel.getInstance().setSilentMode(true);	
+			else
+				sendIrcMessage(channel, "Correct usage is: !anondeath on|off");
+			break;
 		case "!lynch":
 		case "!kill":
 		case "!vote":
@@ -356,18 +365,26 @@ public class WolfBot extends PircBot {
 
 	private void endDay() {
 		Player vote = data.getPlayers().getVote();
-		if (vote.isWolf()) {
+		if (WolfBotModel.getInstance().getSilentMode()) {
 			vote.die(String
 					.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-							+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
-							+ "A werewolf was lynched today, and the village is a little safer. %s the %s is dead!",
-							vote.getName(), vote.getRole()));
+							+ "A volunteer plunges the village's treasured silver dagger into their heart(a bread knife would do)! "
+							+ "*%s* is dead!",
+							vote.getName()));
 		} else {
-			vote.die(String
-					.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-							+ "A volunteer plunges the village's treasured silver dagger into their heart. "
-							+ "They scream in agony as life and blood leave their body. %s the %s is dead!",
-							vote.getName(), vote.getRole()));
+			if (vote.isWolf()) {
+				vote.die(String
+						.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
+								+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
+								+ "A *werewolf* was lynched today, and the village is a little safer. *%s* the *%s* is dead!",
+								vote.getName(), vote.getRole()));
+			} else {
+				vote.die(String
+						.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
+								+ "A volunteer plunges the village's treasured silver dagger into their heart. "
+								+ "They scream in agony as life and blood leave their body. *%s* the *%s* is dead!",
+								vote.getName(), vote.getRole()));
+			}
 		}
 		checkDead();
 		if (!checkVictory())
@@ -438,6 +455,10 @@ public class WolfBot extends PircBot {
 						+ " team. Defend against the invading " + Colors.RED
 						+ "wolf" + Colors.NORMAL + " incursion!");
 				break;
+			case LoneWolf:
+				sendIrcMessage(player.getName(), "You are on your"
+						+ Colors.PURPLE + "OWN" + Colors.NORMAL
+						+ " team. Kill EVERYONE!");
 			default:
 				sendIrcMessage(player.getName(),
 						"You are on an unknown team. Something has probably gone wrong here.");
@@ -505,11 +526,18 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(data.getChannel(),
 					"It appears the wolves didn't kill anybody tonight.");
 		} else {
+			if (WolfBotModel.getInstance().getSilentMode()) {
+				wolfVote.die(String.format(
+						"As the villagers gather, they notice someone missing. "
+								+ "After some searching, their mauled corpse is found in their home. "
+								+ "*%s* is dead!", wolfVote.getName()));		
+			} else {
 			wolfVote.die(String.format(
 					"As the villagers gather, they notice someone missing. "
 							+ "After some searching, their mauled corpse is found in their home. "
 							+ "%s the %s is dead!", wolfVote.getName(),
 					wolfVote.getRole()));
+			}
 		}
 	}
 
@@ -637,6 +665,9 @@ public class WolfBot extends PircBot {
 			return "!notices on|off: Enable or disable notice messaging";
 		case "autorole":
 			return "!autorole sets a standard set of roles for the current number of players. Use just before !start.";
+		case "anondeath":
+			return "!anondeath on|off: When off you will not be told what class a player is when they die.";
+		
 		default:
 			return "Unknown command";
 		}
@@ -647,11 +678,8 @@ public class WolfBot extends PircBot {
 	// By default, send notices.
 	public void sendIrcMessage(String target, String message) {
 		if (data.isEnableNotices()
-				&& target.equalsIgnoreCase(data.getChannel())) // Note that we
-																// always send
-																// straight-up
-																// messages for
-																// PMs.
+				&& target.equalsIgnoreCase(data.getChannel()))
+				// Note that we always send straight-up messages for PMs.
 		{
 			sendNotice(target, message);
 		} else {

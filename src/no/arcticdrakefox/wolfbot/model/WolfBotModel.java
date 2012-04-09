@@ -12,7 +12,15 @@ public class WolfBotModel {
 	private Timer startGameTimer;
 	private boolean enableNotices;
 	private boolean skipNight = false;
+	private boolean silentMode = false;
 	
+	public void setSilentMode (boolean silentMode) {
+		this.silentMode = silentMode;
+	}
+	
+	public boolean getSilentMode() {
+		return silentMode;
+	}
 	
 	public boolean isSkipNight() {
 		return skipNight;
