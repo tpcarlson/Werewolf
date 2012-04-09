@@ -15,7 +15,6 @@ import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
-import no.arcticdrakefox.wolfbot.roles.SkipPlayer;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
@@ -108,12 +107,14 @@ public class WolfBot extends PircBot {
 		 * case "!thatwillbeallthankyou": disconnect(); break;
 		 */
 			
-		case "!anondeath":
-			if (args.length == 2 && args[1] == "off")
-				WolfBotModel.getInstance().setSilentMode(false);
-			if (args.length == 2 && args[1] == "on")
-				WolfBotModel.getInstance().setSilentMode(true);	
-			else
+		case "!reveal":
+			if (args.length == 2 && args[1].trim().equalsIgnoreCase("off")) {
+				WolfBotModel.getInstance().setSilentMode(true);
+				sendIrcMessage(channel, "No reveal off.");
+			} else if (args.length == 2 && args[1].equals("on")) {
+				WolfBotModel.getInstance().setSilentMode(false);	
+				sendIrcMessage(channel, "No reveal on.");
+			} else
 				sendIrcMessage(channel, "Correct usage is: !anondeath on|off");
 			break;
 		case "!lynch":
@@ -141,7 +142,7 @@ public class WolfBot extends PircBot {
 			else
 				sendIrcMessage(
 						channel,
-						"!join, !drop [player], !start, !end, !set <role> <count>, "
+						"!join, !drop [player], !start, !end, !set <role> <count>, reveal on|off "
 								+ "!list, !rolecount, !autorole, !lynch/!vote/!kill, !votes, !time, !help");
 			break;
 		case "!test":
@@ -740,8 +741,8 @@ public class WolfBot extends PircBot {
 			return "!notices on|off: Enable or disable notice messaging";
 		case "autorole":
 			return "!autorole sets a standard set of roles for the current number of players. Use just before !start.";
-		case "anondeath":
-			return "!anondeath on|off: When off you will not be told what class a player is when they die.";
+		case "reveal":
+			return "!reveal on|off: When off you will not be told what class a player is when they die.";
 		
 		default:
 			return "Unknown command";
