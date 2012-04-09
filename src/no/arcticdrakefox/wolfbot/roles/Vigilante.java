@@ -80,4 +80,10 @@ public class Vigilante extends Player {
 			return String.format("Under the cover of darkness, you open %s's door, but before you can step in you feel a searing pain running down your back. As your slump around on the ground, a large, gnarling shadow stands above you...", vote);
 		}
 	}
+
+	@Override
+	public String helpText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
