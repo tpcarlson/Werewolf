@@ -2,20 +2,20 @@ package no.arcticdrakefox.wolfbot.roles;
 
 import java.util.Collection;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 public class Diseased extends Player {
 
 	public Diseased(String name) {
 		super(name);
+		setTeam(Team.Villagers);
 	}
 
 	@Override
