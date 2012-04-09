@@ -620,7 +620,7 @@ public class WolfBot extends PircBot {
 		Player target = data.getPlayers().getPlayer(targetS);
 		if (sender == null) {
 			sendIrcMessage(data.getChannel(), String.format(
-					"%s, you are not enterd in the game.", senderS));
+					"%s, you are not entered in the game.", senderS));
 		} else if (!sender.isAlive()) {
 			sendIrcMessage(data.getChannel(),
 					String.format("%s, you are currently dead..", senderS));
@@ -628,7 +628,7 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(
 					data.getChannel(),
 					String.format(
-							"%s, you may not vote for %s as they aren't enterd in the game.",
+							"%s, you may not vote for %s as they aren't entered in the game.",
 							senderS, targetS));
 		} else if (!target.isAlive()) {
 			sendIrcMessage(data.getChannel(), String.format(
