@@ -30,12 +30,12 @@ public class ApprenticeScry extends Scry {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are the aprentive Scry, you will take over if the seer dies.";
+		return "You are the aprentive Scry. You will take over if your mastter dies.";
 	}
 
 	@Override
 	public String nightStart() {
-		if (active && !informed) return "You are now the seer." + super.nightStart();
+		if (active && !informed) return "Your master has been killed - you now have his powers." + super.nightStart();
 		if (active) return super.nightStart();
 		return null;
 	}
@@ -50,6 +50,9 @@ public class ApprenticeScry extends Scry {
 	public String nightEnd() {
 		if (active) return super.nightEnd();
 		return null;
+	}	
+	@Override
+	public String helpText() {
+		return "The apprentice scry has been learning from his master for years. If his master dies, he will gain his scrying power.";
 	}
-
 }
