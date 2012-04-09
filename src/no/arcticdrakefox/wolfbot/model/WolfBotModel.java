@@ -11,7 +11,6 @@ public class WolfBotModel {
 	private State state;
 	private Timer startGameTimer;
 	private boolean enableNotices;
-	private boolean skipNight = false;
 	private boolean silentMode = false;
 	
 	public void setSilentMode (boolean silentMode) {
@@ -22,17 +21,6 @@ public class WolfBotModel {
 		return silentMode;
 	}
 	
-	public boolean isSkipNight() {
-		return skipNight;
-	}
-	public void skipNight() {
-		skipNight = true;
-	}
-	
-	public void nightSkipped() {
-		skipNight = false;
-	}
-
 	private static WolfBotModel instance;
 	public static WolfBotModel getInstance ()
 	{

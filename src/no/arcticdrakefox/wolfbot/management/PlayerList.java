@@ -127,12 +127,19 @@ public class PlayerList{
 	
 	//Setting list data
 	
-		public boolean setRoleCount(String roleS, int amount){
-			Role role = Role.valueOf(roleS.toLowerCase());
-			if (role == null)
-				return false;
-			roleCount[role.ordinal()] = amount;
-				return true;
+		public boolean setRoleCount(String roleS, int amount) throws WerewolfException{
+			try
+			{
+				Role role = Role.valueOf(roleS.toLowerCase());
+				if (role == null)
+					throw new WerewolfException ("Role ended up null...");
+				roleCount[role.ordinal()] = amount;
+					return true;
+			}
+			catch (IllegalArgumentException illegal) // If a bad type is 
+			{
+				throw new WerewolfException ("Sorry, I don't know what a " + roleS + " is...");
+			}
 		}
 	
 	//Individual player operations

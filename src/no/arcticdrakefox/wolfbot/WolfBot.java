@@ -8,6 +8,7 @@ import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.VoteTable;
+import no.arcticdrakefox.wolfbot.management.WerewolfException;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
@@ -67,13 +68,12 @@ public class WolfBot extends PircBot {
 			}
 			break;
 		case "!set":
-			if (args.length == 3) {
-				if (data.getState() != State.None
-						|| data.getState() != State.Starting) {
-					sendIrcMessage(channel,
-							"Don't mess with rolecount during the game. :/");
-				} else {
+
+			if (args.length == 3){
+				if (data.getState() == State.None || data.getState() == State.Starting){
 					setCount(args[1], args[2].trim());
+				} else {
+					sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 				}
 
 			} else
@@ -81,13 +81,11 @@ public class WolfBot extends PircBot {
 						"Correct usage is:  !set <role> <amount>");
 			break;
 		case "!autorole":
-			if (data.getState() != State.None
-					|| data.getState() != State.Starting) {
-				sendIrcMessage(channel,
-						"Don't mess with rolecount during the game. :/");
-			} else {
+			if (data.getState() == State.None || data.getState() == State.Starting){
 				data.getPlayers().autoRole();
 				sendIrcMessage(channel, data.getPlayers().roleCountToString());
+			} else {
+				sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
 			}
 			break;
 		case "!list":
@@ -256,11 +254,14 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(data.getChannel(), name + " is already entered.");
 		}
 	}
-
-	private void drop(String name) {
-		if (data.getState() == State.None) {
+	
+	private void drop(String name){
+		if (data.getState() == State.None || data.getState() == State.Starting)
+		{
 			// We still need to remove from the game:
 			data.getPlayers().removePlayer(name);
+			// And send a neutral message:
+			sendIrcMessage (data.getChannel(), name + " has retired from the game - before it even started! What a coward.");
 			return;
 		}
 
@@ -271,7 +272,7 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(data.getChannel(), name
 					+ " wasn't found among the entered players.");
 		}
-		if (data.getState() != State.None || data.getState() != State.Starting)
+		if (data.getState() != State.None && data.getState() != State.Starting)
 			checkVictory();
 	}
 
@@ -282,12 +283,17 @@ public class WolfBot extends PircBot {
 					"Villagers are automatically adjusted.");
 		} else if (StringHandler.isInt(amountS)) {
 			amount = StringHandler.parseInt(amountS);
-			if (data.getPlayers().setRoleCount(role, amount))
-				sendIrcMessage(data.getChannel(), String.format(
-						"%s%s set to %d", role, amount == 1 ? "s" : "", amount));
-			else
-				sendIrcMessage(data.getChannel(), String.format(
-						"Failed. Could not resolve %s to a role", role));
+			try
+			{
+				if (data.getPlayers().setRoleCount(role, amount))
+					sendIrcMessage(data.getChannel(), String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
+				else // Should never get here
+					throw new WerewolfException ("Meep");
+			}
+			catch (WerewolfException wolfy)
+			{
+				sendIrcMessage(data.getChannel(), String.format("Failed. Could not resolve %s to a role", role));
+			}
 		} else {
 			sendIrcMessage(data.getChannel(), amountS
 					+ " cannot be parsed to an int.");
@@ -398,11 +404,7 @@ public class WolfBot extends PircBot {
 				data.getChannel(),
 				"It is now night, and most villagers can only sleep. Some forces are busily at work, however...");
 		data.getPlayers().clearVotes();
-		if (WolfBotModel.getInstance().isSkipNight()) { 
-			WolfBotModel.getInstance().nightSkipped();
-			endNight();
-		} else
-			sendNightStartMessages();
+		sendNightStartMessages();
 	}
 
 	private void endNight() {
@@ -422,15 +424,16 @@ public class WolfBot extends PircBot {
 		data.getPlayers().clearRecentlyDead();
 	}
 
-	private void endGame() {
-		data.getStartGameTimer().cancel(); // Kill the existing timer, if we
-											// have one
+	private void endGame(){
+		if (data.getState() != State.None && data.getState() != State.Starting) // Night or day
+		{
+			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
+			data.getPlayers().reset();
+			setMode(data.getChannel(), "-m");
+			deVoiceAll();
+			sendIrcMessage(data.getChannel(), "Thanks for playing! Say !start to go again!");
+		}
 		data.setState(State.None);
-		data.getPlayers().reset();
-		setMode(data.getChannel(), "-m");
-		deVoiceAll();
-		sendIrcMessage(data.getChannel(),
-				"Thanks for playing! Say !start to go again!");
 	}
 
 	public void sendRoleMessages() {
