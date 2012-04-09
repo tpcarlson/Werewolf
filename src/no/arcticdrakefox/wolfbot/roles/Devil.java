@@ -82,6 +82,6 @@ public class Devil extends Player {
 
 	@Override
 	public String helpText() {
-		return "The devil is an evil scry, they work with the werewolves. Each night they scry to find someones role.";
+		return "The devil is an evil creature who can look deep into someone's soul and know what they are capable of. He can also sacrifice people at night, if he prefers.";
 	}
 }
