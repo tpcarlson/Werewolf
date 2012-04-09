@@ -1,9 +1,10 @@
 package no.arcticdrakefox.wolfbot.roles;
 
-import no.arcticdrakefox.wolfbot.management.*;
+import no.arcticdrakefox.wolfbot.management.Player;
+import no.arcticdrakefox.wolfbot.management.PlayerList;
+import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.Team;
-import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 public class Wolf extends Player {
 	
@@ -43,7 +44,7 @@ public class Wolf extends Player {
 	public String nightStart() {
 		isReady = false;
 		if (ill) {
-			return "Something you ate last night did not agree with you. You rest till you feel better";
+			return "Something you ate last night did not agree with you. You will not feel better till you !rest.";
 		} else {
 			return "As a wolf, you can !kill someone tonight or just !rest";
 		}
@@ -78,6 +79,7 @@ public class Wolf extends Player {
 			} else
 				return null;
 		} else {
+			ill = false;
 			isReady = true;
 			vote = null;
 			return null;
