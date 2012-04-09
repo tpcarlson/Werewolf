@@ -24,7 +24,7 @@ public class Devil extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return String.format("You are a devil, a lycantropic scry. You may check a person's role each night. The wolves are %s",
+		return String.format("You are a devil, an evil creature. You may check a person's role each night, or sacrifice someone. The wolves are %s, and you are on their side!",
 				StringHandler.listToString(players.getWolves())
 		);
 	}
@@ -54,7 +54,7 @@ public class Devil extends Player {
 					isReady = true;
 					if (args[0].equals("!scry")){
 						scryVote = target;
-						return String.format("You set up your array of candles, orbs and artifacts, concentrating your efforts on %s", target);
+						return String.format("You start a dark prayer to your evil gods, staring into the soul of %s", target);
 					} else {
 						vote = target;
 						return String.format("Though unbefitting of one of your stature, you abandon your artifacts and get out to hunt %s", target);
@@ -82,6 +82,6 @@ public class Devil extends Player {
 
 	@Override
 	public String helpText() {
-		return "The devil is an evil scry, they work with the werewolves. Each night they scry to find someones role.";
+		return "The devil is an evil creature who can look deep into someone's soul and know what they are capable of. He can also sacrifice people at night, if he prefers.";
 	}
 }

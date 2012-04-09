@@ -30,7 +30,7 @@ public class ToughGuy extends Villager {
 	public String nightStart() {
 		if (hit)
 		{
-			die(String.format("In the dead of night %s finally succombs to their wounds, blood pooling like tar by the anvil...", getName()));
+			die(String.format("In the dead of night %s finally succumbs to their wounds, blood pooling like tar by the anvil...", getName()));
 		}
 		
 		return null;
@@ -47,5 +47,9 @@ public class ToughGuy extends Villager {
 		{
 			super.die(causeOfDeath);
 		}
+	}
+	@Override
+	public String helpText() {
+		return "The tough guy can survive a wolf's bite - for a while! He will succumb to his injuries the following evening.";
 	}
 }

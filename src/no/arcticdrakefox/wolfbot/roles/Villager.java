@@ -43,7 +43,6 @@ public class Villager extends Player {
 
 	@Override
 	public String helpText() {
-		// TODO Auto-generated method stub
-		return null;
+		return "This role is the normal villager, with no special powers. Try to survive without getting lynched or eaten!";
 	}
 }
