@@ -243,9 +243,16 @@ public class WolfBot extends PircBot {
 		if (data.getState() == State.None || data.getState() == State.Starting)
 		{
 			// We still need to remove from the game:
-			data.getPlayers().removePlayer(name);
-			// And send a neutral message:
-			sendIrcMessage (data.getChannel(), name + " has retired from the game - before it even started! What a coward.");
+			boolean playerRemoved = data.getPlayers().removePlayer(name);
+			if (playerRemoved)
+			{
+				// And send a neutral message:
+				sendIrcMessage (data.getChannel(), name + " has retired from the game - before it even started! What a coward.");
+			}
+			else
+			{
+				sendIrcMessage(data.getChannel(), name + " wasn't found among the entered players.");
+			}
 			return;
 		}
 		
