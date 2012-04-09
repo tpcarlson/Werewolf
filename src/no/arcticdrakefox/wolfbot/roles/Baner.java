@@ -64,4 +64,9 @@ public class Baner extends Player {
 	public String nightEnd() {
 		return null;
 	}
+
+	@Override
+	public String helpText() {
+		return "The Baner can protect a member of the villiage each night";
+	}
 }

@@ -101,4 +101,10 @@ public class Scry extends Player {
 							vote);
 		}
 	}
+
+	@Override
+	public String helpText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

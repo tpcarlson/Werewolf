@@ -69,4 +69,10 @@ public class Ghost extends Player {
 			return String.format("A villager emerges at dawn, walking about as if they had never died at all. %s lives again!", vote);
 		}
 	}
+
+	@Override
+	public String helpText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
