@@ -15,7 +15,6 @@ import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
-import no.arcticdrakefox.wolfbot.roles.SkipPlayer;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
@@ -108,12 +107,14 @@ public class WolfBot extends PircBot {
 		 * case "!thatwillbeallthankyou": disconnect(); break;
 		 */
 			
-		case "!anondeath":
-			if (args.length == 2 && args[1] == "off")
-				WolfBotModel.getInstance().setSilentMode(false);
-			if (args.length == 2 && args[1] == "on")
-				WolfBotModel.getInstance().setSilentMode(true);	
-			else
+		case "!reveal":
+			if (args.length == 2 && args[1].trim().equalsIgnoreCase("off")) {
+				WolfBotModel.getInstance().setSilentMode(true);
+				sendIrcMessage(channel, "No reveal off.");
+			} else if (args.length == 2 && args[1].equals("on")) {
+				WolfBotModel.getInstance().setSilentMode(false);	
+				sendIrcMessage(channel, "No reveal on.");
+			} else
 				sendIrcMessage(channel, "Correct usage is: !anondeath on|off");
 			break;
 		case "!lynch":
