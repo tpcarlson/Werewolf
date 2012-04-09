@@ -234,7 +234,7 @@ public class WolfBot extends PircBot {
 			// ie. We're in day or night ...
 			if (! (data.getState() == State.None || data.getState() == State.Starting))
 			{
-				sendIrcMessage(data.getChannel(), String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
+				sendIrcMessage(data.getChannel(), String.format("%s has fled - they were a %s", sourceNick, player.getRole()));
 			}
 			drop(player.getName());
 		}
@@ -248,11 +248,11 @@ public class WolfBot extends PircBot {
 	private void join(String name) {
 		if (!(data.getState() == State.None || data.getState() == State.Starting)) {
 			sendIrcMessage(data.getChannel(), name
-					+ " cannot join now, game is in progress.");
+					+ " cannot join now, a game is in progress.");
 		} else if (data.getPlayers().addPlayer(name)) {
 			sendIrcMessage(data.getChannel(), name + " has joined the game!");
 		} else {
-			sendIrcMessage(data.getChannel(), name + " is already entered.");
+			sendIrcMessage(data.getChannel(), name + " has already entered.");
 		}
 	}
 	
