@@ -5,6 +5,7 @@ import java.util.Timer;
 
 import no.arcticdrakefox.wolfbot.Timers.StartGameTask;
 import no.arcticdrakefox.wolfbot.management.Player;
+import no.arcticdrakefox.wolfbot.management.PlayerFactory;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.VoteTable;
@@ -130,6 +131,8 @@ public class WolfBot extends PircBot {
 		case "!help":
 			if (args.length == 2)
 				sendIrcMessage(channel, help(args[1]));
+			if (args.length == 2)
+				sendIrcMessage(channel, help(args[1], args[2]));
 			else
 				sendIrcMessage(
 						channel,
@@ -631,7 +634,16 @@ public class WolfBot extends PircBot {
 				modeToApply + " "
 						+ StringHandler.listToStringSimplePlayers(toChange));
 	}
-
+	private String help(String command, String arg) {
+		switch (command) {
+		case "role":
+			Role role = Role.valueOf(arg.toLowerCase());
+			return PlayerFactory.makePlayer("tmp", role).helpText();
+		}
+		return "Sorry I can't help you with that!";
+		
+	}
+	
 	private String help(String command) {
 		switch (command) {
 		case "join":

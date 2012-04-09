@@ -85,4 +85,10 @@ public class Wolf extends Player {
 		ill = false;
 		return null;
 	}
+
+	@Override
+	public String helpText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

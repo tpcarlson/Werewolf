@@ -4,6 +4,11 @@ import no.arcticdrakefox.wolfbot.management.PlayerList;
 
 public class OldMan extends Villager {
 
+	@Override
+	public String roleInfo(PlayerList players) {
+		return null;
+	}
+
 	private int ttl;
 	
 	public OldMan(String name, int numWolves) {

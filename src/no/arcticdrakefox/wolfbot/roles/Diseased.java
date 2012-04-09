@@ -67,6 +67,11 @@ public class Diseased extends Player {
 		}
 	}
 
+	@Override
+	public String helpText() {
+		return null;
+	}
+
 	
 	
 }
