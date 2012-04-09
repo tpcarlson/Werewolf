@@ -9,6 +9,7 @@ import no.arcticdrakefox.wolfbot.roles.ApprenticeScry;
 import no.arcticdrakefox.wolfbot.roles.AuraScry;
 import no.arcticdrakefox.wolfbot.roles.Baner;
 import no.arcticdrakefox.wolfbot.roles.Devil;
+import no.arcticdrakefox.wolfbot.roles.Diseased;
 import no.arcticdrakefox.wolfbot.roles.Ghost;
 import no.arcticdrakefox.wolfbot.roles.Mason;
 import no.arcticdrakefox.wolfbot.roles.Mayor;
@@ -25,6 +26,8 @@ public class PlayerFactory
 		switch (role){
 			case villager:
 				return new Villager(name);
+			case diseased:
+				return new Diseased(name);
 			case wolf:
 				return new Wolf(name);
 			case scry:
