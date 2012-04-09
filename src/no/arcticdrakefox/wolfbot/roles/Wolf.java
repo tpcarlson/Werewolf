@@ -66,10 +66,10 @@ public class Wolf extends Player {
 						vote(target);
 						isReady = true;
 						return String
-								.format("You sharpen your fangs. They will taste %s's blood tonight!",
+								.format("You sharpen your fangs. They will taste *%s's* blood tonight!",
 										target);
 					} else
-						return String.format("%s is already dead.", target);
+						return String.format("*%s* is already dead.", target);
 				}
 			} else if (args[0].equals("!rest")) {
 				isReady = true;
