@@ -77,7 +77,11 @@ public class Wolf extends Player {
 				return "You decide to quell your bloodlust tonight.";
 			} else
 				return null;
-		} else return null;
+		} else {
+			isReady = true;
+			vote = null;
+			return null;
+		}
 	}
 	
 	@Override
