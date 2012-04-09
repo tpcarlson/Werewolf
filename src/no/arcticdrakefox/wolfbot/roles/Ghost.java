@@ -72,7 +72,6 @@ public class Ghost extends Player {
 
 	@Override
 	public String helpText() {
-		// TODO Auto-generated method stub
-		return null;
+		return "The ghost is capable of raising the dead at night.";
 	}
 }

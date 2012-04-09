@@ -67,6 +67,6 @@ public class Baner extends Player {
 
 	@Override
 	public String helpText() {
-		return "The Baner can protect a member of the villiage each night";
+		return "The Baner can protect a member of the village each night, including themselves. If the wolves attack that person, they will be driven off and nobody will die.";
 	}
 }

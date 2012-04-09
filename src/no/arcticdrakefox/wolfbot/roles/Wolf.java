@@ -88,7 +88,6 @@ public class Wolf extends Player {
 
 	@Override
 	public String helpText() {
-		// TODO Auto-generated method stub
-		return null;
+		return "The werewolf is the main enemy to all villagers - their aim is to eat everyone before they get lynched!";
 	}
 }

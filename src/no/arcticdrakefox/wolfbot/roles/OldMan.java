@@ -37,4 +37,8 @@ public class OldMan extends Villager {
 		
 		return null;
 	}
+	@Override
+	public String helpText() {
+	return "The old man appears to be a normal villager - but he will die soon whether he gets eaten or not! He will survive one night for each wolf, plus one.";
+	}
 }

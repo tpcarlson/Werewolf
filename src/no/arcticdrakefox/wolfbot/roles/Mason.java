@@ -47,7 +47,6 @@ public class Mason extends Player {
 
 	@Override
 	public String helpText() {
-		// TODO Auto-generated method stub
-		return null;
+		return "The masons have only one difference from the standard villager - they know who all the other masons are.";
 	}
 }
