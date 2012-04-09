@@ -224,6 +224,8 @@ public class WolfBot extends PircBot {
 		}
 	}
 	
+	// tpcarlson: onPart and onQuit have slightly wobbly method signatures. So we call onQuit with
+	//            the same params in a different order.
 	@Override
 	protected void onPart(String sourceNick, String sourceLogin, String sourceHostname, String reason){
 		onQuit(sourceLogin, sourceNick, sourceHostname, reason);
@@ -313,7 +315,7 @@ public class WolfBot extends PircBot {
 	private void startGame(){
 		
 		// Drop any starts that happen after the game has started
-		if (data.getState() != State.None)
+		if (data.getState() != State.None && data.getState() != State.Starting)
 		{
 			return;
 		}
