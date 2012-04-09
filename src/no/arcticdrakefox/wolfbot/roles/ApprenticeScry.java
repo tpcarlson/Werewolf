@@ -30,7 +30,7 @@ public class ApprenticeScry extends Scry {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are the aprentive Scry. You will take over if your mastter dies.";
+		return "You are the apprentice Scry. You will take over if your master dies.";
 	}
 
 	@Override
