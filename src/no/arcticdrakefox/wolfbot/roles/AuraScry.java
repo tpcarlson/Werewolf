@@ -77,7 +77,7 @@ public class AuraScry extends Player {
 
 	@Override
 	public String helpText() {
-		return "The aura scry is woken each night to check if a user has powers (i.e. is not a standard wolf of viligar)";
+		return "The aura scry can look into the spirit world to sense the mental strength of others. He can focus on someone at night and will know if they have any special powers - but won't know what they are! ";
 	}
 
 }
