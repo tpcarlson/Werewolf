@@ -15,7 +15,6 @@ import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
-import no.arcticdrakefox.wolfbot.roles.SkipPlayer;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
@@ -664,7 +663,6 @@ public class WolfBot extends PircBot {
 	private boolean checkLynchMajority() {
 		List<Player> livingPlayers = data.getPlayers().getLivingPlayers();
 		VoteTable table = new VoteTable(livingPlayers);
-		sendIrcMessage(data.getChannel(), "High vote so far " + table.getHighestVote() + data.getPlayers().getVote());
 		return (table.getHighestVote() > livingPlayers.size() / 2);
 	}
 
