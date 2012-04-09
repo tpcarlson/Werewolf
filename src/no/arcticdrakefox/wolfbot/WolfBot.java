@@ -224,24 +224,22 @@ public class WolfBot extends PircBot {
 	}
 
 	@Override
-	protected void onQuit(String sourceNick, String sourceLogin,
-			String sourceHostname, String reason) {
-		Player player = data.getPlayers().getPlayer(sourceLogin);
-		if (player != null) {
+
+	protected void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason){
+		Player player = data.getPlayers().getPlayer(sourceNick);
+		if (player != null){
 			// ie. We're in day or night ...
-			if (!(data.getState() == State.None || data.getState() == State.Starting)) {
-				sendIrcMessage(data.getChannel(), String.format(
-						"%s has fled, they were a %s", sourceLogin,
-						player.getRole()));
+			if (! (data.getState() == State.None || data.getState() == State.Starting))
+			{
+				sendIrcMessage(data.getChannel(), String.format("%s has fled, they were a %s", sourceNick, player.getRole()));
 			}
 			drop(player.getName());
 		}
 	}
 
 	@Override
-	protected void onPart(String sourceNick, String sourceLogin,
-			String sourceHostname, String reason) {
-		onQuit(sourceNick, sourceLogin, sourceHostname, reason);
+	protected void onPart(String sourceNick, String sourceLogin, String sourceHostname, String reason){
+		onQuit(sourceLogin, sourceNick, sourceHostname, reason);
 	}
 
 	private void join(String name) {
@@ -259,9 +257,16 @@ public class WolfBot extends PircBot {
 		if (data.getState() == State.None || data.getState() == State.Starting)
 		{
 			// We still need to remove from the game:
-			data.getPlayers().removePlayer(name);
-			// And send a neutral message:
-			sendIrcMessage (data.getChannel(), name + " has retired from the game - before it even started! What a coward.");
+			boolean playerRemoved = data.getPlayers().removePlayer(name);
+			if (playerRemoved)
+			{
+				// And send a neutral message:
+				sendIrcMessage (data.getChannel(), name + " has retired from the game - before it even started! What a coward.");
+			}
+			else
+			{
+				sendIrcMessage(data.getChannel(), name + " wasn't found among the entered players.");
+			}
 			return;
 		}
 
