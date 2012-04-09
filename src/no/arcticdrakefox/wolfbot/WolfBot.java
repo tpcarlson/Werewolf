@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Timer;
 
 import no.arcticdrakefox.wolfbot.Timers.StartGameTask;
+import no.arcticdrakefox.wolfbot.management.BotConstants;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerFactory;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
@@ -14,6 +15,7 @@ import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+import no.arcticdrakefox.wolfbot.roles.SkipPlayer;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
@@ -122,6 +124,9 @@ public class WolfBot extends PircBot {
 			else
 				sendIrcMessage(channel, "Correct usage is: !lynch <target>");
 			break;
+		case "!skip":
+			skipLynch (sender);
+			break;
 		case "!votes":
 			listVotes();
 			break;
@@ -159,6 +164,35 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(channel, "Correct usage is:  !notices on|off");
 		default:
 			sendIrcMessage(channel, "Unknown command.");
+		}
+	}
+
+	// If player X doesn't want to vote this day, skip
+	private void skipLynch(String sender)
+	{
+		if (data.getState() == State.Day)
+		{
+			Player senderPlayer = data.getPlayers().getPlayer(sender);
+			if (senderPlayer == null)
+			{
+				sendIrcMessage (data.getChannel(), "Player " + Colors.BOLD + sender + Colors.NORMAL + " was not found...");
+			}
+			else
+			{
+				senderPlayer.vote(BotConstants.SKIP_VOTE_PLAYER);
+				sendIrcMessage (data.getChannel(), Colors.BOLD + sender + Colors.NORMAL + " scratches their head in confusion and then tears up their ballot paper.");
+				// We must also check the majority at this point:
+				if (checkLynchMajority())
+					endDay();
+			}
+		}
+		else if (data.getState() == State.Night)
+		{
+			sendIrcMessage (data.getChannel(), "You may only vote during the day.");
+		}
+		else
+		{
+			sendIrcMessage (data.getChannel(), "The game hasn't even started yet!");
 		}
 	}
 
@@ -390,25 +424,34 @@ public class WolfBot extends PircBot {
 
 	private void endDay() {
 		Player vote = data.getPlayers().getVote();
-		if (WolfBotModel.getInstance().getSilentMode()) {
-			vote.die(String
-					.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-							+ "A volunteer plunges the village's treasured silver dagger into their heart(a bread knife would do)! "
-							+ "*%s* is dead!",
-							vote.getName()));
-		} else {
-			if (vote.isWolf()) {
+		
+		// If players have voted to skip then we should send an appropriate message
+		if (vote == BotConstants.SKIP_VOTE_PLAYER)
+		{
+			sendIrcMessage (data.getChannel(), "The villagers can't agree on who to lynch and decide to drink beer instead. Hurrah!");
+		}
+		else
+		{
+			if (WolfBotModel.getInstance().getSilentMode()) {
 				vote.die(String
 						.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-								+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
-								+ "A *werewolf* was lynched today, and the village is a little safer. *%s* the *%s* is dead!",
-								vote.getName(), vote.getRole()));
+								+ "A volunteer plunges the village's treasured silver dagger into their heart(a bread knife would do)! "
+								+ "*%s* is dead!",
+								vote.getName()));
 			} else {
-				vote.die(String
-						.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-								+ "A volunteer plunges the village's treasured silver dagger into their heart. "
-								+ "They scream in agony as life and blood leave their body. *%s* the *%s* is dead!",
-								vote.getName(), vote.getRole()));
+				if (vote.isWolf()) {
+					vote.die(String
+							.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
+									+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
+									+ "A *werewolf* was lynched today, and the village is a little safer. *%s* the *%s* is dead!",
+									vote.getName(), vote.getRole()));
+				} else {
+					vote.die(String
+							.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
+									+ "A volunteer plunges the village's treasured silver dagger into their heart. "
+									+ "They scream in agony as life and blood leave their body. *%s* the *%s* is dead!",
+									vote.getName(), vote.getRole()));
+				}
 			}
 		}
 		checkDead();
@@ -621,6 +664,7 @@ public class WolfBot extends PircBot {
 	private boolean checkLynchMajority() {
 		List<Player> livingPlayers = data.getPlayers().getLivingPlayers();
 		VoteTable table = new VoteTable(livingPlayers);
+		sendIrcMessage(data.getChannel(), "High vote so far " + table.getHighestVote() + data.getPlayers().getVote());
 		return (table.getHighestVote() > livingPlayers.size() / 2);
 	}
 

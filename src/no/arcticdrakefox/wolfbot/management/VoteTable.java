@@ -11,11 +11,12 @@ public class VoteTable {
 	
 	public VoteTable(List<Player> livingPlayers){
 		livingPlayerCount = livingPlayers.size();
+		
 		for (Player player : livingPlayers){
 			Player vote = player.getVote();
 			if (vote == null){
 				continue;
-			} else {				
+			} else {
 				List<Player> list = votes.get(vote);
 				if (list == null){
 					list = new ArrayList<Player>();
@@ -24,6 +25,7 @@ public class VoteTable {
 				list.add(player);
 				
 				// Mayors get double votes:
+				// TODO: Refactor me
 				if (player.getRole() == Role.mayor)
 				{
 					list.add(player);
@@ -67,6 +69,17 @@ public class VoteTable {
 				highest = votes.get(player).size();
 			}
 		}
+		
+		if (votes.get(BotConstants.SKIP_VOTE_PLAYER) != null)
+		{
+			// We must also check the skip player:
+			int skipvote = votes.get(BotConstants.SKIP_VOTE_PLAYER).size();
+			if (skipvote > highest && skipvote < limit)
+			{
+				highest = skipvote;
+			}
+		}
+		
 		return highest;
 	}
 	
