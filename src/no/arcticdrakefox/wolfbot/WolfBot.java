@@ -6,7 +6,6 @@ import java.util.Timer;
 import no.arcticdrakefox.wolfbot.Timers.StartGameTask;
 import no.arcticdrakefox.wolfbot.management.BotConstants;
 import no.arcticdrakefox.wolfbot.management.Player;
-import no.arcticdrakefox.wolfbot.management.PlayerFactory;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.VoteTable;
@@ -598,11 +597,11 @@ public class WolfBot extends PircBot {
 								+ "After some searching, their mauled corpse is found in their home. "
 								+ "*%s* is dead!", wolfVote.getName()));		
 			} else {
-			wolfVote.die(String.format(
-					"As the villagers gather, they notice someone missing. "
-							+ "After some searching, their mauled corpse is found in their home. "
-							+ "%s the %s is dead!", wolfVote.getName(),
-					wolfVote.getRole()));
+				wolfVote.die(String.format(
+						"As the villagers gather, they notice someone missing. "
+								+ "After some searching, their mauled corpse is found in their home. "
+								+ "%s the %s is dead!", wolfVote.getName(),
+						wolfVote.getRole()));
 			}
 		}
 	}
@@ -693,7 +692,7 @@ public class WolfBot extends PircBot {
 		switch (command) {
 		case "role":
 			Role role = Role.valueOf(arg.toLowerCase());
-			return PlayerFactory.makePlayer("tmp", role).helpText();
+			return role.init("tmp").helpText();
 		}
 		return "Sorry I can't help you with that!";
 		
