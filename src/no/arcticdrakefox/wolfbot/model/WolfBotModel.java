@@ -15,11 +15,20 @@ public class WolfBotModel {
 	private void initCommands ()
 	{
 		commands = Lists.newArrayList();
-		// For easy commands, just implement anon. inner class Command - for other things, may wish to create a new class...
+		
 		commands.add(Commands.JOIN_COMMAND);
 		commands.add(Commands.SET_COMMAND);
+		commands.add(Commands.AUTOROLE_COMMAND);
+		commands.add(Commands.LIST_COMMAND);
+		commands.add(Commands.TIME_COMMAND);
+		commands.add(Commands.ROLECOUNT_COMMAND);
+		commands.add(Commands.START_COMMAND);
+		commands.add(Commands.HELP_COMMAND);
+		commands.add(Commands.VOTES_COMMAND);
+		commands.add(Commands.SKIPLYNCH_COMMAND);
+		commands.add(Commands.DROP_COMMAND);
+		commands.add(Commands.LYNCH_COMMAND);
 	}
-	
 	
 	private String channel;
 	private String password;
@@ -121,5 +130,12 @@ public class WolfBotModel {
 
 	public void sendIrcMessage(String channel2, String string) {
 		wolfBot.sendIrcMessage(channel2, string);
+	}
+
+	/*
+	 * Try and use this sparingly...
+	 */
+	public WolfBot getWolfBot() {
+		return wolfBot;
 	}
 }

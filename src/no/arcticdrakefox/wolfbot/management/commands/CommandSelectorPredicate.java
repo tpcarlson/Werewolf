@@ -14,7 +14,7 @@ public class CommandSelectorPredicate implements Predicate<Command> {
 	@Override
 	public boolean apply(Command comm)
 	{
-		return comm.getCommandPrefix().toLowerCase().trim().equalsIgnoreCase(command.trim());
+		return comm.getCommandPrefixes().contains(command.trim().toLowerCase());
 	}
 
 }

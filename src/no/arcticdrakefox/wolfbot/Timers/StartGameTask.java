@@ -4,16 +4,17 @@ import java.util.TimerTask;
 
 import no.arcticdrakefox.wolfbot.WolfBot;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 public class StartGameTask extends TimerTask {
 
-	private WolfBot parent;
+	private WolfBotModel model;
 	private PlayerList players;
 	
-	public StartGameTask (WolfBot parent, PlayerList players)
+	public StartGameTask (WolfBotModel model)
 	{
-		this.parent = parent;
-		this.players = players;
+		this.model = model;
+		this.players = model.getPlayers();
 	}
 	
 	@Override
@@ -21,9 +22,9 @@ public class StartGameTask extends TimerTask {
 	{
 		players.reset();
 		players.assignRoles();
-		parent.sendRoleMessages();
-		parent.setMode(parent.getModel ().getChannel (), "+m");
-		parent.startDay();
+		model.getWolfBot ().sendRoleMessages();
+		model.getWolfBot ().setMode(model.getChannel (), "+m");
+		model.getWolfBot ().startDay();
 	}
 
 }

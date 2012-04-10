@@ -10,7 +10,6 @@ import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.VoteTable;
-import no.arcticdrakefox.wolfbot.management.WerewolfException;
 import no.arcticdrakefox.wolfbot.management.commands.Command;
 import no.arcticdrakefox.wolfbot.management.commands.CommandSelectorPredicate;
 import no.arcticdrakefox.wolfbot.model.MessageType;
@@ -24,6 +23,8 @@ import org.jibble.pircbot.PircBot;
 
 import com.google.common.collect.Collections2;
 
+// TODO: Wolfbot needs moving out into a message handler and a core game
+//       logic thing...
 public class WolfBot extends PircBot {
 
 	public static void main(String[] args) throws Exception {
@@ -62,6 +63,18 @@ public class WolfBot extends PircBot {
 
 		// So, we ask the model for all commands matching the command string:
 		Collection<Command> validCommands = Collections2.filter(data.getCommands(), new CommandSelectorPredicate (command));
+
+		if (validCommands.size() > 1)
+		{
+			sendIrcMessage(data.getChannel(), "More than one valid command. This is probably a bug. Aborting!");
+			return;
+		}
+		else if (validCommands.isEmpty())
+		{
+			sendIrcMessage(data.getChannel(), "Unknown command...");
+			return;
+		}
+		
 		for (Command comm : validCommands)
 		{
 			// So while we have the right command here
@@ -83,152 +96,6 @@ public class WolfBot extends PircBot {
 			{
 				// Command was meant for PM - ignore
 			}
-		}
-		
-		switch (command.toLowerCase()) {
-		/*
-		case "!join":
-			join(sender);
-			break; */
-		case "!drop":
-			if (args.length == 2)
-				drop(args[1]);
-			else if (args.length == 1)
-				drop(sender);
-			else {
-				sendIrcMessage(channel, "Correct usage is:  !drop [player]");
-				return;
-			}
-			break;
-			/*
-		case "!set":
-
-			if (args.length == 3){
-				if (data.getState() == State.None || data.getState() == State.Starting){
-					setCount(args[1], args[2].trim());
-				} else {
-					sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
-				}
-
-			} else
-				sendIrcMessage(channel,
-						"Correct usage is:  !set <role> <amount>");
-			break; */
-		case "!autorole":
-			if (data.getState() == State.None || data.getState() == State.Starting){
-				data.getPlayers().autoRole();
-				sendIrcMessage(channel, data.getPlayers().roleCountToString());
-			} else {
-				sendIrcMessage(channel, "Don't mess with rolecount during the game. :/");
-			}
-			break;
-		case "!list":
-			sendIrcMessage(channel, StringHandler.listToString(data
-					.getPlayers().getLivingPlayers()));
-			break;
-		case "!rolecount":
-			sendIrcMessage(channel, data.getPlayers().roleCountToString());
-			break;
-		case "!start":
-			startGame();
-			break;
-		case "!end":
-			endGame();
-			break;
-		/*
-		 * case "!thatwillbeallthankyou": disconnect(); break;
-		 */
-			
-		case "!reveal":
-			if (args.length == 2 && args[1].trim().equalsIgnoreCase("off")) {
-				WolfBotModel.getInstance().setSilentMode(true);
-				sendIrcMessage(channel, "No reveal off.");
-			} else if (args.length == 2 && args[1].equals("on")) {
-				WolfBotModel.getInstance().setSilentMode(false);	
-				sendIrcMessage(channel, "No reveal on.");
-			} else
-				sendIrcMessage(channel, "Correct usage is: !anondeath on|off");
-			break;
-		case "!lynch":
-		case "!kill":
-		case "!vote":
-			if (args.length == 2)
-				lynchVote(sender, args[1]);
-			else
-				sendIrcMessage(channel, "Correct usage is: !lynch <target>");
-			break;
-		case "!skip":
-			skipLynch (sender);
-			break;
-		case "!votes":
-			listVotes();
-			break;
-		case "!time":
-			sendIrcMessage(channel, "It is currently " + data.getState());
-			break;
-		case "!help":
-			if (args.length == 2)
-				sendIrcMessage(channel, help(args[1]));
-			if (args.length == 2)
-				sendIrcMessage(channel, help(args[1], args[2]));
-			else
-				sendIrcMessage(
-						channel,
-						"!join, !drop [player], !start, !end, !set <role> <count>, reveal on|off "
-								+ "!list, !rolecount, !autorole, !lynch/!vote/!kill, !votes, !time, !help");
-			break;
-		case "!test":
-			sendIrcMessage(channel, String.format("Bluh"));
-			break;
-		case "!notices":
-			if (args.length == 2) {
-				if (args[1].equalsIgnoreCase("on")) {
-					data.setEnableNotices(true);
-					sendIrcMessage(channel, "Notices enabled");
-					break;
-				} else if (args[1].equalsIgnoreCase("off")) {
-					data.setEnableNotices(false);
-					sendIrcMessage(channel, "Notices disabled");
-					break;
-				}
-			}
-
-			// Usage:
-			sendIrcMessage(channel, "Correct usage is:  !notices on|off");
-		case "!join": // Just temporary...
-		case "!set":
-			break;
-		default:
-			sendIrcMessage(channel, "Unknown command.");
-		}
-	}
-
-	// If player X doesn't want to vote this day, skip
-	private void skipLynch(String sender)
-	{
-		if (data.getState() == State.Day)
-		{
-			Player senderPlayer = data.getPlayers().getPlayer(sender);
-			if (senderPlayer == null)
-			{
-				sendIrcMessage (data.getChannel(), "Player " + Colors.BOLD + sender + Colors.NORMAL + " was not found...");
-			}
-			else
-			{
-				senderPlayer.vote(BotConstants.SKIP_VOTE_PLAYER);
-				sendIrcMessage (data.getChannel(), Colors.BOLD + sender + Colors.NORMAL + " scratches their head in confusion and then tears up their ballot paper.");
-				// We must also check the majority at this point:
-				if (checkLynchMajority())
-					endDay();
-			}
-		}
-		else if (data.getState() == State.Night)
-		{
-			sendIrcMessage (data.getChannel(), "You may only vote during the day.");
-		}
-		else
-		{
-			sendIrcMessage (data.getChannel(), "The game hasn't even started yet!");
 		}
 	}
 
@@ -268,7 +135,7 @@ public class WolfBot extends PircBot {
 			break;
 		case "!help":
 			if (args.length == 2)
-				sendIrcMessage(sender, help(args[1]));
+				sendIrcMessage(sender, BotConstants.help(args[1]));
 			else
 				sendIrcMessage(sender,
 						"!join, !drop, !list, !role, !rolecount, !autorole, "
@@ -326,7 +193,7 @@ public class WolfBot extends PircBot {
 		}
 	}
 	
-	private void drop(String name){
+	public void drop(String name){
 		if (data.getState() == State.None || data.getState() == State.Starting)
 		{
 			// We still need to remove from the game:
@@ -392,40 +259,6 @@ public class WolfBot extends PircBot {
 		return false;
 	}
 
-	private void startGame() {
-
-		// Drop any starts that happen after the game has started
-		if (data.getState() != State.None && data.getState() != State.Starting)
-		{
-			return;
-		}
-
-		if (data.getState() == State.Starting) {
-			sendIrcMessage(data.getChannel(),
-					"The game is already starting. Use !end to stop starting.");
-			return;
-		}
-
-		int playerCount = data.getPlayers().getList().size();
-		if (playerCount < 3) {
-			sendIrcMessage(data.getChannel(),
-					"Need at least three players to go.");
-			return;
-		} else if (playerCount < data.getPlayers().totalRoleCount()) {
-			sendIrcMessage(data.getChannel(),
-					"There are more special roles than players!");
-			return;
-		}
-		data.setStartGameTimer(new Timer()); // Make a new timer every time
-		// Fire off a 30s timer:
-		data.getStartGameTimer().schedule(
-				new StartGameTask(this, data.getPlayers()), 30 * 1000); // 30s
-		sendIrcMessage(data.getChannel(), "The game will begin in "
-				+ Colors.BOLD + "30 seconds." + Colors.NORMAL
-				+ " Type !join to join!");
-		data.setState(State.Starting);
-	}
-
 	public void startDay() {
 		sendIrcMessage(data.getChannel(),
 				"It is now day. Vote for someone to lynch!");
@@ -434,7 +267,7 @@ public class WolfBot extends PircBot {
 		data.getPlayers().clearVotes();
 	}
 
-	private void endDay() {
+	public void endDay() {
 		Player vote = data.getPlayers().getVote();
 		
 		// If players have voted to skip then we should send an appropriate message
@@ -498,7 +331,7 @@ public class WolfBot extends PircBot {
 		data.getPlayers().clearRecentlyDead();
 	}
 
-	private void endGame(){
+	public void endGame(){
 		if (data.getState() != State.None && data.getState() != State.Starting) // Night or day
 		{
 			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
@@ -618,62 +451,7 @@ public class WolfBot extends PircBot {
 		}
 	}
 
-	private void lynchVote(String senderS, String targetS) {
-		if (data.getState() == State.None || data.getState() == State.Starting) {
-			sendIrcMessage(data.getChannel(),
-					"The game hasn't even started yet!");
-			return;
-		} else if (data.getState() != State.Day) {
-			sendIrcMessage(data.getChannel(),
-					"You can only cast lynchvotes at day.");
-			return;
-		}
-		Player sender = data.getPlayers().getPlayer(senderS);
-		Player target = data.getPlayers().getPlayer(targetS);
-		if (sender == null) {
-			sendIrcMessage(data.getChannel(), String.format(
-					"%s, you are not entered in the game.", senderS));
-		} else if (!sender.isAlive()) {
-			sendIrcMessage(data.getChannel(),
-					String.format("%s, you are currently dead..", senderS));
-		} else if (target == null) {
-			sendIrcMessage(
-					data.getChannel(),
-					String.format(
-							"%s, you may not vote for %s as they aren't entered in the game.",
-							senderS, targetS));
-		} else if (!target.isAlive()) {
-			sendIrcMessage(data.getChannel(), String.format(
-					"%s, you may not vote for %s as they are currently dead.",
-					senderS, targetS));
-		} else {
-			sender.vote(target);
-			sendIrcMessage(data.getChannel(),
-					String.format("%s has voted for %s.", senderS, targetS));
-		}
-		if (checkLynchMajority())
-			endDay();
-	}
-
-	private void listVotes() {
-		if (data.getState() == State.None || data.getState() == State.Starting) {
-			sendIrcMessage(data.getChannel(),
-					"The game hasn't even started yet!");
-		} else if (data.getState() != State.Day) {
-			sendIrcMessage(data.getChannel(),
-					"You can only view lynchvotes at day.");
-		} else {
-			String nonVoters = data.getPlayers().nonvotersToString();
-			sendIrcMessage(data.getChannel(), data.getPlayers().votesToString());
-
-			if (!nonVoters.isEmpty()) {
-				sendIrcMessage(data.getChannel(), "Not voted: "
-						+ data.getPlayers().nonvotersToString());
-			}
-		}
-	}
-
-	private boolean checkLynchMajority() {
+	public boolean checkLynchMajority() {
 		List<Player> livingPlayers = data.getPlayers().getLivingPlayers();
 		VoteTable table = new VoteTable(livingPlayers);
 		return (table.getHighestVote() > livingPlayers.size() / 2);
@@ -700,65 +478,7 @@ public class WolfBot extends PircBot {
 				modeToApply + " "
 						+ StringHandler.listToStringSimplePlayers(toChange));
 	}
-	private String help(String command, String arg) {
-		switch (command) {
-		case "role":
-			Role role = Role.valueOf(arg.toLowerCase());
-			return role.init("tmp").helpText();
-		}
-		return "Sorry I can't help you with that!";
-		
-	}
 	
-	private String help(String command) {
-		switch (command) {
-		case "join":
-			return "!join: Signs up for the next game. Can only be used when the game is not in progress.";
-		case "drop":
-			return "!drop [player]: Removes yourself or specified user from game. Don't be a jerk and use it nilly-willy!";
-		case "start":
-			return "!start: Starts the game! Will restart if the game is in progress.";
-		case "end":
-			return "!end: Ends game in progress.";
-		case "set":
-			return "!set <role> <count>: sets specified role to specified amount. Valid roles are wolf, devil, mason, scry, vigilante, baner, ghost";
-		case "list":
-			return "!list: Shows all living players in game.";
-		case "rolecount":
-			return "!rolecount: Shows amount of each role the game started with. It will not adapt as roles are killed off.";
-		case "lynch":
-		case "vote":
-			return "!lynch <player>: Votes on a player for lynching. Over half the villagers must agree on a target before day ends.";
-		case "votes":
-			return "!votes: Displays who voted for which player.";
-		case "time":
-			return "!time: Shows wether it is night or day. Returns None if game hasn't started.";
-		case "help":
-			return "!help [command]: Returns a list of all commands (differnt if you PM) or shows description of supplied command.";
-		case "role":
-			return "!role: Tells you which role you are and what the role does. (PM only)";
-		case "ghost":
-			return "!ghost <target>: Selects a target for ressurection. If you're killed at night end it will not work. (PM only)";
-		case "kill":
-			return "!kill <player>: Selects a target for killing as either wolf, devil or vigilante. Wolves just vote for a target not unlike villagers at day. (PM only)";
-		case "scry":
-			return "!scry <player>: Selects a target for scrying. Scries check wether or not a person is a wolf. Devil retrieve the person's exact role. (PM only)";
-		case "bane":
-			return "!bane <player>: Selects a target to protect from wolves. You can protect yourself. (PM only)";
-		case "rest":
-			return "!rest <players>: Opts out of night action. (PM only)";
-		case "notices":
-			return "!notices on|off: Enable or disable notice messaging";
-		case "autorole":
-			return "!autorole sets a standard set of roles for the current number of players. Use just before !start.";
-		case "reveal":
-			return "!reveal on|off: When off you will not be told what class a player is when they die.";
-		
-		default:
-			return "Unknown command";
-		}
-	}
-
 	// This will allow for the bot to be customised at runtime to either send
 	// notices or messages
 	// By default, send notices.
