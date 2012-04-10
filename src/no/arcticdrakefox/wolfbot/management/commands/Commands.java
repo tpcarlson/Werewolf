@@ -1,16 +1,18 @@
-package no.arcticdrakefox.wolfbot.model;
+package no.arcticdrakefox.wolfbot.management.commands;
 
 import java.util.Timer;
 
-import org.jibble.pircbot.Colors;
-
 import no.arcticdrakefox.wolfbot.Timers.StartGameTask;
 import no.arcticdrakefox.wolfbot.management.BotConstants;
+import no.arcticdrakefox.wolfbot.management.GameCore;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.WerewolfException;
-import no.arcticdrakefox.wolfbot.management.commands.Command;
-import no.arcticdrakefox.wolfbot.management.commands.CommandUtils;
+import no.arcticdrakefox.wolfbot.model.MessageType;
+import no.arcticdrakefox.wolfbot.model.State;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+
+import org.jibble.pircbot.Colors;
 
 import com.google.common.collect.Lists;
 
@@ -257,7 +259,7 @@ public class Commands
 
 		@Override
 		public void runCommand(String[] args, String sender, MessageType type) {
-			model.getWolfBot().endGame();
+			GameCore.endGame(model);
 		}
 
 		@Override
@@ -333,8 +335,8 @@ public class Commands
 				sendIrcMessage (model.getChannel(), Colors.BOLD + sender + Colors.NORMAL + " scratches their head in confusion and then tears up their ballot paper.", sender, type);
 				// We must also check the majority at this point:
 				// TODO: Refactor checkLynchMajority etc.
-				if (model.getWolfBot().checkLynchMajority())
-					model.getWolfBot().endDay();
+				if (GameCore.checkLynchMajority(model))
+					GameCore.endDay(model);
 			}
 		}
 
@@ -359,9 +361,18 @@ public class Commands
 		@Override
 		public void runCommand(String[] args, String sender, MessageType type) {
 			if (args.length == 2)
-				model.getWolfBot().drop(args[1]);
+			{
+				if (type != MessageType.PRIVATE)
+				{
+					GameCore.drop(args[1], model);
+				}
+				else
+				{
+					sendIrcMessage(model.getChannel(), sender + " tried to drop " + args[1] + " in PM! What a scumbag!", sender, MessageType.CHANNEL);
+				}
+			}
 			else if (args.length == 1)
-				model.getWolfBot().drop(sender);
+				GameCore.drop(sender, model);
 			else {
 				sendIrcMessage(model.getChannel(), "Correct usage is:  !drop [player]", sender, type);
 			}
@@ -382,7 +393,7 @@ public class Commands
 		public void runCommand(String[] args, String sender, MessageType type) {
 			if (args.length == 2)
 			{
-				CommandUtils.lynchVote(sender, args[1], model, type);
+				GameCore.lynchVote(sender, args[1], model, type);
 			}
 			else
 			{
@@ -405,6 +416,23 @@ public class Commands
 			}
 		}
 
+	};
+	public static final Command MY_ROLE_COMMAND = new Command (Lists.newArrayList("!whoami", "!role"),
+			Lists.newArrayList(State.Day, State.Night),
+			Lists.newArrayList(MessageType.PRIVATE))
+	{
+
+		@Override
+		public void runCommand(String[] args, String sender, MessageType type) {
+			Player player = model.getPlayers().getPlayer(sender);
+			sendIrcMessage(sender, String.format("You are a %s", player.getRole()), sender, type);
+		}
+
+		@Override
+		public void runInvalidCommand(String[] args, String sender,
+				MessageType type) {
+			sendIrcMessage (sender, "The game hasn't even started yet!", sender, type);
+		}
 	};
 	
 	// Shorthand for model.sendIrcMessage.

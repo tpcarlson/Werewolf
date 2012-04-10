@@ -3,11 +3,12 @@ package no.arcticdrakefox.wolfbot.model;
 import java.util.Collection;
 import java.util.Timer;
 
-import com.google.common.collect.Lists;
-
 import no.arcticdrakefox.wolfbot.WolfBot;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.commands.Command;
+import no.arcticdrakefox.wolfbot.management.commands.Commands;
+
+import com.google.common.collect.Lists;
 
 public class WolfBotModel {
 	

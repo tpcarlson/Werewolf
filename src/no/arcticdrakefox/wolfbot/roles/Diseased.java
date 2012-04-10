@@ -69,9 +69,7 @@ public class Diseased extends Player {
 
 	@Override
 	public String helpText() {
-		return null;
+		return "I taste bad. Don't eat me!";
 	}
 
-	
-	
 }

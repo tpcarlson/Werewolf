@@ -2,7 +2,7 @@ package no.arcticdrakefox.wolfbot.Timers;
 
 import java.util.TimerTask;
 
-import no.arcticdrakefox.wolfbot.WolfBot;
+import no.arcticdrakefox.wolfbot.management.GameCore;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
@@ -24,7 +24,7 @@ public class StartGameTask extends TimerTask {
 		players.assignRoles();
 		model.getWolfBot ().sendRoleMessages();
 		model.getWolfBot ().setMode(model.getChannel (), "+m");
-		model.getWolfBot ().startDay();
+		GameCore.startDay(model);
 	}
 
 }

@@ -2,10 +2,10 @@ package no.arcticdrakefox.wolfbot.management.commands;
 
 import java.util.Collection;
 
-import com.google.common.collect.Lists;
-
 import no.arcticdrakefox.wolfbot.model.MessageType;
 import no.arcticdrakefox.wolfbot.model.State;
+
+import com.google.common.collect.Lists;
 
 // TO ADD A NEW COMMAND:
 // -Create a new Command object in Commands
