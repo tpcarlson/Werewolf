@@ -129,7 +129,6 @@ public class WolfBot extends PircBot {
 		else if (validCommands.isEmpty())
 		{
 			sendIrcMessage(sender, "Unknown command...");
-			return;
 		}
 		
 		for (Command comm : validCommands)
