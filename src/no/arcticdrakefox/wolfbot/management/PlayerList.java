@@ -230,7 +230,8 @@ public class PlayerList{
 			for (int j = 0; j < roleCount[i]; ++j){
 				Player player = getRandomPlayer(Role.villager);
 				int index = players.indexOf(player);
-				players.set(index, PlayerFactory.makePlayer(player.getName(), Role.values()[i]));
+				Player p = Role.values()[i].init(player.getName());
+				players.set(index, p);
 			}
 		}
 	}
