@@ -71,12 +71,12 @@ public class WolfBot extends PircBot {
 				if (comm.getValidStates().contains(data.getState()))
 				{
 					// All good - run this command:
-					comm.runCommand(args, sender, MessageType.PRIVATE);
+					comm.runCommand(args, sender, MessageType.CHANNEL);
 				}
 				else
 				{
 					// Not so good - we're in the wrong state
-					comm.runInvalidCommand(args, sender, MessageType.PRIVATE);
+					comm.runInvalidCommand(args, sender, MessageType.CHANNEL);
 				}
 			}
 			else
