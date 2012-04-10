@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Timer;
 
@@ -10,6 +11,9 @@ import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.VoteTable;
 import no.arcticdrakefox.wolfbot.management.WerewolfException;
+import no.arcticdrakefox.wolfbot.management.commands.Command;
+import no.arcticdrakefox.wolfbot.management.commands.CommandSelectorPredicate;
+import no.arcticdrakefox.wolfbot.model.MessageType;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
@@ -17,6 +21,8 @@ import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
+
+import com.google.common.collect.Collections2;
 
 public class WolfBot extends PircBot {
 
@@ -29,7 +35,7 @@ public class WolfBot extends PircBot {
 
 	
 	WolfBotModel data = new WolfBotModel(new PlayerList(), State.None,
-			new Timer(), true);
+			new Timer(), true, this);
 
 	private WolfBot(String name, String password) {
 		super();
@@ -54,10 +60,36 @@ public class WolfBot extends PircBot {
 		String[] args = message.split(" ");
 		String command = args[0];
 
+		// So, we ask the model for all commands matching the command string:
+		Collection<Command> validCommands = Collections2.filter(data.getCommands(), new CommandSelectorPredicate (command));
+		for (Command comm : validCommands)
+		{
+			// So while we have the right command here
+			// still need to verify that the command can be used in this state:
+			if (comm.getValidIn().contains(MessageType.CHANNEL))
+			{
+				if (comm.getValidStates().contains(data.getState()))
+				{
+					// All good - run this command:
+					comm.runCommand(args, sender, MessageType.PRIVATE);
+				}
+				else
+				{
+					// Not so good - we're in the wrong state
+					comm.runInvalidCommand(args, sender, MessageType.PRIVATE);
+				}
+			}
+			else
+			{
+				// Command was meant for PM - ignore
+			}
+		}
+		
 		switch (command.toLowerCase()) {
+		/*
 		case "!join":
 			join(sender);
-			break;
+			break; */
 		case "!drop":
 			if (args.length == 2)
 				drop(args[1]);
@@ -162,6 +194,8 @@ public class WolfBot extends PircBot {
 
 			// Usage:
 			sendIrcMessage(channel, "Correct usage is:  !notices on|off");
+		case "!join": // Just temporary...
+			break;
 		default:
 			sendIrcMessage(channel, "Unknown command.");
 		}
