@@ -16,29 +16,8 @@ public class WolfBotModel {
 	{
 		commands = Lists.newArrayList();
 		// For easy commands, just implement anon. inner class Command - for other things, may wish to create a new class...
-		commands.add(new Command ("!join",
-				Lists.newArrayList(State.None, State.Starting),
-				Lists.newArrayList(MessageType.CHANNEL, MessageType.PRIVATE))
-		{			
-			@Override
-			public void runCommand(String[] args, String sender, MessageType type)
-			{
-				if (getPlayers().addPlayer(sender))
-				{
-					wolfBot.sendIrcMessage(channel, sender + " has joined the game!");
-				}
-				else
-				{
-					wolfBot.sendIrcMessage(channel, sender + " has already entered.");
-				}
-			}
-			
-			@Override
-			public void runInvalidCommand(String[] args, String sender, MessageType type)
-			{
-				wolfBot.sendIrcMessage(channel, sender + " cannot join now, a game is in progress.");				
-			}
-		});
+		commands.add(Commands.JOIN_COMMAND);
+		commands.add(Commands.SET_COMMAND);
 	}
 	
 	
@@ -87,6 +66,7 @@ public class WolfBotModel {
 		this.startGameTimer = startGameTimer;
 		this.enableNotices = enableNotices;
 		this.wolfBot = wolfBot;
+		Commands.setModel (this);
 		initCommands ();
 	}
 	
@@ -137,5 +117,9 @@ public class WolfBotModel {
 
 	public void setEnableNotices(boolean enableNotices) {
 		this.enableNotices = enableNotices;
+	}
+
+	public void sendIrcMessage(String channel2, String string) {
+		wolfBot.sendIrcMessage(channel2, string);
 	}
 }

@@ -100,6 +100,7 @@ public class WolfBot extends PircBot {
 				return;
 			}
 			break;
+			/*
 		case "!set":
 
 			if (args.length == 3){
@@ -112,7 +113,7 @@ public class WolfBot extends PircBot {
 			} else
 				sendIrcMessage(channel,
 						"Correct usage is:  !set <role> <amount>");
-			break;
+			break; */
 		case "!autorole":
 			if (data.getState() == State.None || data.getState() == State.Starting){
 				data.getPlayers().autoRole();
@@ -195,6 +196,7 @@ public class WolfBot extends PircBot {
 			// Usage:
 			sendIrcMessage(channel, "Correct usage is:  !notices on|off");
 		case "!join": // Just temporary...
+		case "!set":
 			break;
 		default:
 			sendIrcMessage(channel, "Unknown command.");
@@ -360,30 +362,6 @@ public class WolfBot extends PircBot {
 		
 		// In both day and night, we check victory:
 		checkVictory();
-	}
-
-	private void setCount(String role, String amountS) {
-		int amount;
-		if (role.toLowerCase().equals("villager")) {
-			sendIrcMessage(data.getChannel(),
-					"Villagers are automatically adjusted.");
-		} else if (StringHandler.isInt(amountS)) {
-			amount = StringHandler.parseInt(amountS);
-			try
-			{
-				if (data.getPlayers().setRoleCount(role, amount))
-					sendIrcMessage(data.getChannel(), String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
-				else // Should never get here
-					throw new WerewolfException ("Meep");
-			}
-			catch (WerewolfException wolfy)
-			{
-				sendIrcMessage(data.getChannel(), String.format("Failed. Could not resolve %s to a role", role));
-			}
-		} else {
-			sendIrcMessage(data.getChannel(), amountS
-					+ " cannot be parsed to an int.");
-		}
 	}
 
 	private boolean checkVictory() {
