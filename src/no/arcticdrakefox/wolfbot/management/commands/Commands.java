@@ -22,14 +22,15 @@ public class Commands
 	// (Note: numpad / and *)
 	public static final Command JOIN_COMMAND = new Command ("!join",
 			Lists.newArrayList(State.None, State.Starting),
-			Lists.newArrayList(MessageType.CHANNEL, MessageType.PRIVATE))
+			Lists.newArrayList(MessageType.values()))
 	{			
 		@Override
 		public void runCommand(String[] args, String sender, MessageType type)
 		{
 			if (model.getPlayers().addPlayer(sender))
 			{
-				sendIrcMessage(model.getChannel(), sender + " has joined the game!", sender, type);
+				// Joins should be announced
+				sendIrcMessage(model.getChannel(), sender + " has joined the game!", sender, MessageType.CHANNEL);
 			}
 			else
 			{
@@ -126,7 +127,7 @@ public class Commands
 	
 	public static final Command LIST_COMMAND = new Command ("!list",
 			Lists.newArrayList(State.values()),
-			Lists.newArrayList(MessageType.CHANNEL, MessageType.PRIVATE))
+			Lists.newArrayList(MessageType.values()))
 	{
 
 		@Override

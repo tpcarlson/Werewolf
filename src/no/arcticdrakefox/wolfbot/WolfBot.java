@@ -20,6 +20,7 @@ import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 // TODO: Wolfbot needs moving out into a message handler and a core game
 //       logic thing...
@@ -107,10 +108,13 @@ public class WolfBot extends PircBot {
 			return;
 		String[] args = message.split(" ");
 		String command = args[0];
+		
 		Player player = data.getPlayers().getPlayer(sender);
 		
-		// Ignore PMs from players that are not playing:
-		if (player == null)
+		Collection<String> pmWhitelist = Lists.newArrayList("!join","!help","!list", "!time");
+		
+		// Ignore PMs from players that are not playing, but whitelist a few commands
+		if ((! pmWhitelist.contains(command.trim().toLowerCase())) && player == null)
 			return;
 		
 		// As with CHANNEL messages, filter out anything we don't want to see:
@@ -119,12 +123,12 @@ public class WolfBot extends PircBot {
 
 		if (validCommands.size() > 1)
 		{
-			sendIrcMessage(data.getChannel(), "More than one valid command. This is probably a bug. Aborting!");
+			sendIrcMessage(sender, "More than one valid command. This is probably a bug. Aborting!");
 			return;
 		}
 		else if (validCommands.isEmpty())
 		{
-			sendIrcMessage(data.getChannel(), "Unknown command...");
+			sendIrcMessage(sender, "Unknown command...");
 			return;
 		}
 		
