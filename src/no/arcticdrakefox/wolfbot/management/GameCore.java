@@ -9,6 +9,7 @@ import no.arcticdrakefox.wolfbot.management.commands.Commands;
 import no.arcticdrakefox.wolfbot.model.MessageType;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
+import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 import static no.arcticdrakefox.wolfbot.WolfBot.bold;
@@ -101,7 +102,7 @@ public class GameCore {
 						data.getChannel(),
 						String.format(
 								"After turning on the last remaining  %svillager%s, %s prowls on to terrorize somewhere else.",
-								Colors.GREEN, Colors.NORMAL,
+								Team.Villagers.getColor(), Colors.NORMAL,
 								StringHandler.listToString(data.getPlayers().getWolves())));
 			else
 				data.getWolfBot().sendIrcMessage(
@@ -110,7 +111,6 @@ public class GameCore {
 								"they leave the village behind to find fresh meat elsewhere.",
 								bold(StringHandler.listToString(data.getPlayers().getWolves()))));
 			endGame(data);
-			return true;
 		}
 		return false;
 	}
@@ -137,21 +137,20 @@ public class GameCore {
 				vote.die(String
 						.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
 								+ "A volunteer plunges the village's treasured silver dagger into their heart(a bread knife would do)! "
-								+ "*%s* is dead!",
-								vote.getName()));
+								+ "%s is dead!", bold(vote.getName())));
 			} else {
 				if (vote.isWolf()) {
 					vote.die(String
 							.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
 									+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
-									+ "A *werewolf* was lynched today, and the village is a little safer. *%s* the *%s* is dead!",
-									vote.getName(), vote.getRole()));
+									+ "A "+ Role.wolf.toStringColor() + " was lynched today, and the village is a little safer. %s the %s is dead!",
+									bold(vote.getName()), vote.getRole().toStringColor()));
 				} else {
 					vote.die(String
 							.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
 									+ "A volunteer plunges the village's treasured silver dagger into their heart. "
-									+ "They scream in agony as life and blood leave their body. *%s* the *%s* is dead!",
-									vote.getName(), vote.getRole()));
+									+ "They scream in agony as life and blood leave their body. %s the %s is dead!",
+									bold(vote.getName()), vote.getRole().toStringColor()));
 				}
 			}
 		}
@@ -163,9 +162,9 @@ public class GameCore {
 	private static void startNight(WolfBotModel data) {
 		data.setState(State.Night);
 		data.getWolfBot().deVoiceAll();
-		data.getWolfBot().sendIrcMessage(
-				data.getChannel(),
-				"It is now night, and most villagers can only sleep. Some forces are busily at work, however...");
+		data.getWolfBot().sendIrcMessage( data.getChannel(),
+				"It is now night, and most villagers can only sleep." +
+				"Some forces are busily at work, however...");
 		data.getPlayers().clearVotes();
 		data.getWolfBot().sendNightStartMessages();
 	}
@@ -194,7 +193,8 @@ public class GameCore {
 			data.getPlayers().reset();
 			data.getWolfBot().setMode(data.getChannel(), "-m");
 			data.getWolfBot().deVoiceAll();
-			data.getWolfBot().sendIrcMessage(data.getChannel(), "Thanks for playing! Say !start to go again!");
+			data.getWolfBot().sendIrcMessage(data.getChannel(), 
+					"Thanks for playing! Say !start to go again!");
 		}
 		data.setState(State.None);
 	}
@@ -233,13 +233,13 @@ public class GameCore {
 				wolfVote.die(String.format(
 						"As the villagers gather, they notice someone missing. "
 								+ "After some searching, their mauled corpse is found in their home. "
-								+ "*%s* is dead!", wolfVote.getName()));		
+								+ "%s is dead!", bold(wolfVote.getName())));		
 			} else {
 				wolfVote.die(String.format(
 						"As the villagers gather, they notice someone missing. "
 								+ "After some searching, their mauled corpse is found in their home. "
-								+ "%s the %s is dead!", wolfVote.getName(),
-						wolfVote.getRole()));
+								+ "%s the %s is dead!", bold(wolfVote.getName()),
+								wolfVote.getRole().toStringColor()));
 			}
 		}
 	}
