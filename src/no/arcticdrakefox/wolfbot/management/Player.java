@@ -38,7 +38,7 @@ public abstract class Player {
 	}
 	
 	protected final String targetNotFound(String name){ 
-		return String.format("Target %s not found. They might be dead already or you could've mispelled their name.", name);
+		return String.format("Target %s not found. They might be dead already - or maybe you just misspelled their name?", name);
 	}
 	
 	public abstract boolean isWolf();
