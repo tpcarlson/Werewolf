@@ -6,7 +6,7 @@ public class OldMan extends Villager {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return null;
+		return Role.oldman;
 	}
 
 	private int ttl;
@@ -39,6 +39,6 @@ public class OldMan extends Villager {
 	}
 	@Override
 	public String helpText() {
-	return "The old man appears to be a normal villager - but he will die soon whether he gets eaten or not! He will survive one night for each wolf, plus one.";
+		return "The old man appears to be a normal villager - but he will die soon whether he gets eaten or not! He will survive one night for each wolf, plus one.";
 	}
 }
