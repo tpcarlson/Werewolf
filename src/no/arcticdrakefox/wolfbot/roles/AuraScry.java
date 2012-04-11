@@ -3,14 +3,13 @@ package no.arcticdrakefox.wolfbot.roles;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.Team;
 
 public class AuraScry extends Player {
 
 	public AuraScry(String name) {
 		super(name);
-		setTeam (Team.Villagers);
 	}
+
 
 	@Override
 	public boolean isWolf() {

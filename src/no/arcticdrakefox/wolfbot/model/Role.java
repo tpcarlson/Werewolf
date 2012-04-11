@@ -19,26 +19,34 @@ import no.arcticdrakefox.wolfbot.roles.Vigilante;
 import no.arcticdrakefox.wolfbot.roles.Villager;
 import no.arcticdrakefox.wolfbot.roles.Wolf;
 
+import org.jibble.pircbot.Colors;
+
 public enum Role {	
-	villager (Villager.class), 
-	wolf (Wolf.class), 
-	scry (Scry.class),
-	devil (Devil.class),
-	baner (Baner.class),
-	ghost (Ghost.class),
-	vigilante (Vigilante.class),
-	mason (Mason.class),
-	toughguy (ToughGuy.class),
-	oldman (OldMan.class),
-	mayor (Mayor.class),
-	aura_scry (AuraScry.class),
-	apprentice_scry (ApprenticeScry.class),
-	diseased (Diseased.class);
+	villager (Villager.class, Team.Villagers), 
+	wolf (Wolf.class, Team.Wolves), 
+	scry (Scry.class, Team.Villagers),
+	devil (Devil.class, Team.Wolves),
+	baner (Baner.class, Team.Villagers),
+	ghost (Ghost.class, Team.Villagers),
+	vigilante (Vigilante.class, Team.Villagers),
+	mason (Mason.class, Team.Villagers),
+	toughguy (ToughGuy.class, Team.Villagers),
+	oldman (OldMan.class, Team.Villagers),
+	mayor (Mayor.class, Team.Villagers),
+	aura_scry (AuraScry.class, Team.Villagers),
+	apprentice_scry (ApprenticeScry.class, Team.Villagers),
+	diseased (Diseased.class, Team.Villagers);
 	
 	private Class<? extends Player> c;
+	private Team team;
 	
-	private Role (Class<? extends Player> c) {
+	public Team getTeam() {
+		return team;
+	}
+
+	private Role (Class<? extends Player> c, Team team) {
 		this.c = c;
+		this.team = team;
 	}
 	
 	public Class<? extends Player> getRoleClass() {
@@ -65,6 +73,10 @@ public enum Role {
 		}
 		
 		throw new RuntimeException();
+	}
+	
+	public String toStringColor() {
+		return team.getColor() + this.toString() + Colors.NORMAL;
 	}
 }
 
