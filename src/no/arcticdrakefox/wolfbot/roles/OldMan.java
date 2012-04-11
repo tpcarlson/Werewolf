@@ -4,6 +4,11 @@ import no.arcticdrakefox.wolfbot.management.PlayerList;
 
 public class OldMan extends Villager {
 
+	public OldMan (String nick)
+	{
+		super (nick);
+	}
+	
 	@Override
 	public String roleInfo(PlayerList players) {
 		return "You are an old man. Your time is almost up...";
