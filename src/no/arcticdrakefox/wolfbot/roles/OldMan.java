@@ -1,19 +1,21 @@
 package no.arcticdrakefox.wolfbot.roles;
 
 import no.arcticdrakefox.wolfbot.management.PlayerList;
+import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 public class OldMan extends Villager {
-
+	
 	@Override
 	public String roleInfo(PlayerList players) {
-		return null;
+		return "You are an old man. Your time is almost up...";
 	}
 
 	private int ttl;
 	
-	public OldMan(String name, int numWolves) {
+	public OldMan(String name) {
 		super(name);
-		this.ttl = numWolves + 1;
+		this.ttl = WolfBotModel.getInstance().getPlayers().getRole(Role.wolf).size() + 1;
 	}
 
 	@Override
@@ -39,6 +41,6 @@ public class OldMan extends Villager {
 	}
 	@Override
 	public String helpText() {
-	return "The old man appears to be a normal villager - but he will die soon whether he gets eaten or not! He will survive one night for each wolf, plus one.";
+		return "The old man appears to be a normal villager - but he will die soon whether he gets eaten or not! He will survive one night for each wolf, plus one.";
 	}
 }

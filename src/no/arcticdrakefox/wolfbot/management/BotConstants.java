@@ -9,7 +9,7 @@ public class BotConstants {
 	public static final Player SKIP_VOTE_PLAYER = new SkipPlayer ();
 	public static final String HELP_COMMANDS = 
 	     "!join, !drop [player], !start, !end, !set <role> <count>, reveal on|off "
-       + "!list, !rolecount, !autorole, !lynch/!vote/!kill, !votes, !time, !help";
+       + "!list, !roles, !autorole, !lynch/!vote/!kill, !votes, !time, !help";
 	
 	// TODO: Roles should handle help?
 	public static String help(String command, String arg) {
@@ -36,8 +36,8 @@ public class BotConstants {
 			return "!set <role> <count>: sets specified role to specified amount. Valid roles are wolf, devil, mason, scry, vigilante, baner, ghost";
 		case "list":
 			return "!list: Shows all living players in game.";
-		case "rolecount":
-			return "!rolecount: Shows amount of each role the game started with. It will not adapt as roles are killed off.";
+		case "roles":
+			return "!roles: Shows amount of each role the game started with. It will not adapt as roles are killed off.";
 		case "lynch":
 		case "vote":
 			return "!lynch <player>: Votes on a player for lynching. Over half the villagers must agree on a target before day ends.";
