@@ -111,11 +111,11 @@ public class WolfBot extends PircBot {
 		
 		Player player = data.getPlayers().getPlayer(sender);
 		
-		Collection<String> pmWhitelist = Lists.newArrayList("!join","!help","!list", "!time");
+		// Collection<String> pmWhitelist = Lists.newArrayList("!join","!help","!list", "!time");
 		
 		// Ignore PMs from players that are not playing, but whitelist a few commands
-		if ((! pmWhitelist.contains(command.trim().toLowerCase())) && player == null)
-			return;
+		//if ((! pmWhitelist.contains(command.trim().toLowerCase())) && player == null)
+		//	return;
 		
 		// As with CHANNEL messages, filter out anything we don't want to see:
 		// So, we ask the model for all commands matching the command string...:
@@ -125,11 +125,11 @@ public class WolfBot extends PircBot {
 		{
 			sendIrcMessage(sender, "More than one valid command. This is probably a bug. Aborting!");
 			return;
-		}
+		}/*
 		else if (validCommands.isEmpty())
 		{
 			sendIrcMessage(sender, "Unknown command...");
-		}
+		} */
 		
 		for (Command comm : validCommands)
 		{

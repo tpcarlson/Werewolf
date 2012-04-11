@@ -29,6 +29,7 @@ public class WolfBotModel {
 		commands.add(Commands.SKIPLYNCH_COMMAND);
 		commands.add(Commands.DROP_COMMAND);
 		commands.add(Commands.LYNCH_COMMAND);
+		commands.add(Commands.REVEAL_COMMAND);
 	}
 	
 	private String channel;
