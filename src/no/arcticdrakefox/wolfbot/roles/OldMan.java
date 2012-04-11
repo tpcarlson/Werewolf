@@ -6,7 +6,7 @@ public class OldMan extends Villager {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return Role.oldman;
+		return "You are an old man. Your time is almost up...";
 	}
 
 	private int ttl;
