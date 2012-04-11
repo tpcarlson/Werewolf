@@ -289,7 +289,6 @@ public class PlayerList{
 			addWarrior();
 			break;
 		case 3:
-			roleCount[Role.mason.ordinal()] = 1;
 		case 2:
 		case 1:
 		case 0:
