@@ -55,7 +55,7 @@ public class Vigilante extends Player {
 		} else if (args[0].equals("!rest")){
 			isReady = true;
 			vote = null;
-			return "You deem it unwise to take anyone's life without more evidence. Tonight, you will gather your strenght.";
+			return "You deem it unwise to take anyone's life without more evidence. Tonight, you will gather your strength.";
 		} else
 			return null;
 	}
