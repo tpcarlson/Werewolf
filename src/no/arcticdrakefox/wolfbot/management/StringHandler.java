@@ -15,7 +15,7 @@ public class StringHandler {
 		return Integer.parseInt(number);
 	}
 	
-	public static String listToString(List list){
+	public static String listToString(List<?> list){
 		if (list.size() < 1)
 			return BotConstants.NO_VOTES;
 		String ret = list.get(0).toString();
@@ -27,7 +27,7 @@ public class StringHandler {
 		return ret;
 	}
 	
-	public static String listToStringSimple(List list){
+	public static String listToStringSimple(List<?> list){
 		String ret = "";
 		for (int i = 0; i < list.size(); ++i) 
 			ret += " " + list.get(i);

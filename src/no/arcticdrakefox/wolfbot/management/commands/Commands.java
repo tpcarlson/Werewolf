@@ -1,5 +1,7 @@
 package no.arcticdrakefox.wolfbot.management.commands;
 
+import static no.arcticdrakefox.wolfbot.WolfBot.bold;
+
 import java.util.Timer;
 
 import no.arcticdrakefox.wolfbot.Timers.StartGameTask;
@@ -11,8 +13,6 @@ import no.arcticdrakefox.wolfbot.management.WerewolfException;
 import no.arcticdrakefox.wolfbot.model.MessageType;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
-
-import org.jibble.pircbot.Colors;
 
 import com.google.common.collect.Lists;
 
@@ -30,18 +30,18 @@ public class Commands
 			if (model.getPlayers().addPlayer(sender))
 			{
 				// Joins should be announced
-				sendIrcMessage(model.getChannel(), sender + " has joined the game!", sender, MessageType.CHANNEL);
+				sendIrcMessage(model.getChannel(), bold(sender) + " has joined the game!", sender, MessageType.CHANNEL);
 			}
 			else
 			{
-				sendIrcMessage(model.getChannel(), sender + " has already entered.", sender, type);
+				sendIrcMessage(model.getChannel(), bold(sender) + " has already entered.", sender, type);
 			}
 		}
 		
 		@Override
 		public void runInvalidCommand(String[] args, String sender, MessageType type)
 		{
-			sendIrcMessage(model.getChannel(), sender + " cannot join now, a game is in progress.", sender, type);				
+			sendIrcMessage(model.getChannel(), bold(sender) + " cannot join now, a game is in progress.", sender, type);				
 		}
 	};
 
@@ -79,7 +79,7 @@ public class Commands
 				try
 				{
 					if (model.getPlayers().setRoleCount(role, amount))
-						model.sendIrcMessage(model.getChannel(), String.format("%s%s set to %d", role,amount == 1 ? "s" : "" ,amount));
+						model.sendIrcMessage(model.getChannel(), String.format("%s%s set to %d", role ,amount == 1 ? "s" : "" ,amount));
 					else // Should never get here
 						throw new WerewolfException ("Meep");
 				}
@@ -248,7 +248,7 @@ public class Commands
 			model.getStartGameTimer().schedule(
 					new StartGameTask(model), 30 * 1000); // 30s
 			sendIrcMessage(model.getChannel(), "The game will begin in "
-					+ Colors.BOLD + "30 seconds." + Colors.NORMAL
+					+ bold( "30 seconds.")
 					+ " Type !join to join!", sender, type);
 			model.setState(State.Starting);
 		}
@@ -328,12 +328,14 @@ public class Commands
 			Player senderPlayer = model.getPlayers().getPlayer(sender);
 			if (senderPlayer == null)
 			{
-				sendIrcMessage (model.getChannel(), "Player " + Colors.BOLD + sender + Colors.NORMAL + " was not found...", sender, type);
+				sendIrcMessage (model.getChannel(), "Player " + bold(sender) + " was not found...", sender, type);
 			}
 			else
 			{
 				senderPlayer.vote(BotConstants.SKIP_VOTE_PLAYER);
-				sendIrcMessage (model.getChannel(), Colors.BOLD + sender + Colors.NORMAL + " scratches their head in confusion and then tears up their ballot paper.", sender, type);
+				sendIrcMessage (model.getChannel(), bold(sender) + 
+						" scratches their head in confusion and then tears "+
+						"up their ballot paper.", sender, type);
 				// We must also check the majority at this point:
 				// TODO: Refactor checkLynchMajority etc.
 				if (GameCore.checkLynchMajority(model))
@@ -369,7 +371,7 @@ public class Commands
 				}
 				else
 				{
-					sendIrcMessage(model.getChannel(), sender + " tried to drop " + args[1] + " in PM! What a scumbag!", sender, MessageType.CHANNEL);
+					sendIrcMessage(model.getChannel(), bold(sender) + " tried to drop " + args[1] + " in PM! What a scumbag!", sender, MessageType.CHANNEL);
 				}
 			}
 			else if (args.length == 1)
@@ -426,7 +428,7 @@ public class Commands
 		@Override
 		public void runCommand(String[] args, String sender, MessageType type) {
 			Player player = model.getPlayers().getPlayer(sender);
-			sendIrcMessage(sender, String.format("You are a %s", player.getRole()), sender, type);
+			sendIrcMessage(sender, String.format("You are a %s", player.getRole().toStringColor()), sender, type);
 		}
 
 		@Override

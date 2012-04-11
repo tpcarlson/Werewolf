@@ -20,7 +20,6 @@ import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 // TODO: Wolfbot needs moving out into a message handler and a core game
 //       logic thing...
@@ -33,6 +32,9 @@ public class WolfBot extends PircBot {
 		bot.joinChannel("#wolfbot");
 	}
 
+	public static String bold(String s) {
+		return Colors.BOLD + s + Colors.NORMAL;
+	}
 	
 	WolfBotModel data = new WolfBotModel(new PlayerList(), State.None,
 			new Timer(), true, this);
@@ -182,7 +184,13 @@ public class WolfBot extends PircBot {
 			// ie. We're in day or night ...
 			if (! (data.getState() == State.None || data.getState() == State.Starting))
 			{
-				sendIrcMessage(data.getChannel(), String.format("%s has fled - they were a %s", sourceNick, player.getRole()));
+				if (data.getSilentMode()) {
+					sendIrcMessage(data.getChannel(), String.format("%s has fled", 
+							bold(sourceNick)));
+				} else {
+					sendIrcMessage(data.getChannel(), String.format("%s has fled - they were a %s", 
+							bold(sourceNick), player.getRole().toStringColor()));
+				}
 			}
 			GameCore.drop(player.getName(), data);
 		}
@@ -203,18 +211,18 @@ public class WolfBot extends PircBot {
 				sendIrcMessage(player.getName(), message);
 			}
 
-			Team team = player.getTeam();
+			Team team = player.getRole().getTeam();
 			switch (team) {
 			case Wolves:
-				sendIrcMessage(player.getName(), "You are on the " + Colors.RED
+				sendIrcMessage(player.getName(), "You are on the " + team.getColor()
 						+ "wolf" + Colors.NORMAL
-						+ " team. You must attempt to eat the " + Colors.BLUE
+						+ " team. You must attempt to eat the " + Team.Villagers.getColor()
 						+ " villagers!");
 				break;
 			case Villagers:
 				sendIrcMessage(player.getName(), "You are on the "
-						+ Colors.BLUE + "villager" + Colors.NORMAL
-						+ " team. Defend against the invading " + Colors.RED
+						+ team.getColor() + "villager" + Colors.NORMAL
+						+ " team. Defend against the invading " + Team.Wolves.getColor()
 						+ "wolf" + Colors.NORMAL + " incursion!");
 				break;
 			case LoneWolf:

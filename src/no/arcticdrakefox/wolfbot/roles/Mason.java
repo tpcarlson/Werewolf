@@ -4,13 +4,11 @@ import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.Team;
 
 public class Mason extends Player {
 	
 	public Mason(String name){
 		super(name);
-		setTeam (Team.Villagers);
 	}
 	
 	@Override
