@@ -1,13 +1,10 @@
 package no.arcticdrakefox.wolfbot.roles;
 
 import no.arcticdrakefox.wolfbot.management.PlayerList;
+import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 public class OldMan extends Villager {
-
-	public OldMan (String nick)
-	{
-		super (nick);
-	}
 	
 	@Override
 	public String roleInfo(PlayerList players) {
@@ -16,9 +13,9 @@ public class OldMan extends Villager {
 
 	private int ttl;
 	
-	public OldMan(String name, int numWolves) {
+	public OldMan(String name) {
 		super(name);
-		this.ttl = numWolves + 1;
+		this.ttl = WolfBotModel.getInstance().getPlayers().getRole(Role.wolf).size() + 1;
 	}
 
 	@Override
