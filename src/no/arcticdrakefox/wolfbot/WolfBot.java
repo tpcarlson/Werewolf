@@ -20,6 +20,7 @@ import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 // TODO: Wolfbot needs moving out into a message handler and a core game
 //       logic thing...
@@ -274,6 +275,8 @@ public class WolfBot extends PircBot {
 		massMode(data.getPlayers().getList(), false, "v");
 	}
 
+	private static final int MAX_MODE = 5;
+	
 	private void massMode(List<Player> toChange, boolean add, String mode) {
 		String modeToApply = "";
 		if (add) {
@@ -281,11 +284,14 @@ public class WolfBot extends PircBot {
 		} else {
 			modeToApply += "-";
 		}
-		for (int i = 0; i < toChange.size(); ++i)
-			modeToApply += mode;
-		setMode(data.getChannel(),
-				modeToApply + " "
-						+ StringHandler.listToStringSimplePlayers(toChange));
+		
+		List<List<Player>> smallerLists = Lists.partition(toChange, MAX_MODE);
+		for (List<Player> ps : smallerLists) {
+			for (int i = 0; i < ps.size(); ++i)
+				modeToApply += mode;
+				setMode(data.getChannel(), modeToApply + " "
+						+ StringHandler.listToStringSimplePlayers(ps));
+		}
 	}
 	
 	// This will allow for the bot to be customised at runtime to either send
