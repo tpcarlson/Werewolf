@@ -1,6 +1,8 @@
 package no.arcticdrakefox.wolfbot.management;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import no.arcticdrakefox.wolfbot.model.Role;
 
