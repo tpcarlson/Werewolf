@@ -5,7 +5,6 @@ import java.util.Collection;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 import com.google.common.base.Predicate;
@@ -16,7 +15,6 @@ public class Scry extends Player {
 
 	public Scry(String name) {
 		super(name);
-		setTeam(Team.Villagers);
 	}
 
 	@Override

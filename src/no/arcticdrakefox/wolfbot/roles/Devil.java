@@ -4,14 +4,12 @@ import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.Team;
 
 public class Devil extends Player {
 	private Player scryVote;
 	
 	public Devil(String name){
 		super(name);
-		setTeam (Team.Wolves);
 	}
 	
 	@Override

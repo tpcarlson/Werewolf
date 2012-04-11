@@ -1,17 +1,12 @@
 package no.arcticdrakefox.wolfbot.management;
 
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.Team;
 
 public abstract class Player {
 	
 	protected String name;
 	public String getName(){return name;}
 	public void rename(String name){this.name = name;}
-	
-	protected Team team;
-	public Team getTeam () { return team; }
-	public void setTeam (Team team) { this.team = team; }
 	
 	protected Player vote;
 	public Player getVote(){return vote;}

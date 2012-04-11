@@ -4,7 +4,6 @@ import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.Team;
 
 public class Wolf extends Player {
 	
@@ -20,7 +19,6 @@ public class Wolf extends Player {
 
 	public Wolf(String name){
 		super(name);
-		setTeam (Team.Wolves);
 	}
 	
 	@Override

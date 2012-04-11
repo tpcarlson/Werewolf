@@ -3,13 +3,11 @@ package no.arcticdrakefox.wolfbot.roles;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.Team;
 
 public class Vigilante extends Player {
 	
 	public Vigilante(String name){
 		super(name);
-		setTeam (Team.Villagers);
 	}
 	
 	@Override

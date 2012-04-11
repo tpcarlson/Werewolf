@@ -2,11 +2,16 @@ package no.arcticdrakefox.wolfbot.management;
 
 import java.util.List;
 
+import org.jibble.pircbot.Colors;
+
+
 import no.arcticdrakefox.wolfbot.management.commands.Commands;
 import no.arcticdrakefox.wolfbot.model.MessageType;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+
+import static no.arcticdrakefox.wolfbot.WolfBot.bold;
 
 public class GameCore {
 	public static void lynchVote(String senderS, String targetS, WolfBotModel data, MessageType type) {
@@ -14,20 +19,20 @@ public class GameCore {
 		Player target = data.getPlayers().getPlayer(targetS);
 		if (sender == null) {
 			Commands.sendIrcMessage(data.getChannel(), String.format(
-					"%s, you are not entered in the game.", senderS), senderS, type);
+					"%s, you are not entered in the game.", bold(senderS)), senderS, type);
 		} else if (!sender.isAlive()) {
 			Commands.sendIrcMessage(data.getChannel(),
-					String.format("%s, you are currently dead..", senderS), senderS, type);
+					String.format("%s, you are currently dead..", bold(senderS)), senderS, type);
 		} else if (target == null) {
 			Commands.sendIrcMessage(
 					data.getChannel(),
 					String.format(
 							"%s, you may not vote for %s as they aren't entered in the game.",
-							senderS, targetS), senderS, type);
+							bold(senderS), bold(targetS)), senderS, type);
 		} else if (!target.isAlive()) {
 			Commands.sendIrcMessage(data.getChannel(), String.format(
 					"%s, you may not vote for %s as they are currently dead.",
-					senderS, targetS), senderS, type);
+					bold(senderS), bold(targetS)), senderS, type);
 		} else {
 			sender.vote(target);
 			Commands.sendIrcMessage(data.getChannel(),
@@ -45,20 +50,22 @@ public class GameCore {
 			if (playerRemoved)
 			{
 				// And send a neutral message:
-				data.getWolfBot().sendIrcMessage (data.getChannel(), name + " has retired from the game - before it even started! What a coward.");
+				data.getWolfBot().sendIrcMessage (data.getChannel(), bold(name) + 
+						" has retired from the game - before it even started! What a coward.");
 			}
 			else
 			{
-				data.getWolfBot().sendIrcMessage(data.getChannel(), name + " wasn't found among the entered players.");
+				data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name) + 
+						" wasn't found among the entered players.");
 			}
 			return;
 		}
 
 		if (data.getPlayers().removePlayer(name)) {
-			data.getWolfBot().sendIrcMessage(data.getChannel(), name
+			data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
 					+ " has retired from the game!");
 		} else {
-			data.getWolfBot().sendIrcMessage(data.getChannel(), name
+			data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
 					+ " wasn't found among the entered players.");
 		}
 		
@@ -93,16 +100,15 @@ public class GameCore {
 				data.getWolfBot().sendIrcMessage(
 						data.getChannel(),
 						String.format(
-								"After turning on the last remaining villager, %s prowls on to terrorize somewhere else.",
-								StringHandler.listToString(data.getPlayers()
-										.getWolves())));
+								"After turning on the last remaining  %svillager%s, %s prowls on to terrorize somewhere else.",
+								Colors.GREEN, Colors.NORMAL,
+								StringHandler.listToString(data.getPlayers().getWolves())));
 			else
 				data.getWolfBot().sendIrcMessage(
 						data.getChannel(),
-						String.format(
-								"%s turn on the last villagers. With all food depleted, they leave the village behind to find fresh meat elsewhere.",
-								StringHandler.listToString(data.getPlayers()
-										.getWolves())));
+						String.format("%s turn on the last villagers. With all food depleted, " +
+								"they leave the village behind to find fresh meat elsewhere.",
+								bold(StringHandler.listToString(data.getPlayers().getWolves()))));
 			endGame(data);
 			return true;
 		}

@@ -2,7 +2,6 @@ package no.arcticdrakefox.wolfbot.roles;
 
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.Team;
 
 public class ApprenticeScry extends Scry {
 
@@ -11,7 +10,6 @@ public class ApprenticeScry extends Scry {
 	
 	public ApprenticeScry(String name) {
 		super(name);
-		setTeam(Team.Villagers);
 	}
 	
 	public void setActive() {
