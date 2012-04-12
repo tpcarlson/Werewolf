@@ -13,10 +13,10 @@ import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+import no.arcticdrakefox.wolfbot.predicates.TeamPredicate;
 
 import org.jibble.pircbot.Colors;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
@@ -233,21 +233,6 @@ public class GameCore {
 			}
 			
 			data.setState(State.None);
-		}
-	}
-	
-	static class TeamPredicate implements Predicate<Player>
-	{
-		Team team;
-		
-		public TeamPredicate (Team team)
-		{
-			this.team = team;
-		}
-		
-		@Override
-		public boolean apply(Player player) {
-			return player.getRole().getTeam().equals(team);
 		}
 	}
 	

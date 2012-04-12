@@ -11,12 +11,12 @@ import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
 import no.arcticdrakefox.wolfbot.management.commands.Command;
-import no.arcticdrakefox.wolfbot.management.commands.CommandSelectorPredicate;
 import no.arcticdrakefox.wolfbot.model.MessageType;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+import no.arcticdrakefox.wolfbot.predicates.CommandSelectorPredicate;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
