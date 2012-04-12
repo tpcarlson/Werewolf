@@ -13,7 +13,7 @@ public enum Team {
 		this.color = color;
 	}
 	
-	public String getColord() {
+	public String getColored() {
 		return color + this.toString() + Colors.NORMAL;
 	}
 	

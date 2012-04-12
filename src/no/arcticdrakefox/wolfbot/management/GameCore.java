@@ -1,9 +1,11 @@
 package no.arcticdrakefox.wolfbot.management;
 
+import static no.arcticdrakefox.wolfbot.WolfBot.bold;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-
-import org.jibble.pircbot.Colors;
-
 
 import no.arcticdrakefox.wolfbot.management.commands.Commands;
 import no.arcticdrakefox.wolfbot.model.MessageType;
@@ -12,7 +14,11 @@ import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
-import static no.arcticdrakefox.wolfbot.WolfBot.bold;
+import org.jibble.pircbot.Colors;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 public class GameCore {
 	public static void lynchVote(String senderS, String targetS, WolfBotModel data, MessageType type) {
@@ -207,6 +213,7 @@ public class GameCore {
 		if (data.getState() != State.None && data.getState() != State.Starting) // Night or day
 		{
 			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
+			printCast (data);
 			data.getPlayers().reset();
 			data.getWolfBot().setMode(data.getChannel(), "-m");
 			data.getWolfBot().deVoiceAll();
@@ -214,6 +221,49 @@ public class GameCore {
 					"Thanks for playing! Say !start to go again!");
 		}
 		data.setState(State.None);
+	}
+	
+	static class TeamPredicate implements Predicate<Player>
+	{
+		Team team;
+		
+		public TeamPredicate (Team team)
+		{
+			this.team = team;
+		}
+		
+		@Override
+		public boolean apply(Player player) {
+			return player.getRole().getTeam().equals(team);
+		}
+	}
+	
+	private static void printCast (WolfBotModel data)
+	{
+		// For each team, build up a string:
+		for (Team team : Team.values())
+		{
+			Collection<Player> teamPlayers = Collections2.filter(data.getPlayers().getList(), new TeamPredicate (team));
+			List<Player> sortedList = Lists.newArrayList(teamPlayers);
+			Collections.sort(sortedList, new Comparator<Player> () {
+				@Override
+				public int compare(Player o1, Player o2)
+				{
+					return o1.getName().compareToIgnoreCase(o2.getName());
+				} });
+			
+			if (sortedList.isEmpty())
+			{
+				// Skip teams that have nobody in them
+				continue;
+			}
+			else
+			{
+				// It's possible this string is going to be too long for IRC. Will have to see.
+				String rolesForTeam = StringHandler.playersListToStringWithRoles (sortedList);
+				data.getWolfBot().sendIrcMessage(data.getChannel(), team.getColored() + ": " + rolesForTeam);
+			}
+		}
 	}
 	
 	public static void killWolfVote(WolfBotModel data) {
