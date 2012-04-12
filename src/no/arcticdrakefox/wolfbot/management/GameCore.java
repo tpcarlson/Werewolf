@@ -210,7 +210,7 @@ public class GameCore {
 	}
 
 	public static void endGame(WolfBotModel data){
-		if (data.getState() != State.None && data.getState() != State.Starting) // Night or day
+		if (data.getState() != State.None) // Night or day
 		{
 			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
 			printCast (data);
@@ -219,8 +219,9 @@ public class GameCore {
 			data.getWolfBot().deVoiceAll();
 			data.getWolfBot().sendIrcMessage(data.getChannel(), 
 					"Thanks for playing! Say !start to go again!");
+			
+			data.setState(State.None);
 		}
-		data.setState(State.None);
 	}
 	
 	static class TeamPredicate implements Predicate<Player>
