@@ -65,6 +65,7 @@ public class GameCore {
 		if (data.getPlayers().removePlayer(name)) {
 			data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
 					+ " has retired from the game!");
+			data.getWolfBot().setMode(data.getChannel(), "-v " + name);
 		} else {
 			data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
 					+ " wasn't found among the entered players.");
