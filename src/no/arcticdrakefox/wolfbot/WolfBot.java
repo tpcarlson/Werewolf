@@ -269,7 +269,7 @@ public class WolfBot extends PircBot {
 	}
 
 	public void sendNightStartMessages() {
-		List<Player> playerList = data.getPlayers().getLivingPlayers();
+		List<Player> playerList = data.getPlayers().getPlayersWithNightActions();
 		for (Player player : playerList) {
 			String message = player.nightStart();
 			if (message != null)
@@ -286,7 +286,7 @@ public class WolfBot extends PircBot {
 	}
 
 	private void sendNightEndMessages(Role role, boolean publicMessage) {
-		List<Player> playerList = data.getPlayers().getLivingPlayers();
+		List<Player> playerList = data.getPlayers().getPlayersWithNightActions();
 		for (Player player : playerList) {
 			if (player.getRole() != role)
 				continue;
