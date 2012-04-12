@@ -43,16 +43,23 @@ public class GameCore {
 			endDay(data);
 	}
 	
-	public static void drop(String name, WolfBotModel data){
+	public static void drop(String name, String sender, WolfBotModel data){
 		if (data.getState() == State.None || data.getState() == State.Starting)
 		{
 			// We still need to remove from the game:
 			boolean playerRemoved = data.getPlayers().removePlayer(name);
 			if (playerRemoved)
 			{
-				// And send a neutral message:
-				data.getWolfBot().sendIrcMessage (data.getChannel(), bold(name) + 
-						" has retired from the game - before it even started! What a coward.");
+				if (name.equals(sender))
+				{
+					// And send a neutral message:
+					data.getWolfBot().sendIrcMessage (data.getChannel(), bold(name) + 
+							" has retired from the game - before it even started! What a coward.");
+				}
+				else
+				{
+					data.getWolfBot().sendIrcMessage(data.getChannel(), bold (sender) + " cut off " + bold(name) + "'s arm. "+ bold(name) + " retires from the game."); 
+				}
 			}
 			else
 			{
@@ -62,9 +69,18 @@ public class GameCore {
 			return;
 		}
 
+		// Night or day at this point
 		if (data.getPlayers().removePlayer(name)) {
-			data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
-					+ " has retired from the game!");
+			if (name.equals(sender))
+			{
+				data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
+						+ " has retired from the game!");
+			}
+			else
+			{
+				data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
+						+ " has been retired from the game by " + bold(sender) + "!");
+			}
 			data.getWolfBot().setMode(data.getChannel(), "-v " + name);
 		} else {
 			data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)

@@ -224,7 +224,7 @@ public class WolfBot extends PircBot {
 							bold(sourceNick), player.getRole().toStringColor()));
 				}
 			}
-			GameCore.drop(player.getName(), data);
+			GameCore.drop(player.getName(), sourceNick, data);
 		}
 	}
 
