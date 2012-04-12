@@ -197,10 +197,10 @@ public class Commands
 		public void runCommand(String[] args, String sender, MessageType type) {
 			if (args.length == 2 && args[1].trim().equalsIgnoreCase("off")) {
 				WolfBotModel.getInstance().setSilentMode(true);
-				sendIrcMessage(model.getChannel(), "No reveal off.", sender, type);
+				sendIrcMessage(model.getChannel(), "Reveal off.", sender, type);
 			} else if (args.length == 2 && args[1].equals("on")) {
 				WolfBotModel.getInstance().setSilentMode(false);	
-				sendIrcMessage(model.getChannel(), "No reveal on.", sender, type);
+				sendIrcMessage(model.getChannel(), "Reveal on.", sender, type);
 			} else
 				sendIrcMessage(model.getChannel(), "Correct usage is: !anondeath on|off", sender, type);
 		}
