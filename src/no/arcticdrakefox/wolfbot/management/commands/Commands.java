@@ -276,7 +276,7 @@ public class Commands
 		public void runCommand(String[] args, String sender, MessageType type) {
 			if (args.length == 2)
 				sendIrcMessage(model.getChannel(), BotConstants.help(args[1]), sender, type);
-			if (args.length == 3)
+			else if (args.length == 3)
 				sendIrcMessage(model.getChannel(), BotConstants.help(args[1], args[2]), sender, type);
 			else
 				sendIrcMessage(
