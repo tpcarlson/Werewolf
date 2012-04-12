@@ -2,10 +2,12 @@ package no.arcticdrakefox.wolfbot.roles;
 
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 public class ToughGuy extends Villager {
 
 	private boolean hit = false;
+	private String delayedCause = null;
 	
 	public ToughGuy(String name) {
 		super(name);
@@ -30,7 +32,11 @@ public class ToughGuy extends Villager {
 	public String nightStart() {
 		if (hit)
 		{
-			die(String.format("In the dead of night %s finally succumbs to their wounds, blood pooling like tar by the anvil...", getName()));
+			if (WolfBotModel.getInstance().getSilentMode()) {
+				die (delayedCause);
+			} else {
+				die(String.format("In the dead of night %s finally succumbs to their wounds, blood pooling like tar by the anvil...", getName()));
+			}
 		}
 		
 		return null;
@@ -41,7 +47,12 @@ public class ToughGuy extends Villager {
 	{
 		if (! hit)
 		{
-			this.causeOfDeath = String.format ("%s is down but not out. It doesn't look like they'll live much longer though.", getName());
+			if (WolfBotModel.getInstance().getSilentMode()) {
+				this.delayedCause = causeOfDeath;
+				// In silent mode players just see no one died
+			} else {
+				this.causeOfDeath = String.format ("%s is down but not out. It doesn't look like they'll live much longer though.", getName());
+			}
 		}
 		else
 		{
