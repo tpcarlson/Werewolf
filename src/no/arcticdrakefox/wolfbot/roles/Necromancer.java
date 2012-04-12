@@ -22,7 +22,7 @@ public class Necromancer extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are a ghost, capable of bringing people back from the dead as you once managed to do for yourself.";
+		return "You are a necromancer, capable of bringing people back from the dead as you once managed to do for yourself.";
 	}
 
 	@Override
