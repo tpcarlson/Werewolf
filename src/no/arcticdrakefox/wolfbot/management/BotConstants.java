@@ -1,5 +1,7 @@
 package no.arcticdrakefox.wolfbot.management;
 
+import com.google.common.base.Joiner;
+
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.roles.SkipPlayer;
 
@@ -33,7 +35,7 @@ public class BotConstants {
 		case "end":
 			return "!end: Ends game in progress.";
 		case "set":
-			return "!set <role> <count>: sets specified role to specified amount. Valid roles are wolf, devil, mason, scry, vigilante, baner, ghost";
+			return "!set <role> <count>: sets specified role to specified amount. Valid roles are " + Joiner.on(", ").join(Role.values())+ ".";
 		case "list":
 			return "!list: Shows all living players in game.";
 		case "roles":
