@@ -1,5 +1,7 @@
 package no.arcticdrakefox.wolfbot;
 
+import gnu.getopt.Getopt;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Timer;
@@ -27,10 +29,39 @@ import com.google.common.collect.Lists;
 public class WolfBot extends PircBot {
 
 	public static void main(String[] args) throws Exception {
-		PircBot bot = new WolfBot("WolfBot", "ruffruff");
+		
+		String server = "irc.lessthan3.net";
+		String nick = "Wolfbot";
+		String channel = "#wolfbot";
+	
+		 Getopt g = new Getopt("WolfBot", args, "c:n:s:");
+		 //
+		int c;
+		while ((c = g.getopt()) != -1) {
+			switch (c) {
+			case 'c':
+				channel = g.getOptarg();
+				break;
+			case 'n':
+				nick = g.getOptarg();
+				break;
+			case 's':
+				server = g.getOptarg();
+				//
+			case '?':
+				break; // getopt() already printed an error
+			//
+			default:
+				System.out.print("getopt() returned " + c + "\n");
+			}
+		}
+		
+		
+	
+		PircBot bot = new WolfBot(nick, "ruffruff");
 		bot.setVerbose(true);
-		bot.connect("irc.lessthan3.net");
-		bot.joinChannel("#wolfbot");
+		bot.connect(server);
+		bot.joinChannel(channel);
 	}
 
 	public static String bold(String s) {
