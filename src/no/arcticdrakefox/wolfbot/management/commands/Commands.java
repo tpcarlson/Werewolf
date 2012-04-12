@@ -254,7 +254,7 @@ public class Commands
 		}
 	};	
 	public static final Command END_COMMAND   = new Command ("!end",
-			Lists.newArrayList(State.values()),
+			Lists.newArrayList(Lists.newArrayList(State.Day, State.Night, State.Starting)),
 			Lists.newArrayList(MessageType.CHANNEL))
 	{
 

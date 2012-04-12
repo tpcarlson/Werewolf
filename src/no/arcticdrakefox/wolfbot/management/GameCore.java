@@ -213,12 +213,19 @@ public class GameCore {
 		if (data.getState() != State.None) // Night or day
 		{
 			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
-			printCast (data);
-			data.getPlayers().reset();
-			data.getWolfBot().setMode(data.getChannel(), "-m");
-			data.getWolfBot().deVoiceAll();
-			data.getWolfBot().sendIrcMessage(data.getChannel(), 
-					"Thanks for playing! Say !start to go again!");
+			if (data.getState() == State.Starting)
+			{
+				data.getWolfBot().sendIrcMessage(data.getChannel(), "Start cancelled.");
+			}
+			else
+			{
+				printCast (data);
+				data.getPlayers().reset();
+				data.getWolfBot().setMode(data.getChannel(), "-m");
+				data.getWolfBot().deVoiceAll();
+				data.getWolfBot().sendIrcMessage(data.getChannel(), 
+						"Thanks for playing! Say !start to go again!");
+			}
 			
 			data.setState(State.None);
 		}
