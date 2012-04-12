@@ -134,6 +134,9 @@ public class GameCore {
 								"they leave the village behind to find fresh meat elsewhere.",
 								bold(StringHandler.listToString(data.getPlayers().getWolves()))));
 			endGame(data);
+			
+			// End of the game - return true here.
+			return true;
 		}
 		return false;
 	}
@@ -177,7 +180,9 @@ public class GameCore {
 				}
 			}
 		}
+		
 		checkDead(data);
+		
 		if (!checkVictory(data))
 			startNight(data);
 	}
@@ -186,7 +191,7 @@ public class GameCore {
 		data.setState(State.Night);
 		data.getWolfBot().deVoiceAll();
 		data.getWolfBot().sendIrcMessage( data.getChannel(),
-				"It is now night, and most villagers can only sleep." +
+				"It is now night, and most villagers can only sleep. " +
 				"Some forces are busily at work, however...");
 		data.getPlayers().clearVotes();
 		data.getWolfBot().sendNightStartMessages();
