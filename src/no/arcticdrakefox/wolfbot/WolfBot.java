@@ -37,7 +37,6 @@ public class WolfBot extends PircBot {
 		 Getopt g = new Getopt("WolfBot", args, "c:n:s:");
 		 //
 		int c;
-		String arg;
 		while ((c = g.getopt()) != -1) {
 			switch (c) {
 			case 'c':
