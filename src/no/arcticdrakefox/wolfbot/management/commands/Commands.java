@@ -367,7 +367,7 @@ public class Commands
 			{
 				if (type != MessageType.PRIVATE)
 				{
-					GameCore.drop(args[1], model);
+					GameCore.drop(args[1], sender, model);
 				}
 				else
 				{
@@ -375,7 +375,7 @@ public class Commands
 				}
 			}
 			else if (args.length == 1)
-				GameCore.drop(sender, model);
+				GameCore.drop(sender, sender, model);
 			else {
 				sendIrcMessage(model.getChannel(), "Correct usage is:  !drop [player]", sender, type);
 			}
