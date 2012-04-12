@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
 
@@ -28,12 +29,12 @@ public class ApprenticeScry extends Scry {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are the apprentice Scry. You will take over if your master dies.";
+		return Messages.getString("ApprenticeScry.intro"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightStart() {
-		if (active && !informed) return "Your master has been killed - you now have his powers." + super.nightStart();
+		if (active && !informed) return Messages.getString("ApprenticeScry.upgrade") + super.nightStart(); //$NON-NLS-1$
 		if (active) return super.nightStart();
 		return null;
 	}
@@ -51,6 +52,6 @@ public class ApprenticeScry extends Scry {
 	}	
 	@Override
 	public String helpText() {
-		return "The apprentice scry has been learning from his master for years. If his master dies, he will gain his scrying power.";
+		return Messages.getString("ApprenticeScry.help"); //$NON-NLS-1$
 	}
 }
