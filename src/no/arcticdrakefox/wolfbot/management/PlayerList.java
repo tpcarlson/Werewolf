@@ -86,6 +86,19 @@ public class PlayerList{
 		return StringHandler.listToString(roleCountList);
 	}
 	
+	public List<Player> getPlayersWithNightActions() {
+		List<Player> ret = new ArrayList<Player>(players.size());
+		System.out.println(players.size());
+		for (Player player : players)
+		{
+			if (player.isAlive() || player.hasDeadActions())
+			{
+				ret.add(player);
+			}
+		}	
+		return ret;
+	}
+	
 	public List<Player> getLivingPlayers(){
 		List<Player> ret = new ArrayList<Player>(players.size());
 		System.out.println(players.size());

@@ -3,12 +3,15 @@ package no.arcticdrakefox.wolfbot.roles;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 public class Ghost extends Player {
-	
-	public Ghost(String name){
+
+	public Ghost(String name) {
 		super(name);
 	}
+
+	String msg = null;
 	
 	@Override
 	public boolean isWolf() {
@@ -22,55 +25,42 @@ public class Ghost extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are a ghost, capable of bringing people back from the dead as you once managed to do for yourself.";
+		return "Ghosts can comunicate with the living, one charactor at a time.";
 	}
 
 	@Override
 	public String nightStart() {
-		isReady = false;
-		return "The time is right. You may !ghost a person back to life or just !rest";
+		if (isAlive()) return null;
+		return "What would you like to say to the living !Say <somthing>.";
 	}
 
 	@Override
 	public String nightAction(String message, PlayerList players) {
-		String[] args = message.trim().split(" ", 2);
-		if (args[0].equals("!ghost")){
-			if (args.length != 2)
-				return "Correct usage: !ghost <someone>";
-			Player target = players.getPlayer(args[1]);
-			if (target == null)
-				return targetNotFound(args[1]);
-			else {
-				if (target.isAlive()){
-					return String.format("%s is still amongst the living.", target);
-				} else {
-					vote(target);
-					isReady = true;
-					return String.format("Life leaves your body as you trail off the spirit world, trying to find %s", target);
-				}
+		if (!isAlive()) {
+			String[] args = message.trim().split(" ", 2);
+			if (args[0].equals("!say")) {
+				if (args.length != 2)
+					return "Correct usage: !say <Letter>";
+				msg = args[1].trim().substring(0, 1);
+				isReady = true;
+				WolfBotModel.getInstance().sendIrcMessage(WolfBotModel.getInstance().getChannel(), 
+						String.format("The voice of the dead can be heard pn the wind." +
+								"You make out the letter '%s'", msg));
+				return String.format("Your message '%s' will be relayed", msg);
 			}
-		} else if (args[0].equals("!rest")){
-			isReady = true;
-			vote = null;
-			return "You cannot think of a worthy man to bring back. Tonight, you will rest.";
-		} else
-			return null;
+		}
+
+		return null;
 	}
-	
+
 	@Override
 	public String nightEnd() {
-		if (vote == null)
-			return null;
-		else if (vote.isAlive()){
-			return null;
-		} else {
-			vote.revive();
-			return String.format("A villager emerges at dawn, walking about as if they had never died at all. %s lives again!", vote);
-		}
+		return null;
 	}
 
 	@Override
 	public String helpText() {
-		return "The ghost is capable of raising the dead at night.";
+		return "Once the ghost dies they will be able to communicate with the living.";
 	}
+
 }

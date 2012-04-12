@@ -4,6 +4,10 @@ import no.arcticdrakefox.wolfbot.model.Role;
 
 public abstract class Player {
 	
+	public boolean hasDeadActions() {
+		return false;
+	}
+	
 	protected String name;
 	public String getName(){return name;}
 	public void rename(String name){this.name = name;}
