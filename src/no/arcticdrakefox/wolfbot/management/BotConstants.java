@@ -1,10 +1,9 @@
 package no.arcticdrakefox.wolfbot.management;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.roles.SkipPlayer;
+
+import com.google.common.collect.Lists;
 
 public class BotConstants {
 	public static final String NO_VOTES = "Noone ;_;";

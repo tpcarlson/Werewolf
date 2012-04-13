@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
@@ -25,7 +26,7 @@ public class ToughGuy extends Villager {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are a burly villager, the blacksmith's apprentice.";
+		return Messages.getString("ToughGuy.intro"); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -35,7 +36,7 @@ public class ToughGuy extends Villager {
 			if (WolfBotModel.getInstance().getSilentMode()) {
 				die (delayedCause);
 			} else {
-				die(String.format("In the dead of night %s finally succumbs to their wounds, blood pooling like tar by the anvil...", getName()));
+				die(Messages.getString("ToughGuy.died", new Object[]{getName()})); //$NON-NLS-1$
 			}
 		}
 		
@@ -51,7 +52,7 @@ public class ToughGuy extends Villager {
 				this.delayedCause = causeOfDeath;
 				// In silent mode players just see no one died
 			} else {
-				this.causeOfDeath = String.format ("%s is down but not out. It doesn't look like they'll live much longer though.", getName());
+				this.causeOfDeath = Messages.getString("ToughGuy.wounded",new Object[]{getName()}); //$NON-NLS-1$
 			}
 		}
 		else
@@ -61,6 +62,6 @@ public class ToughGuy extends Villager {
 	}
 	@Override
 	public String helpText() {
-		return "The tough guy can survive a wolf's bite - for a while! He will succumb to his injuries the following evening.";
+		return Messages.getString("ToughGuy.help"); //$NON-NLS-1$
 	}
 }
