@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
@@ -22,21 +23,21 @@ public class Baner extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are the terror that flaps into the night! You are Wolfsbane! Baner of wolves! Each night you may choose one person to protect from wolf attacks.";
+		return Messages.getString("Baner.description"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightStart() {
 		isReady = false;
-		return "It's time. !bane the wolves from someone tonight or !rest";
+		return Messages.getString("Baner.nightInstructions"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightAction(String message, PlayerList players) {
-		String[] args = message.trim().split(" ", 2);
-		if (args[0].equals("!bane")){
+		String[] args = message.trim().split(" ", 2); //$NON-NLS-1$
+		if (args[0].equals("!bane")){ //$NON-NLS-1$
 			if (args.length != 2)
-				return "Correct usage: !bane <someone>";
+				return Messages.getString("Baner.correctUsage"); //$NON-NLS-1$
 			Player target = players.getPlayer(args[1]);
 			if (target == null)
 				return targetNotFound(args[1]);
@@ -45,16 +46,16 @@ public class Baner extends Player {
 					vote(target);
 					isReady = true;
 					if (target.equals(this))
-						return "You fortify your defenses and set up traps. The wolves will never catch you!";
+						return Messages.getString("Baner.selfBane"); //$NON-NLS-1$
 					else
-						return String.format("You don your purple cape and matching bell-shaped hat. %s will not die on your watch!", target);
+						return Messages.getString("Baner.bane", new Object[] {target}); //$NON-NLS-1$
 				} else
-					return String.format("You are too late to save %s, they are dead already.", target);
+					return Messages.getString("Baner.tooLate", new Object[] {target}); //$NON-NLS-1$
 			}
-		} else if (args[0].equals("!rest")){
+		} else if (args[0].equals("!rest")){ //$NON-NLS-1$
 			isReady = true;
 			vote = null;
-			return "You give up. The village can die for all you care.";
+			return Messages.getString("Baner.rest"); //$NON-NLS-1$
 		} else
 			return null;
 	}
@@ -66,6 +67,6 @@ public class Baner extends Player {
 
 	@Override
 	public String helpText() {
-		return "The Baner can protect a member of the village each night, including themselves. If the wolves attack that person, they will be driven off and nobody will die.";
+		return Messages.getString("Baner.help"); //$NON-NLS-1$
 	}
 }
