@@ -13,10 +13,10 @@ import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+import no.arcticdrakefox.wolfbot.predicates.TeamPredicate;
 
 import org.jibble.pircbot.Colors;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
@@ -134,6 +134,9 @@ public class GameCore {
 								"they leave the village behind to find fresh meat elsewhere.",
 								bold(StringHandler.listToString(data.getPlayers().getWolves()))));
 			endGame(data);
+			
+			// End of the game - return true here.
+			return true;
 		}
 		return false;
 	}
@@ -177,7 +180,9 @@ public class GameCore {
 				}
 			}
 		}
+		
 		checkDead(data);
+		
 		if (!checkVictory(data))
 			startNight(data);
 	}
@@ -186,7 +191,7 @@ public class GameCore {
 		data.setState(State.Night);
 		data.getWolfBot().deVoiceAll();
 		data.getWolfBot().sendIrcMessage( data.getChannel(),
-				"It is now night, and most villagers can only sleep." +
+				"It is now night, and most villagers can only sleep. " +
 				"Some forces are busily at work, however...");
 		data.getPlayers().clearVotes();
 		data.getWolfBot().sendNightStartMessages();
@@ -210,31 +215,24 @@ public class GameCore {
 	}
 
 	public static void endGame(WolfBotModel data){
-		if (data.getState() != State.None && data.getState() != State.Starting) // Night or day
+		if (data.getState() != State.None) // Night or day
 		{
 			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
-			printCast (data);
-			data.getPlayers().reset();
-			data.getWolfBot().setMode(data.getChannel(), "-m");
-			data.getWolfBot().deVoiceAll();
-			data.getWolfBot().sendIrcMessage(data.getChannel(), 
-					"Thanks for playing! Say !start to go again!");
-		}
-		data.setState(State.None);
-	}
-	
-	static class TeamPredicate implements Predicate<Player>
-	{
-		Team team;
-		
-		public TeamPredicate (Team team)
-		{
-			this.team = team;
-		}
-		
-		@Override
-		public boolean apply(Player player) {
-			return player.getRole().getTeam().equals(team);
+			if (data.getState() == State.Starting)
+			{
+				data.getWolfBot().sendIrcMessage(data.getChannel(), "Start cancelled.");
+			}
+			else
+			{
+				printCast (data);
+				data.getPlayers().reset();
+				data.getWolfBot().setMode(data.getChannel(), "-m");
+				data.getWolfBot().deVoiceAll();
+				data.getWolfBot().sendIrcMessage(data.getChannel(), 
+						"Thanks for playing! Say !start to go again!");
+			}
+			
+			data.setState(State.None);
 		}
 	}
 	

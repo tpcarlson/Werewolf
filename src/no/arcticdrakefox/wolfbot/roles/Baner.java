@@ -4,6 +4,10 @@ import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
+import no.arcticdrakefox.wolfbot.predicates.TeamPredicate;
+
+import com.google.common.collect.Collections2;
 
 public class Baner extends Player {
 	
@@ -31,7 +35,7 @@ public class Baner extends Player {
 		isReady = false;
 		return Messages.getString("Baner.nightInstructions"); //$NON-NLS-1$
 	}
-
+	
 	@Override
 	public String nightAction(String message, PlayerList players) {
 		String[] args = message.trim().split(" ", 2); //$NON-NLS-1$

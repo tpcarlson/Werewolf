@@ -1,5 +1,6 @@
-package no.arcticdrakefox.wolfbot.management.commands;
+package no.arcticdrakefox.wolfbot.predicates;
 
+import no.arcticdrakefox.wolfbot.management.commands.Command;
 import no.arcticdrakefox.wolfbot.model.MessageType;
 
 import com.google.common.base.Predicate;

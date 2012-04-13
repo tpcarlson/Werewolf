@@ -39,7 +39,7 @@ public class StringHandler {
 			return ret;
 		for (int i = 1; i < list.size() - 1; ++i) 
 			ret += ", " + Colors.BOLD + list.get(i).toString() + Colors.NORMAL + "(" + list.get(i).getRole() + ")";
-		ret += " and " + Colors.BOLD + Iterables.getLast(list).toString() + Colors.NORMAL + "(" + Iterables.getLast(list).getRole();
+		ret += " and " + Colors.BOLD + Iterables.getLast(list).toString() + Colors.NORMAL + "(" + Iterables.getLast(list).getRole() + ")";
 		return ret;
 	}
 	
