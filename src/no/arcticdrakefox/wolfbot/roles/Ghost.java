@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
@@ -25,28 +26,27 @@ public class Ghost extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "Ghosts can comunicate with the living, one charactor at a time.";
+		return Messages.getString("Ghost.init"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightStart() {
 		if (isAlive()) return null;
-		return "What would you like to say to the living !Say <somthing>.";
+		return Messages.getString("Ghost.nightHelp"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightAction(String message, PlayerList players) {
 		if (!isAlive()) {
-			String[] args = message.trim().split(" ", 2);
-			if (args[0].equals("!say")) {
+			String[] args = message.trim().split(" ", 2); //$NON-NLS-1$
+			if (args[0].equals("!say")) { //$NON-NLS-1$
 				if (args.length != 2)
-					return "Correct usage: !say <Letter>";
+					return Messages.getString("Ghost.nightError"); //$NON-NLS-1$
 				msg = args[1].trim().substring(0, 1);
 				isReady = true;
 				WolfBotModel.getInstance().sendIrcMessage(WolfBotModel.getInstance().getChannel(), 
-						String.format("The voice of the dead can be heard pn the wind." +
-								"You make out the letter '%s'", msg));
-				return String.format("Your message '%s' will be relayed", msg);
+						Messages.getString("Ghost.say", new Object[] {msg})); //$NON-NLS-1$
+				return Messages.getString("Ghost.feedback", new Object[] { msg}); //$NON-NLS-1$
 			}
 		}
 
@@ -60,7 +60,7 @@ public class Ghost extends Player {
 
 	@Override
 	public String helpText() {
-		return "Once the ghost dies they will be able to communicate with the living.";
+		return Messages.getString("Ghost.help"); //$NON-NLS-1$
 	}
 
 }

@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
@@ -33,47 +34,45 @@ public class Wolf extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return String.format("You're a werewolf! The wolves are %s",
-				StringHandler.listToString(players.getWolves())
-		);
+		return Messages.getString("Wolf.intro", //$NON-NLS-1$
+				new Object[] {StringHandler.listToString(players.getWolves())});
 	}
 
 	@Override
 	public String nightStart() {
 		isReady = false;
 		if (ill) {
-			return "Something you ate last night did not agree with you. You will not feel better till you !rest.";
+			return Messages.getString("Wolf.ill"); //$NON-NLS-1$
 		} else {
-			return "As a wolf, you can !kill someone tonight or just !rest";
+			return Messages.getString("Wolf.nightHelp"); //$NON-NLS-1$
 		}
 	}
 
 	@Override
 	public String nightAction(String message, PlayerList players) {
 		if (!ill) {
-			String[] args = message.trim().split(" ", 2);
-			if (args[0].equals("!kill")) {
+			String[] args = message.trim().split(" ", 2); //$NON-NLS-1$
+			if (args[0].equals("!kill")) { //$NON-NLS-1$
 				if (args.length != 2)
-					return "Correct usage: !kill <someone>";
+					return Messages.getString("Wolf.nightError"); //$NON-NLS-1$
 				Player target = players.getPlayer(args[1]);
 				if (target == null)
 					return targetNotFound(args[1]);
 				else {
 					if (target.equals(this)) {
-						return "Killing yourself doesn't seem very productive.";
+						return Messages.getString("Wolf.selfKill"); //$NON-NLS-1$
 					} else if (target.isAlive()) {
 						vote(target);
 						isReady = true;
-						return String
-								.format("You sharpen your fangs. They will taste *%s's* blood tonight!",
-										target);
+						return Messages.getString("Wolf.nightConfirmation", //$NON-NLS-1$
+								new Object[] {target});
 					} else
-						return String.format("*%s* is already dead.", target);
+						return Messages.getString("Wolf.alreadyDead", new Object[] {target}); //$NON-NLS-1$
 				}
-			} else if (args[0].equals("!rest")) {
+			} else if (args[0].equals("!rest")) { //$NON-NLS-1$
 				isReady = true;
 				vote = null;
-				return "You decide to quell your bloodlust tonight.";
+				return Messages.getString("Wolf.rested"); //$NON-NLS-1$
 			} else
 				return null;
 		} else {
@@ -92,6 +91,6 @@ public class Wolf extends Player {
 
 	@Override
 	public String helpText() {
-		return "The werewolf is the main enemy to all villagers - their aim is to eat everyone before they get lynched!";
+		return Messages.getString("Wolf.help"); //$NON-NLS-1$
 	}
 }

@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
@@ -24,8 +25,8 @@ public class Devil extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return String.format("You are a devil, an evil creature. You may check a person's role each night, or sacrifice someone. The wolves are %s, and you are on their side!",
-				StringHandler.listToString(players.getWolves())
+		return Messages.getString("Devil.intro", //$NON-NLS-1$
+				new Object[] {StringHandler.listToString(players.getWolves())}
 		);
 	}
 
@@ -33,40 +34,40 @@ public class Devil extends Player {
 	public String nightStart() {
 		isReady = false;
 		scryVote = null;
-		return "The moon is in alignment. You may !scry a person, !kill them or just !rest";
+		return Messages.getString("Devil.nightInstructions"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightAction(String message, PlayerList players) {
-		String[] args = message.trim().split(" ", 2);
-		if (args[0].matches("!scry|!kill")){
+		String[] args = message.trim().split(" ", 2); //$NON-NLS-1$
+		if (args[0].matches("!scry|!kill")){ //$NON-NLS-1$
 			if (args.length != 2)
-				return "Correct usage: !scry <someone> or !kill <someone>";
+				return Messages.getString("Devil.nightHelp"); //$NON-NLS-1$
 			if (isReady)
-				return "You may only scry one person each night.";
+				return Messages.getString("Devil.multipleScryError"); //$NON-NLS-1$
 			Player target = players.getPlayer(args[1]);
 			if (target == null)
 				return targetNotFound(args[1]);
 			else {
 				if (target.equals(this)){
-					return "It makes no sense to target yourself.";
+					return Messages.getString("Devil.selfScry"); //$NON-NLS-1$
 				} else if (target.isAlive()){
 					isReady = true;
-					if (args[0].equals("!scry")){
+					if (args[0].equals("!scry")){ //$NON-NLS-1$
 						scryVote = target;
-						return String.format("You start a dark prayer to your evil gods, staring into the soul of %s", target);
+						return Messages.getString("Devil.successfulFeedback", new Object[]{target}); //$NON-NLS-1$
 					} else {
 						vote = target;
-						return String.format("Though unbefitting of one of your stature, you abandon your artifacts and get out to hunt %s", target);
+						return Messages.getString("Devil.restFeedback", new Object[]{target}); //$NON-NLS-1$
 					}
 				} else
-					return String.format("%s is already dead.", target);
+					return Messages.getString("Devil.targetDied", new Object[]{target}); //$NON-NLS-1$
 			}
-		} else if (args[0].equals("!rest")){
+		} else if (args[0].equals("!rest")){ //$NON-NLS-1$
 			isReady = true;
 			vote = null;
 			scryVote = null;
-			return "You rest for tonight, confident that you already know all you need.";
+			return Messages.getString("Devil.rested"); //$NON-NLS-1$
 		}
 			return null;
 	}
@@ -76,12 +77,12 @@ public class Devil extends Player {
 		if (scryVote == null){
 			return null;
 		} else {
-			return String.format("%s is a %s", vote, vote.getRole());
+			return Messages.getString("Devil.result", new Object[] {vote, vote.getRole()}); //$NON-NLS-1$
 		}
 	}
 
 	@Override
 	public String helpText() {
-		return "The devil is an evil creature who can look deep into someone's soul and know what they are capable of. He can also sacrifice people at night, if he prefers.";
+		return Messages.getString("Devil.roleHelp"); //$NON-NLS-1$
 	}
 }

@@ -2,6 +2,7 @@ package no.arcticdrakefox.wolfbot.roles;
 
 import java.util.Collection;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
@@ -28,7 +29,7 @@ public class Diseased extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are diseased, your man-meat will poison any wolf that eats you.";
+		return Messages.getString("Diseased.intro"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class Diseased extends Player {
 
 	@Override
 	public String helpText() {
-		return "I taste bad. Don't eat me!";
+		return Messages.getString("Diseased.helptext"); //$NON-NLS-1$
 	}
 
 }

@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
@@ -23,41 +24,40 @@ public class AuraScry extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return	"You are the Aura Scry, each night you will be able to see whether " +
-				"a player has a special ability.";
+		return	Messages.getString("AuraScry.info"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightStart() {
 		isReady = false;
-		return "The stars smile on you tonight. You may !scry a person or just !rest";
+		return Messages.getString("AuraScry.nightInstructions"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightAction(String message, PlayerList players) {
-		String[] args = message.trim().split(" ", 2);
-		if (args[0].equals("!scry")){
+		String[] args = message.trim().split(" ", 2); //$NON-NLS-1$
+		if (args[0].equals("!scry")){ //$NON-NLS-1$
 			if (args.length != 2)
-				return "Correct usage: !scry <someone>";
+				return Messages.getString("AuraScry.correctUsage"); //$NON-NLS-1$
 			if (isReady)
-				return "You may only scry one person each night.";
+				return Messages.getString("AuraScry.tooManyPeople"); //$NON-NLS-1$
 			Player target = players.getPlayer(args[1]);
 			if (target == null)
 				return targetNotFound(args[1]);
 			else {
 				if (target.equals(this)){
-					return "You don't need your special powers to know that you are a scry.";
+					return Messages.getString("AuraScry.selfScry"); //$NON-NLS-1$
 				} else if (target.isAlive()){
 					isReady = true;
 					vote = target;
-					return String.format("You set up your array of candles, orbs and artifacts, concentrating your efforts on %s", target);
+					return Messages.getString("AuraScry.Scried", new Object[] {target}); //$NON-NLS-1$
 				} else
-					return String.format("%s is already dead.", target);
+					return Messages.getString("AuraScry.allreadyDead", new Object[] {target}); //$NON-NLS-1$
 			}
-		} else if (args[0].equals("!rest")){
+		} else if (args[0].equals("!rest")){ //$NON-NLS-1$
 			isReady = true;
 			vote = null;
-			return "You rest for tonight, confident that you already know all you need.";
+			return Messages.getString("AuraScry.rest"); //$NON-NLS-1$
 		} else
 			return null;
 	}
@@ -69,14 +69,14 @@ public class AuraScry extends Player {
 		} else {
 			Role r = vote.getRole();
 			return (r != Role.villager) && (r!=Role.wolf) ?
-				String.format("%s has an aura. They clearly have some power, though you know not what it may be.", vote)
-				: String.format("%s does not appear to have any powers, whatever their crimes.", vote);
+				Messages.getString("AuraScry.hasAura", new Object[] {vote}) //$NON-NLS-1$
+				: Messages.getString("AuraScry.noAura", new Object[] {vote}); //$NON-NLS-1$
 		}
 	}
 
 	@Override
 	public String helpText() {
-		return "The aura scry can look into the spirit world to sense the mental strength of others. He can focus on someone at night and will know if they have any special powers - but won't know what they are! ";
+		return Messages.getString("AuraScry.help"); //$NON-NLS-1$
 	}
 
 }
