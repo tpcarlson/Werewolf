@@ -2,6 +2,7 @@ package no.arcticdrakefox.wolfbot.roles;
 
 import java.util.Collection;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
@@ -46,42 +47,40 @@ public class Scry extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return "You are a scry. Every night you may check a person for lycanthropy. Beware, for you are the wolves primary target.";
+		return Messages.getString("Scry.intro"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightStart() {
 		isReady = false;
-		return "The moon is in alignment. You may !scry a person or just !rest";
+		return Messages.getString("Scry.nightHelp"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String nightAction(String message, PlayerList players) {
-		String[] args = message.trim().split(" ", 2);
-		if (args[0].equals("!scry")) {
+		String[] args = message.trim().split(" ", 2); //$NON-NLS-1$
+		if (args[0].equals("!scry")) { //$NON-NLS-1$
 			if (args.length != 2)
-				return "Correct usage: !scry <someone>";
+				return Messages.getString("Scry.nightError"); //$NON-NLS-1$
 			if (isReady)
-				return "You may only scry one person each night.";
+				return Messages.getString("Scry.twoScries"); //$NON-NLS-1$
 			Player target = players.getPlayer(args[1]);
 			if (target == null)
 				return targetNotFound(args[1]);
 			else {
 				if (target.equals(this)) {
-					return "You don't need your special powers to know that you are a scry.";
+					return Messages.getString("Scry.selfScry"); //$NON-NLS-1$
 				} else if (target.isAlive()) {
 					isReady = true;
 					vote = target;
-					return String
-							.format("You set up your array of candles, orbs and artifacts, concentrating your efforts on %s",
-									target);
+					return Messages.getString("Scry.success",new Object []{target});
 				} else
-					return String.format("%s is already dead.", target);
+					return Messages.getString("Scry.deadError", new Object[]{target}); //$NON-NLS-1$
 			}
-		} else if (args[0].equals("!rest")) {
+		} else if (args[0].equals("!rest")) { //$NON-NLS-1$
 			isReady = true;
 			vote = null;
-			return "You rest for tonight, confident that you already know all you need.";
+			return Messages.getString("Scry.rest"); //$NON-NLS-1$
 		} else
 			return null;
 	}
@@ -91,17 +90,13 @@ public class Scry extends Player {
 		if (vote == null) {
 			return null;
 		} else {
-			return vote.isWolf() ? String
-					.format("%s shows all the signs of lycanthropy. They are undoubtedly a wolf, but do you dare to tell anyone?",
-							vote)
-					: String.format(
-							"%s, though certainly not an innocent person, does not appear to be a werewolf.",
-							vote);
+			return vote.isWolf() ? Messages.getString("Scry.foundWolf",new Object[]{vote})
+					: Messages.getString("Scry.foundNonWolf",new Object[]{vote});
 		}
 	}
 
 	@Override
 	public String helpText() {
-		return "The scry can use his psychic talents to stare into someone's soul at night - if they are a wolf, he will know!";
+		return Messages.getString("Scry.help"); //$NON-NLS-1$
 	}
 }

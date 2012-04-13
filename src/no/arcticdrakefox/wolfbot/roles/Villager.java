@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
@@ -17,7 +18,7 @@ public class Villager extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players){
-		return "You are a common villager. Try not to get eaten or lynched!";
+		return Messages.getString("Villager.intro"); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -32,7 +33,7 @@ public class Villager extends Player {
 
 	@Override
 	public String nightAction(String message, PlayerList players) {
-		return "You do not have any night actions. Please stop pestering me, filthy commoner.";
+		return Messages.getString("Villager.nightError"); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -42,6 +43,6 @@ public class Villager extends Player {
 
 	@Override
 	public String helpText() {
-		return "This role is the normal villager, with no special powers. Try to survive without getting lynched or eaten!";
+		return Messages.getString("Villager.help"); //$NON-NLS-1$
 	}
 }

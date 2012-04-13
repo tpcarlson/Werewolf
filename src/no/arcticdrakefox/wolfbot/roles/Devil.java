@@ -25,8 +25,8 @@ public class Devil extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return String.format(Messages.getString("Devil.intro"), //$NON-NLS-1$
-				StringHandler.listToString(players.getWolves())
+		return Messages.getString("Devil.intro", //$NON-NLS-1$
+				new Object[] {StringHandler.listToString(players.getWolves())}
 		);
 	}
 
