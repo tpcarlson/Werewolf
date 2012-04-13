@@ -1,5 +1,6 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
 
@@ -17,10 +18,10 @@ public class Mayor extends Villager {
 	
 	@Override
 	public String roleInfo(PlayerList players){
-		return "You are the village Mayor and your opinion is well respected by your fellow villagers. Try not to get eaten or lynched!";
+		return Messages.getString("Mayor.intro"); //$NON-NLS-1$
 	}
 	@Override
 	public String helpText() {
-		return "The Mayor is well respected by the villagers - his voice counts more than anyone else when it comes to lynching time!";
+		return Messages.getString("Mayor.help"); //$NON-NLS-1$
 	}
 }

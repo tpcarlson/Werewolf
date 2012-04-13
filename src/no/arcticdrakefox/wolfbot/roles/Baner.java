@@ -4,10 +4,6 @@ import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
-import no.arcticdrakefox.wolfbot.model.WolfBotModel;
-import no.arcticdrakefox.wolfbot.predicates.TeamPredicate;
-
-import com.google.common.collect.Collections2;
 
 public class Baner extends Player {
 	
