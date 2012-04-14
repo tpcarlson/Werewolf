@@ -56,4 +56,8 @@ public class StringHandler {
 			ret += " " + list.get(i).getName();
 		return ret;
 	}
+	
+	public static String colorise(final String color, final String text) {
+		return color + text + Colors.NORMAL;
+	}
 }
