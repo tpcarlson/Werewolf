@@ -21,10 +21,19 @@ public class PlayerList{
 	
 	//List information
 	
+	/**
+	 * 
+	 * @return Count of wolves
+	 */
 	public int wolfCount(){
 		return getWolves().size();
 	}
 	
+	/**
+	 * Returns the number of living players
+	 * 
+	 * @return Number of players still alive
+	 */
 	public int playerCount(){
 		return getLivingPlayers().size();
 	}
@@ -88,7 +97,7 @@ public class PlayerList{
 	
 	public List<Player> getPlayersWithNightActions() {
 		List<Player> ret = new ArrayList<Player>(players.size());
-		System.out.println(players.size());
+
 		for (Player player : players)
 		{
 			if (player.isAlive() || player.hasDeadActions())
@@ -101,7 +110,7 @@ public class PlayerList{
 	
 	public List<Player> getLivingPlayers(){
 		List<Player> ret = new ArrayList<Player>(players.size());
-		System.out.println(players.size());
+
 		for (Player player : players)
 		{
 			if (player.isAlive())

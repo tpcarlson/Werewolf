@@ -8,14 +8,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import no.arcticdrakefox.wolfbot.management.commands.Commands;
+import no.arcticdrakefox.wolfbot.management.victory.Victory;
 import no.arcticdrakefox.wolfbot.model.MessageType;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 import no.arcticdrakefox.wolfbot.predicates.TeamPredicate;
-
-import org.jibble.pircbot.Colors;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -113,32 +112,36 @@ public class GameCore {
 	}
 
 	private static boolean checkVictory(WolfBotModel data) {
-		int wolfCount = data.getPlayers().wolfCount();
-		if (wolfCount < 1) {
-			data.getWolfBot().sendIrcMessage(data.getChannel(),
-					"With all wolves exterminated, the village is safe once again.");
-			endGame(data);
-			return true;
-		} else if (wolfCount * 2 >= data.getPlayers().playerCount()) {
-			if (wolfCount == 1)
-				data.getWolfBot().sendIrcMessage(
-						data.getChannel(),
-						String.format(
-								"After turning on the last remaining  %svillager%s, %s prowls on to terrorize somewhere else.",
-								Team.Villagers.getColor(), Colors.NORMAL,
-								StringHandler.listToString(data.getPlayers().getWolves())));
-			else
-				data.getWolfBot().sendIrcMessage(
-						data.getChannel(),
-						String.format("%s turn on the last villagers. With all food depleted, " +
-								"they leave the village behind to find fresh meat elsewhere.",
-								bold(StringHandler.listToString(data.getPlayers().getWolves()))));
-			endGame(data);
-			
-			// End of the game - return true here.
-			return true;
+		List<Victory> victoryConditions = Lists.newArrayList(data.getVictoryConditions());
+		Collections.sort(victoryConditions);
+		boolean isGameOver = false;
+		String victoryString = null;
+		for (Victory v : victoryConditions)
+		{
+			if (v.isVictory(data.getPlayers()))
+			{
+				isGameOver = true;
+				victoryString = v.getVictoryMessage(data.getPlayers());
+				break;
+			}
 		}
-		return false;
+		
+		if (isGameOver && victoryString == null)
+		{
+			data.getWolfBot().sendIrcMessage(data.getChannel(), "No victory string defined!");
+		}
+		else if (isGameOver)
+		{
+			data.getWolfBot().sendIrcMessage(data.getChannel(), victoryString);
+		}
+		
+		// Regardless, we want to endGame here
+		if (isGameOver)
+		{
+			endGame(data);
+		}
+		
+		return isGameOver;
 	}
 
 	public static void startDay(WolfBotModel data) {
