@@ -67,7 +67,7 @@ public class Vigilante extends Player {
 			return null;
 		else if (isAlive){
 			if (vote.isAlive()){
-				vote.die(Messages.getString("Vigilante.killed", new Object[] {vote, vote.getRole()})); //$NON-NLS-1$
+				vote.die(Messages.getString("Vigilante.killed", vote, vote.getRole())); //$NON-NLS-1$
 				if (vote.isWolf()){
 					return Messages.getString("Vigilante.killedWolf", new Object[]{vote}); //$NON-NLS-1$
 				} else{

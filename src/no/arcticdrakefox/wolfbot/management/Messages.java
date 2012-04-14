@@ -18,7 +18,7 @@ public class Messages {
 	private Messages() {
 	}
 
-	public static String getString(String key, Object[] args) {
+	public static String getString(String key, Object... args) {
 		try {
 			int count = Integer.parseInt(RESOURCE_BUNDLE.getString(key + ".count"));
 			int rnd = rng.nextInt(count);
