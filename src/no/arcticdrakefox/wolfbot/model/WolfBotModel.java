@@ -7,6 +7,9 @@ import no.arcticdrakefox.wolfbot.WolfBot;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.commands.Command;
 import no.arcticdrakefox.wolfbot.management.commands.Commands;
+import no.arcticdrakefox.wolfbot.management.victory.Victory;
+import no.arcticdrakefox.wolfbot.management.victory.VillagerVictory;
+import no.arcticdrakefox.wolfbot.management.victory.WolfVictory;
 
 import com.google.common.collect.Lists;
 
@@ -33,6 +36,17 @@ public class WolfBotModel {
 		commands.add(Commands.END_COMMAND);
 	}
 	
+	private void initVictoryConditions ()
+	{
+		victoryConditions = Lists.newArrayList();
+		
+		// The argument to the constructor here tells the game what priority you
+		// wish to assign to this victory condition. See GameCore#checkVictory
+		// for more.
+		victoryConditions.add(new VillagerVictory(0));
+		victoryConditions.add(new WolfVictory(0));
+	}
+	
 	private String channel;
 	private String password;
 	private PlayerList players;
@@ -42,7 +56,12 @@ public class WolfBotModel {
 	private boolean silentMode = false;
 	
 	private Collection<Command> commands;
+	private Collection<Victory> victoryConditions;
 	
+	public Collection<Victory> getVictoryConditions() {
+		return victoryConditions;
+	}
+
 	public Collection<Command> getCommands() {
 		return commands;
 	}
@@ -80,6 +99,7 @@ public class WolfBotModel {
 		this.wolfBot = wolfBot;
 		Commands.setModel (this);
 		initCommands ();
+		initVictoryConditions ();
 	}
 	
 
