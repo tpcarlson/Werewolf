@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Timer;
 
 import no.arcticdrakefox.wolfbot.management.GameCore;
+import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.management.StringHandler;
@@ -30,11 +31,11 @@ public class WolfBot extends PircBot {
 
 	public static void main(String[] args) throws Exception {
 		
-		String server = "irc.lessthan3.net";
-		String nick = "Wolfbot";
-		String channel = "#wolfbot";
+		String server = "irc.lessthan3.net"; //$NON-NLS-1$
+		String nick = "Wolfbot"; //$NON-NLS-1$
+		String channel = "#wolfbot"; //$NON-NLS-1$
 	
-		 Getopt g = new Getopt("WolfBot", args, "c:n:s:");
+		 Getopt g = new Getopt("WolfBot", args, "c:n:s:"); //$NON-NLS-1$ //$NON-NLS-2$
 		 //
 		int c;
 		while ((c = g.getopt()) != -1) {
@@ -47,18 +48,17 @@ public class WolfBot extends PircBot {
 				break;
 			case 's':
 				server = g.getOptarg();
-				//
 			case '?':
+				System.out.println("help?! There is no stinking help."); //TODO
 				break; // getopt() already printed an error
-			//
 			default:
-				System.out.print("getopt() returned " + c + "\n");
+				System.out.print("getopt() returned " + c + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		
 		
 	
-		PircBot bot = new WolfBot(nick, "ruffruff");
+		PircBot bot = new WolfBot(nick, "ruffruff"); //$NON-NLS-1$
 		bot.setVerbose(true);
 		bot.connect(server);
 		bot.joinChannel(channel);
@@ -91,7 +91,7 @@ public class WolfBot extends PircBot {
 		message = StringHandler.stripColour(message).trim();
 		if (message.charAt(0) != '!')
 			return;
-		String[] args = message.split(" ");
+		String[] args = message.split(" "); //$NON-NLS-1$
 		String command = args[0];
 
 		// So, we ask the model for all commands matching the command string:
@@ -99,12 +99,12 @@ public class WolfBot extends PircBot {
 
 		if (validCommands.size() > 1)
 		{
-			sendIrcMessage(data.getChannel(), "More than one valid command. This is probably a bug. Aborting!");
+			sendIrcMessage(data.getChannel(), Messages.getString("WolfBot.error.multipleCommands")); //$NON-NLS-1$
 			return;
 		}
 		else if (validCommands.isEmpty())
 		{
-			sendIrcMessage(data.getChannel(), "Unknown command...");
+			sendIrcMessage(data.getChannel(), Messages.getString("WolfBot.error.unknownCommand")); //$NON-NLS-1$
 			return;
 		}
 		
@@ -140,7 +140,7 @@ public class WolfBot extends PircBot {
 		// Ignore private messages that aren't commands
 		if (message.charAt(0) != '!')
 			return;
-		String[] args = message.split(" ");
+		String[] args = message.split(" "); //$NON-NLS-1$
 		String command = args[0];
 		
 		Player player = data.getPlayers().getPlayer(sender);
@@ -157,7 +157,7 @@ public class WolfBot extends PircBot {
 
 		if (validCommands.size() > 1)
 		{
-			sendIrcMessage(sender, "More than one valid command. This is probably a bug. Aborting!");
+			sendIrcMessage(sender, Messages.getString("WolfBot.error.multipleCommands")); //$NON-NLS-1$
 			return;
 		}/*
 		else if (validCommands.isEmpty())
@@ -217,10 +217,10 @@ public class WolfBot extends PircBot {
 			if (! (data.getState() == State.None || data.getState() == State.Starting))
 			{
 				if (data.getSilentMode()) {
-					sendIrcMessage(data.getChannel(), String.format("%s has fled", 
+					sendIrcMessage(data.getChannel(), String.format(Messages.getString("WolfBot.fled.noReveal"),  //$NON-NLS-1$
 							bold(sourceNick)));
 				} else {
-					sendIrcMessage(data.getChannel(), String.format("%s has fled - they were a %s", 
+					sendIrcMessage(data.getChannel(), String.format(Messages.getString("WolfBot.fled.Reveal"),  //$NON-NLS-1$
 							bold(sourceNick), player.getRole().toStringColor()));
 				}
 			}
@@ -246,24 +246,22 @@ public class WolfBot extends PircBot {
 			Team team = player.getRole().getTeam();
 			switch (team) {
 			case Wolves:
-				sendIrcMessage(player.getName(), "You are on the " + team.getColor()
-						+ "wolf" + Colors.NORMAL
-						+ " team. You must attempt to eat the " + Team.Villagers.getColor()
-						+ " villagers!");
+				sendIrcMessage(player.getName(), 
+						String.format(Messages.getString("WolfBot.intro.wolf"),  //$NON-NLS-1$
+								new Object[] {StringHandler.colorise(Team.Wolves.getColor(), "wolf"),  //$NON-NLS-1$
+								StringHandler.colorise(Team.Villagers.getColor(), "villagers")})); //$NON-NLS-1$
 				break;
 			case Villagers:
-				sendIrcMessage(player.getName(), "You are on the "
-						+ team.getColor() + "villager" + Colors.NORMAL
-						+ " team. Defend against the invading " + Team.Wolves.getColor()
-						+ "wolf" + Colors.NORMAL + " incursion!");
+				sendIrcMessage(player.getName(), 
+						String.format(Messages.getString("WolfBot.intro.villagers"), //$NON-NLS-1$
+								StringHandler.colorise(Team.Wolves.getColor(), "wolf"), Role.villager.toStringColor())); //$NON-NLS-1$
 				break;
 			case LoneWolf:
-				sendIrcMessage(player.getName(), "You are on your"
-						+ Colors.PURPLE + "OWN" + Colors.NORMAL
-						+ " team. Kill EVERYONE!");
+				sendIrcMessage(player.getName(), String.format(Messages.getString("WolfBot.intro.LoneWolf"),  //$NON-NLS-1$
+						StringHandler.colorise(Team.LoneWolf.getColor(), "OWN"))); //$NON-NLS-1$
 			default:
 				sendIrcMessage(player.getName(),
-						"You are on an unknown team. Something has probably gone wrong here.");
+						Messages.getString("WolfBot.intro.unknown")); //$NON-NLS-1$
 			}
 		}
 	}
@@ -299,28 +297,28 @@ public class WolfBot extends PircBot {
 	}
 
 	public void voiceAll() {
-		massMode(data.getPlayers().getLivingPlayers(), true, "v");
+		massMode(data.getPlayers().getLivingPlayers(), true, "v"); //$NON-NLS-1$
 	}
 
 	public void deVoiceAll() {
-		massMode(data.getPlayers().getList(), false, "v");
+		massMode(data.getPlayers().getList(), false, "v"); //$NON-NLS-1$
 	}
 
 	private static final int MAX_MODE = 5;
 	
 	private void massMode(List<Player> toChange, boolean add, String mode) {
-		String modeToApply = "";
+		String modeToApply = ""; //$NON-NLS-1$
 		if (add) {
-			modeToApply += "+";
+			modeToApply += "+"; //$NON-NLS-1$
 		} else {
-			modeToApply += "-";
+			modeToApply += "-"; //$NON-NLS-1$
 		}
 		
 		List<List<Player>> smallerLists = Lists.partition(toChange, MAX_MODE);
 		for (List<Player> ps : smallerLists) {
 			for (int i = 0; i < ps.size(); ++i)
 				modeToApply += mode;
-				setMode(data.getChannel(), modeToApply + " "
+				setMode(data.getChannel(), modeToApply + " " //$NON-NLS-1$
 						+ StringHandler.listToStringSimplePlayers(ps));
 		}
 	}

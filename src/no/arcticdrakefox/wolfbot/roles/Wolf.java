@@ -34,8 +34,9 @@ public class Wolf extends Player {
 
 	@Override
 	public String roleInfo(PlayerList players) {
-		return Messages.getString("Wolf.intro", //$NON-NLS-1$
-				new Object[] {StringHandler.listToString(players.getWolves())});
+		Object [] params = new Object[] {StringHandler.listToString(players.getWolves())};
+		
+		return Messages.getString("Wolf.intro", params);
 	}
 
 	@Override
