@@ -8,9 +8,9 @@ import no.arcticdrakefox.wolfbot.management.victory.WolfVictory;
 import org.jibble.pircbot.Colors;
 
 public enum Team {
-	Villagers (Colors.GREEN, new VillagerVictory(0)),
-	Wolves (Colors.RED, new WolfVictory(0)),
-	LoneWolf (Colors.BROWN, new LoneWolfVictory(1));
+	Villagers (Colors.GREEN, new VillagerVictory(1)),
+	Wolves (Colors.RED, new WolfVictory(1)),
+	LoneWolf (Colors.BROWN, new LoneWolfVictory(0));
 	
 	private String color;
 	private Victory victory;
