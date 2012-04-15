@@ -123,6 +123,8 @@ public class GameCore {
 				isGameOver = true;
 				victoryString = v.getVictoryMessage(data.getPlayers());
 				break;
+			} else if(v.inhibitsOthersVictory(data.getPlayers())) {
+				break;
 			}
 		}
 		
