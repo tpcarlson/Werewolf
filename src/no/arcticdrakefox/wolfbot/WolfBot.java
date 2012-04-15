@@ -261,6 +261,7 @@ public class WolfBot extends PircBot {
 				sendIrcMessage(player.getName(),
 						Messages.getString("WolfBot.intro.LoneWolf",  //$NON-NLS-1$
 						StringHandler.colorise(Team.LoneWolf.getColor(), "OWN"))); //$NON-NLS-1$
+				break;
 			default:
 				sendIrcMessage(player.getName(),
 						Messages.getString("WolfBot.intro.unknown")); //$NON-NLS-1$
