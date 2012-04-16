@@ -8,6 +8,8 @@ import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 import no.arcticdrakefox.wolfbot.predicates.TeamPredicate;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
 
@@ -32,8 +34,23 @@ public class LoneWolfVictory extends Victory {
 	public boolean inhibitsOthersVictory(PlayerList players) {
 		WolfBotModel data = WolfBotModel.getInstance();
 		
-		Collection<Player> loneWolves = Collections2.filter(data.getPlayers().getList(), 
-				new TeamPredicate (Team.LoneWolf));
-		return !loneWolves.isEmpty();
+		
+		Predicate<Player> p_wolves = new TeamPredicate(Team.Wolves);
+		Predicate<Player> p_loneWolf = new TeamPredicate(Team.LoneWolf);
+		Predicate<Player> p_others = Predicates.and(Predicates.not(p_wolves), Predicates.not(p_loneWolf));
+		
+		
+		Collection<Player> loneWolves = Collections2.filter(players.getLivingPlayers(), p_loneWolf);
+		Collection<Player> wolves = Collections2.filter(players.getLivingPlayers(), p_wolves);
+		Collection<Player> others = Collections2.filter(players.getLivingPlayers(), p_others);
+		
+		if (others.isEmpty() && !isVictory(players)) {
+			for (Player p: loneWolves) {
+				p.die("Was killed by the remaing Wolves");
+				return false;
+			}
+		}
+		
+		return (!loneWolves.isEmpty());
 	}
 }
