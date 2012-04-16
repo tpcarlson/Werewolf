@@ -21,13 +21,16 @@ public class LoneWolfVictory extends Victory {
 
 	@Override
 	public boolean isVictory(PlayerList players) {
-		return players.getLivingPlayers().size() == 1 && 
+		return players.getLivingPlayers().size() <= 2 && 
 				players.getLivingPlayers().get(0).getRole().getTeam() == Team.LoneWolf;
 	}
 
 	@Override
 	public String getVictoryMessage(PlayerList players) {
-		return "A 'Lone Wolf' survived. Killing of villiagers and brother alike.";
+		if (players.getLivingPlayers().size() == 2) 
+			return "The Lone Wolf turns on the last remaing player.";
+		else
+			return "A 'Lone Wolf' survived. Killing of villiagers and brother alike.";
 	}
 
 	@Override
@@ -44,12 +47,12 @@ public class LoneWolfVictory extends Victory {
 		Collection<Player> wolves = Collections2.filter(players.getLivingPlayers(), p_wolves);
 		Collection<Player> others = Collections2.filter(players.getLivingPlayers(), p_others);
 		
-		if (others.isEmpty() && !isVictory(players)) {
-			for (Player p: loneWolves) {
-				p.die("Was killed by the remaing Wolves");
-				return false;
-			}
-		}
+//		if (others.isEmpty() && !isVictory(players)) {
+//			for (Player p: loneWolves) {
+//				p.die("Was killed by the remaing Wolves");
+//				return false;
+//			}
+//		}
 		
 		return (!loneWolves.isEmpty());
 	}
