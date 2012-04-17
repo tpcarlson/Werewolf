@@ -118,8 +118,8 @@ public class GameCore {
 		String victoryString = null;
 		for (Victory v : victoryConditions)
 		{
-			data.getWolfBot().sendIrcMessage(data.getChannel(),String.format("testing role %s.", 
-					v.getClass().getCanonicalName()));
+//			data.getWolfBot().sendIrcMessage(data.getChannel(),String.format("testing role %s.", 
+//					v.getClass().getCanonicalName()));
 			if (v.isVictory(data.getPlayers()))
 			{
 				isGameOver = true;
