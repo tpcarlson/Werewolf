@@ -51,7 +51,7 @@ public class Wolf extends Player {
 	public String nightAction(String message, PlayerList players) {
 		if (!ill) {
 			String[] args = message.trim().split(" ", 2); //$NON-NLS-1$
-			if (args[0].equals("!kill")) { //$NON-NLS-1$
+			if (args[0].equals("!kill") || args[0].equals("!eat") || args[0].equals("!nom")) { //$NON-NLS-1$
 				if (args.length != 2)
 					return Messages.getString("Wolf.nightError"); //$NON-NLS-1$
 				Player target = players.getPlayer(args[1]);
