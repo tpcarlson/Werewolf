@@ -24,7 +24,15 @@ public class StartGameTask extends TimerTask {
 		players.assignRoles();
 		model.getWolfBot ().sendRoleMessages();
 		model.getWolfBot ().setMode(model.getChannel (), "+m");
-		GameCore.startDay(model);
+		
+		if (model.isStartOnNight())
+		{
+			GameCore.startNight (model);
+		}
+		else
+		{
+			GameCore.startDay(model);
+		}
 	}
 
 }

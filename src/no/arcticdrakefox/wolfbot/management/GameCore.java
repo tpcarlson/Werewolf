@@ -223,7 +223,7 @@ public class GameCore {
 			startNight(data);
 	}
 
-	private static void startNight(WolfBotModel data) {
+	public static void startNight(WolfBotModel data) {
 		data.setState(State.Night);
 		data.getWolfBot().deVoiceAll();
 		data.getWolfBot().sendIrcMessage( data.getChannel(),

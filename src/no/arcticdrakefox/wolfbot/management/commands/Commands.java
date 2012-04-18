@@ -4,6 +4,8 @@ import static no.arcticdrakefox.wolfbot.WolfBot.bold;
 
 import java.util.Timer;
 
+import org.jibble.pircbot.Colors;
+
 import no.arcticdrakefox.wolfbot.Timers.StartGameTask;
 import no.arcticdrakefox.wolfbot.management.BotConstants;
 import no.arcticdrakefox.wolfbot.management.GameCore;
@@ -436,6 +438,52 @@ public class Commands
 				MessageType type) {
 			sendIrcMessage (sender, "The game hasn't even started yet!", sender, type);
 		}
+	};
+	
+	public static final Command START_ON_NIGHT_COMMAND = new Command (Lists.newArrayList("!nightstart"),
+			Lists.newArrayList(State.None, State.Starting),
+			Lists.newArrayList(MessageType.values()))
+	{
+
+		@Override
+		public void runCommand(String[] args, String sender, MessageType type)
+		{
+			if (args.length == 2)
+			{
+				if (args[1].equalsIgnoreCase("on"))
+				{
+					model.setStartOnNight (true);
+					return;
+				}
+				else if (args[1].equalsIgnoreCase("off"))
+				{
+					model.setStartOnNight (false);
+					return;
+				}
+			}
+			// Just one arg - print current value
+			else if (args.length == 1)
+			{
+				String onStr = model.isStartOnNight() ? "ON" : "OFF";
+				sendIrcMessage(sender, "Night start is " + Colors.BOLD + onStr + Colors.NORMAL + ".", sender, type);
+				return;
+			}
+			
+			printUsageHint (sender, type);
+		}
+
+		private void printUsageHint (String sender, MessageType type)
+		{
+			sendIrcMessage(sender, "Correct usage is: !nightstart on|off", sender, type);
+		}
+		
+		@Override
+		public void runInvalidCommand(String[] args, String sender,
+				MessageType type)
+		{
+			sendIrcMessage(sender, "You may not change this while the game is running", sender, type);
+		}
+		
 	};
 	
 	// Shorthand for model.sendIrcMessage.

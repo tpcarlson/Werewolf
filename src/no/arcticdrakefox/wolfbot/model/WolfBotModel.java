@@ -179,4 +179,13 @@ public class WolfBotModel {
 	public void setEndDayTimer(Timer timer) {
 		this.endDayTimer = timer;
 	}
+
+	private boolean startOnNight = false;
+	public boolean isStartOnNight() {
+		return startOnNight;
+	}
+
+	public void setStartOnNight(boolean b) {
+		startOnNight = b;
+	}
 }
