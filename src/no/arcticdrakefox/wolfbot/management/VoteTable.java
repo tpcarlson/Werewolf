@@ -74,7 +74,7 @@ public class VoteTable {
 		
 		if (votes.get(BotConstants.SKIP_VOTE_PLAYER) != null)
 		{
-			// We must also check the skip player:
+			// We must also check the skip "player":
 			int skipvote = votes.get(BotConstants.SKIP_VOTE_PLAYER).size();
 			if (skipvote > highest && skipvote < limit)
 			{

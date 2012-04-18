@@ -161,4 +161,22 @@ public class WolfBotModel {
 	public WolfBot getWolfBot() {
 		return wolfBot;
 	}
+
+	private Timer endNightTimer;
+	public Timer getEndNightTimer() {
+		return endNightTimer;
+	}
+
+	public void setEndNightTimer(Timer timer) {
+		this.endNightTimer = timer;
+	}
+
+	private Timer endDayTimer;
+	public Timer getEndDayTimer() {
+		return endDayTimer;
+	}
+
+	public void setEndDayTimer(Timer timer) {
+		this.endDayTimer = timer;
+	}
 }

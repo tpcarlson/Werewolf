@@ -6,7 +6,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import org.jibble.pircbot.Colors;
+
+import no.arcticdrakefox.wolfbot.Timers.EndDayTask;
+import no.arcticdrakefox.wolfbot.Timers.EndNightTask;
 import no.arcticdrakefox.wolfbot.management.commands.Commands;
 import no.arcticdrakefox.wolfbot.management.victory.Victory;
 import no.arcticdrakefox.wolfbot.model.MessageType;
@@ -45,7 +51,7 @@ public class GameCore {
 					String.format("%s has voted for %s.", senderS, targetS), senderS, type);
 		}
 		if (checkLynchMajority(data))
-			endDay(data);
+			endDay(true, data);
 	}
 	
 	public static void drop(String name, String sender, WolfBotModel data){
@@ -98,7 +104,7 @@ public class GameCore {
 		if (data.getState() == State.Day) // If we're in daytime (ie. voting)
 		{
 			if (checkLynchMajority(data))
-				endDay(data);
+				endDay(true, data);
 		}
 		
 		// In both day and night, we check victory:
@@ -144,42 +150,69 @@ public class GameCore {
 		return isGameOver;
 	}
 
-	public static void startDay(WolfBotModel data) {
+	static TimerTask endDayWarningTask;
+	public static void startDay(final WolfBotModel data) {
 		data.getWolfBot().sendIrcMessage(data.getChannel(),
 				"It is now day. Vote for someone to lynch!");
 		data.setState(State.Day);
 		data.getWolfBot().voiceAll();
 		data.getPlayers().clearVotes();
+		data.getWolfBot().sendIrcMessage(data.getChannel(), "You have " + Colors.BOLD + "five minutes" + Colors.NORMAL + " to vote.");
+		// Kick off a new task to endNight after 2 minutes:
+		TimerTask endDayTask = new EndDayTask (data);
+		data.setEndDayTimer (new Timer ());
+		data.getEndDayTimer ().schedule (endDayTask, 5*60*1000); // Should this be configurable?
+		
+		// Also start another timer to warn when there are 30 seconds left
+		endDayWarningTask = new TimerTask ()
+		{
+			@Override
+			public void run() {
+				data.getWolfBot().sendIrcMessage(data.getChannel(), "The sun is setting - come to a verdict, villagers! " + Colors.BOLD + "One minute" + Colors.NORMAL + " remaining.");
+			}
+		};
 	}
 
-	public static void endDay(WolfBotModel data) {
-		Player vote = data.getPlayers().getVote();
+	public static void endDay(boolean villagersVoted, WolfBotModel data) {
+		data.getEndDayTimer().cancel();
+		endDayWarningTask.cancel(); // Guaranteed non-null at this point
 		
-		// If players have voted to skip then we should send an appropriate message
-		if (vote == BotConstants.SKIP_VOTE_PLAYER)
+		// Are we currently in a timer?
+		if (! villagersVoted)
 		{
-			data.getWolfBot().sendIrcMessage (data.getChannel(), "The villagers can't agree on who to lynch and decide to drink beer instead. Hurrah!");
+			data.getWolfBot().sendIrcMessage(data.getChannel(), "The sky turns blood-red - the villagers have run out of time! They flee to their homes as darkness decends...");
 		}
+		// Villagers voted and endDay is called due to lynchMajority succeess...
 		else
 		{
-			if (WolfBotModel.getInstance().getSilentMode()) {
-				vote.die(String
-						.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-								+ "A volunteer plunges the village's treasured silver dagger into their heart(a bread knife would do)! "
-								+ "%s is dead!", bold(vote.getName())));
-			} else {
-				if (vote.isWolf()) {
+			Player vote = data.getPlayers().getVote();
+			
+			// If players have voted to skip then we should send an appropriate message
+			if (vote == BotConstants.SKIP_VOTE_PLAYER)
+			{
+				data.getWolfBot().sendIrcMessage (data.getChannel(), "The villagers can't agree on who to lynch and decide to drink beer instead. Hurrah!");
+			}
+			else
+			{
+				if (WolfBotModel.getInstance().getSilentMode()) {
 					vote.die(String
 							.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-									+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
-									+ "A "+ Role.wolf.toStringColor() + " was lynched today, and the village is a little safer. %s the %s is dead!",
-									bold(vote.getName()), vote.getRole().toStringColor()));
+									+ "A volunteer plunges the village's treasured silver dagger into their heart(a bread knife would do)! "
+									+ "%s is dead!", bold(vote.getName())));
 				} else {
-					vote.die(String
-							.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-									+ "A volunteer plunges the village's treasured silver dagger into their heart. "
-									+ "They scream in agony as life and blood leave their body. %s the %s is dead!",
-									bold(vote.getName()), vote.getRole().toStringColor()));
+					if (vote.isWolf()) {
+						vote.die(String
+								.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
+										+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
+										+ "A "+ Role.wolf.toStringColor() + " was lynched today, and the village is a little safer. %s the %s is dead!",
+										bold(vote.getName()), vote.getRole().toStringColor()));
+					} else {
+						vote.die(String
+								.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
+										+ "A volunteer plunges the village's treasured silver dagger into their heart. "
+										+ "They scream in agony as life and blood leave their body. %s the %s is dead!",
+										bold(vote.getName()), vote.getRole().toStringColor()));
+					}
 				}
 			}
 		}
@@ -196,11 +229,19 @@ public class GameCore {
 		data.getWolfBot().sendIrcMessage( data.getChannel(),
 				"It is now night, and most villagers can only sleep. " +
 				"Some forces are busily at work, however...");
+		
 		data.getPlayers().clearVotes();
 		data.getWolfBot().sendNightStartMessages();
+		data.getWolfBot().sendIrcMessage(data.getChannel(), "You have " + Colors.BOLD + "two minutes" + Colors.NORMAL + " to act.");
+		// Kick off a new task to endNight after 2 minutes:
+		TimerTask endNightTask = new EndNightTask (data);
+		data.setEndNightTimer (new Timer ());
+		data.getEndNightTimer ().schedule (endNightTask, 2*60*1000); // Should this be configurable?
 	}
 
 	public static void endNight(WolfBotModel data) {
+		// Kill the timer first:
+		data.getEndNightTimer().cancel(); // Javadoc says this is safe when called by a TimerTask. We'll see.
 		killWolfVote(data);
 		data.getWolfBot().sendNightEndMessages();
 		checkDead(data);

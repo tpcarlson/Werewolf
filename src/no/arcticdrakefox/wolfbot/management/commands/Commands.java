@@ -339,7 +339,7 @@ public class Commands
 				// We must also check the majority at this point:
 				// TODO: Refactor checkLynchMajority etc.
 				if (GameCore.checkLynchMajority(model))
-					GameCore.endDay(model);
+					GameCore.endDay(true, model);
 			}
 		}
 
