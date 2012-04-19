@@ -209,7 +209,6 @@ public class WolfBot extends PircBot {
 	}
 
 	@Override
-
 	protected void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason){
 		Player player = data.getPlayers().getPlayer(sourceNick);
 		if (player != null){
@@ -228,12 +227,24 @@ public class WolfBot extends PircBot {
 		}
 	}
 
-        @Override
+    @Override
 	protected void onPart(String sourceNick, String sourceLogin, String sourceHostname, String reason){
 		onQuit(sourceLogin, sourceNick, sourceHostname, reason);
 	}
 	
-
+    @Override
+    protected void onKick(String channel, String kickerNick, String kickerLogin, String kickerHostname, String recipientNick, String reason)
+    {
+    	if (recipientNick.equalsIgnoreCase(getNick ()))
+    	{
+    		this.joinChannel (channel);
+    	}
+    	else
+    	{
+    		onQuit (recipientNick, kickerNick, kickerHostname, reason);
+    	}
+    }
+        
 
 	public void sendRoleMessages() {
 		List<Player> playerList = data.getPlayers().getLivingPlayers();
