@@ -32,6 +32,7 @@ public class WolfBotModel {
 		commands.add(Commands.LYNCH_COMMAND);
 		commands.add(Commands.REVEAL_COMMAND);
 		commands.add(Commands.END_COMMAND);
+		commands.add(Commands.START_ON_NIGHT_COMMAND);
 	}
 	
 	private void initVictoryConditions ()
@@ -161,5 +162,15 @@ public class WolfBotModel {
 	 */
 	public WolfBot getWolfBot() {
 		return wolfBot;
+	}
+
+	private boolean startOnNight;
+
+	public boolean isStartOnNight() {
+		return startOnNight;
+	}
+
+	public void setStartOnNight(boolean startOnNight) {
+		this.startOnNight = startOnNight;
 	}
 }

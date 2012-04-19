@@ -6,7 +6,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import no.arcticdrakefox.wolfbot.Timers.EndDayTask;
+import no.arcticdrakefox.wolfbot.Timers.EndNightTask;
 import no.arcticdrakefox.wolfbot.management.commands.Commands;
 import no.arcticdrakefox.wolfbot.management.victory.Victory;
 import no.arcticdrakefox.wolfbot.model.MessageType;
@@ -15,6 +19,8 @@ import no.arcticdrakefox.wolfbot.model.State;
 import no.arcticdrakefox.wolfbot.model.Team;
 import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 import no.arcticdrakefox.wolfbot.predicates.TeamPredicate;
+
+import org.jibble.pircbot.Colors;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -45,7 +51,7 @@ public class GameCore {
 					senderS, targetS), senderS, type); //$NON-NLS-1$
 		}
 		if (checkLynchMajority(data))
-			endDay(data);
+			endDay(true, data);
 	}
 	
 	public static void drop(String name, String sender, WolfBotModel data){
@@ -97,7 +103,7 @@ public class GameCore {
 		if (data.getState() == State.Day) // If we're in daytime (ie. voting)
 		{
 			if (checkLynchMajority(data))
-				endDay(data);
+				endDay(true, data);
 		}
 		
 		// In both day and night, we check victory:
@@ -147,33 +153,58 @@ public class GameCore {
 		return isGameOver;
 	}
 
-	public static void startDay(WolfBotModel data) {
+	static Timer endDayWarningTimer;
+	static Timer endDayTimer;
+	public static void startDay(final WolfBotModel data) {
 		data.getWolfBot().sendIrcMessage(data.getChannel(),
 				Messages.getString("GameCore.dayStart")); //$NON-NLS-1$
 		data.setState(State.Day);
 		data.getWolfBot().voiceAll();
 		data.getPlayers().clearVotes();
+		// Kick off a new task to endNight after 2 minutes:
+		TimerTask endDayTask = new EndDayTask (data);
+		endDayTimer = new Timer ();
+		endDayTimer.schedule (endDayTask, 5*60*1000); // Should this be configurable?
+		endDayWarningTimer = new Timer ();
+		endDayWarningTimer.schedule(new TimerTask ()
+		{
+			@Override
+			public void run() {
+				data.getWolfBot().sendIrcMessage(data.getChannel(), "The sun is setting - come to a verdict, villagers! " + Colors.BOLD + "One minute" + Colors.NORMAL + " remaining.");
+			}
+		}, 4*60*1000); // 4 minutes time - 1 minute before the time is up
 	}
 
-	public static void endDay(WolfBotModel data) {
-		Player vote = data.getPlayers().getVote();
-		
-		// If players have voted to skip then we should send an appropriate message
-		if (vote == BotConstants.SKIP_VOTE_PLAYER)
+	public static void endDay(boolean villagersVoted, WolfBotModel data) {
+		endDayTimer.cancel();
+		endDayWarningTimer.cancel();
+		if (! villagersVoted)
 		{
-			data.getWolfBot().sendIrcMessage (data.getChannel(), Messages.getString("GameCore.skip")); //$NON-NLS-1$
+			data.getWolfBot().sendIrcMessage(data.getChannel(), "The sky turns blood-red - the villagers have run out of time! They flee to their homes as darkness decends...");
 		}
 		else
 		{
-			if (WolfBotModel.getInstance().getSilentMode()) {
-				vote.die(Messages.getString("GameCore.kill.noreveal", bold(vote.getName()))); //$NON-NLS-1$
-			} else {
-				if (vote.isWolf()) {
-					vote.die(Messages.getString("GameCore.kill.reveal.wolf",  //$NON-NLS-1$
-							Role.wolf.toStringColor(), bold(vote.getName()), vote.getRole().toStringColor()));
+
+			// Villagers voted and endDay is called due to lynchMajority succeess...
+			Player vote = data.getPlayers().getVote();
+			
+			// If players have voted to skip then we should send an appropriate message
+			if (vote == BotConstants.SKIP_VOTE_PLAYER)
+			{
+				data.getWolfBot().sendIrcMessage (data.getChannel(), Messages.getString("GameCore.skip")); //$NON-NLS-1$
+			}
+			else
+			{
+				if (WolfBotModel.getInstance().getSilentMode()) {
+					vote.die(Messages.getString("GameCore.kill.noreveal", bold(vote.getName()))); //$NON-NLS-1$
 				} else {
-					vote.die(Messages.getString("GameCore.kill.reveal.notwolf", //$NON-NLS-1$
-							bold(vote.getName()), vote.getRole().toStringColor()));
+					if (vote.isWolf()) {
+						vote.die(Messages.getString("GameCore.kill.reveal.wolf",  //$NON-NLS-1$
+										Role.wolf.toStringColor(), bold(vote.getName()), vote.getRole().toStringColor()));
+					} else {
+						vote.die(Messages.getString("GameCore.kill.reveal.notwolf", //$NON-NLS-1$
+										bold(vote.getName()), vote.getRole().toStringColor()));
+					}
 				}
 			}
 		}
@@ -184,16 +215,25 @@ public class GameCore {
 			startNight(data);
 	}
 
-	private static void startNight(WolfBotModel data) {
+	public static Timer endNightTimer;
+	public static void startNight(WolfBotModel data) {
 		data.setState(State.Night);
 		data.getWolfBot().deVoiceAll();
 		data.getWolfBot().sendIrcMessage( data.getChannel(),
-				Messages.getString("GameCore.nightstart")); //$NON-NLS-1$
+		Messages.getString("GameCore.nightstart")); //$NON-NLS-1$
+
 		data.getPlayers().clearVotes();
 		data.getWolfBot().sendNightStartMessages();
+		data.getWolfBot().sendIrcMessage(data.getChannel(), "You have " + Colors.BOLD + "two minutes" + Colors.NORMAL + " to act.");
+		// Kick off a new task to endNight after 2 minutes:
+		TimerTask endNightTask = new EndNightTask (data);
+		endNightTimer = new Timer ();
+		endNightTimer.schedule (endNightTask, 2*60*1000); // Should this be configurable?
 	}
 
 	public static void endNight(WolfBotModel data) {
+		// Kill the timer first:
+		endNightTimer.cancel(); // Javadoc says this is safe when called by a TimerTask. We'll see.
 		killWolfVote(data);
 		data.getWolfBot().sendNightEndMessages();
 		checkDead(data);
@@ -214,6 +254,10 @@ public class GameCore {
 		if (data.getState() != State.None) // Night or day
 		{
 			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
+			// Kill the other timers too:
+			endDayWarningTimer.cancel();
+			endDayTimer.cancel();
+			endNightTimer.cancel();
 			if (data.getState() == State.Starting)
 			{
 				data.getWolfBot().sendIrcMessage(data.getChannel(), Messages.getString("GameCore.startCancled")); //$NON-NLS-1$

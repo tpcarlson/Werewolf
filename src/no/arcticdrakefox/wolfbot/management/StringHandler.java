@@ -34,6 +34,30 @@ public class StringHandler {
 	public static String playersListToStringWithRoles(List<Player> list){
 		if (list.isEmpty())
 			return null;
+		String ret = isLivingBoldState(list.get(0)) + list.get(0).toString() + Colors.NORMAL + "(" + list.get(0).getRole() + ")";
+		if (list.size() == 1)
+			return ret;
+		for (int i = 1; i < list.size() - 1; ++i) 
+			ret += ", " + isLivingBoldState(list.get(i)) + list.get(i).toString() + Colors.NORMAL + "(" + list.get(i).getRole() + ")";
+		ret += " and " + isLivingBoldState(Iterables.getLast(list)) + Iterables.getLast(list).toString() + Colors.NORMAL + "(" + Iterables.getLast(list).getRole() + ")";
+		return ret;
+	}
+	
+	private static String isLivingBoldState (Player player)
+	{
+		if (player.isAlive())
+		{
+			return "";
+		}
+		else
+		{
+			return Colors.BOLD;
+		}
+	}
+	
+	public static String playersListToStringWithRolesAndLivingState(List<Player> list){
+		if (list.isEmpty())
+			return null;
 		String ret = Colors.BOLD + list.get(0).toString() + Colors.NORMAL + "(" + list.get(0).getRole() + ")";
 		if (list.size() == 1)
 			return ret;

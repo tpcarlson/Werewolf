@@ -11,7 +11,7 @@ public class BotConstants {
 	public static final Player SKIP_VOTE_PLAYER = new SkipPlayer ();
 	public static final String HELP_COMMANDS = 
 	     "!join, !drop [player], !start, !end, !set <role> <count>, reveal on|off "
-       + "!list, !roles, !autorole, !lynch/!vote/!kill, !votes, !time, !help";
+       + "!list, !roles, !autorole, !lynch/!vote/!kill, !votes, !time, !help, !nightstart";
 	
 	// TODO: Roles should handle help?
 	public static String help(String command, String arg) {
