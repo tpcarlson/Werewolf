@@ -10,6 +10,7 @@ import no.arcticdrakefox.wolfbot.roles.Baner;
 import no.arcticdrakefox.wolfbot.roles.Devil;
 import no.arcticdrakefox.wolfbot.roles.Diseased;
 import no.arcticdrakefox.wolfbot.roles.Ghost;
+import no.arcticdrakefox.wolfbot.roles.LoneWolf;
 import no.arcticdrakefox.wolfbot.roles.Necromancer;
 import no.arcticdrakefox.wolfbot.roles.Mason;
 import no.arcticdrakefox.wolfbot.roles.Mayor;
@@ -37,7 +38,8 @@ public enum Role {
 	aura_scry (AuraScry.class, Team.Villagers),
 	apprentice_scry (ApprenticeScry.class, Team.Villagers),
 	diseased (Diseased.class, Team.Villagers),
-	ghost(Ghost.class, Team.Villagers);
+	ghost(Ghost.class, Team.Villagers),
+	lonewolf (LoneWolf.class, Team.LoneWolf);
 	
 	private Class<? extends Player> c;
 	private Team team;

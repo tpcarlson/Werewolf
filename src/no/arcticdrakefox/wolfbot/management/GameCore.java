@@ -25,24 +25,24 @@ public class GameCore {
 		Player target = data.getPlayers().getPlayer(targetS);
 		if (sender == null) {
 			Commands.sendIrcMessage(data.getChannel(), String.format(
-					"%s, you are not entered in the game.", bold(senderS)), senderS, type);
+					Messages.getString("GameCore.error.youAreNotInGame"), bold(senderS)), senderS, type); //$NON-NLS-1$
 		} else if (!sender.isAlive()) {
 			Commands.sendIrcMessage(data.getChannel(),
-					String.format("%s, you are currently dead..", bold(senderS)), senderS, type);
+					String.format(Messages.getString("GameCore.error.youAreDead"), bold(senderS)), senderS, type); //$NON-NLS-1$
 		} else if (target == null) {
 			Commands.sendIrcMessage(
 					data.getChannel(),
 					String.format(
-							"%s, you may not vote for %s as they aren't entered in the game.",
+							Messages.getString("GameCore.error.target.notInGAme"), //$NON-NLS-1$
 							bold(senderS), bold(targetS)), senderS, type);
 		} else if (!target.isAlive()) {
 			Commands.sendIrcMessage(data.getChannel(), String.format(
-					"%s, you may not vote for %s as they are currently dead.",
+					Messages.getString("GameCore.error.target.dead"), //$NON-NLS-1$
 					bold(senderS), bold(targetS)), senderS, type);
 		} else {
 			sender.vote(target);
 			Commands.sendIrcMessage(data.getChannel(),
-					String.format("%s has voted for %s.", senderS, targetS), senderS, type);
+					String.format(Messages.getString("GameCore.voted"), senderS, targetS), senderS, type); //$NON-NLS-1$
 		}
 		if (checkLynchMajority(data))
 			endDay(data);
@@ -58,18 +58,19 @@ public class GameCore {
 				if (name.equals(sender))
 				{
 					// And send a neutral message:
-					data.getWolfBot().sendIrcMessage (data.getChannel(), bold(name) + 
-							" has retired from the game - before it even started! What a coward.");
+					data.getWolfBot().sendIrcMessage (data.getChannel(), 
+							String.format(Messages.getString("GameCore.retired.preGame"), bold(name))); //$NON-NLS-1$
 				}
 				else
 				{
-					data.getWolfBot().sendIrcMessage(data.getChannel(), bold (sender) + " cut off " + bold(name) + "'s arm. "+ bold(name) + " retires from the game."); 
+					data.getWolfBot().sendIrcMessage(data.getChannel(), 
+							String.format( Messages.getString("GameCore.retired.someoneElse"), bold (sender), bold(name), bold(name)));  //$NON-NLS-1$
 				}
 			}
 			else
 			{
-				data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name) + 
-						" wasn't found among the entered players.");
+				data.getWolfBot().sendIrcMessage(data.getChannel(), String.format(
+						Messages.getString("GameCore.errro.targetNotingame"), bold(name) )); //$NON-NLS-1$
 			}
 			return;
 		}
@@ -78,18 +79,15 @@ public class GameCore {
 		if (data.getPlayers().removePlayer(name)) {
 			if (name.equals(sender))
 			{
-				data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
-						+ " has retired from the game!");
+				data.getWolfBot().sendIrcMessage(data.getChannel(), String.format(Messages.getString("GameCore.hasretired"),  bold(name))); //$NON-NLS-1$
 			}
 			else
 			{
-				data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
-						+ " has been retired from the game by " + bold(sender) + "!");
+				data.getWolfBot().sendIrcMessage(data.getChannel(), String.format(Messages.getString("GameCore.wasretired"), bold(name), bold(sender))); //$NON-NLS-1$
 			}
-			data.getWolfBot().setMode(data.getChannel(), "-v " + name);
+			data.getWolfBot().setMode(data.getChannel(), "-v " + name); //$NON-NLS-1$
 		} else {
-			data.getWolfBot().sendIrcMessage(data.getChannel(), bold(name)
-					+ " wasn't found among the entered players.");
+			data.getWolfBot().sendIrcMessage(data.getChannel(), String.format(Messages.getString("GameCore.error.target.notPlaying"), bold(name))); //$NON-NLS-1$
 		}
 		
 		// Two stages here - we want to check the lynch majority to 
@@ -118,17 +116,21 @@ public class GameCore {
 		String victoryString = null;
 		for (Victory v : victoryConditions)
 		{
+//			data.getWolfBot().sendIrcMessage(data.getChannel(),String.format("testing role %s.", 
+//					v.getClass().getCanonicalName()));
 			if (v.isVictory(data.getPlayers()))
 			{
 				isGameOver = true;
 				victoryString = v.getVictoryMessage(data.getPlayers());
+				break;
+			} else if(v.inhibitsOthersVictory(data.getPlayers())) {
 				break;
 			}
 		}
 		
 		if (isGameOver && victoryString == null)
 		{
-			data.getWolfBot().sendIrcMessage(data.getChannel(), "No victory string defined!");
+			data.getWolfBot().sendIrcMessage(data.getChannel(), Messages.getString("GameCore.error.noVictoryString")); //$NON-NLS-1$
 		}
 		else if (isGameOver)
 		{
@@ -146,7 +148,7 @@ public class GameCore {
 
 	public static void startDay(WolfBotModel data) {
 		data.getWolfBot().sendIrcMessage(data.getChannel(),
-				"It is now day. Vote for someone to lynch!");
+				Messages.getString("GameCore.dayStart")); //$NON-NLS-1$
 		data.setState(State.Day);
 		data.getWolfBot().voiceAll();
 		data.getPlayers().clearVotes();
@@ -158,27 +160,21 @@ public class GameCore {
 		// If players have voted to skip then we should send an appropriate message
 		if (vote == BotConstants.SKIP_VOTE_PLAYER)
 		{
-			data.getWolfBot().sendIrcMessage (data.getChannel(), "The villagers can't agree on who to lynch and decide to drink beer instead. Hurrah!");
+			data.getWolfBot().sendIrcMessage (data.getChannel(), Messages.getString("GameCore.skip")); //$NON-NLS-1$
 		}
 		else
 		{
 			if (WolfBotModel.getInstance().getSilentMode()) {
 				vote.die(String
-						.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-								+ "A volunteer plunges the village's treasured silver dagger into their heart(a bread knife would do)! "
-								+ "%s is dead!", bold(vote.getName())));
+						.format(Messages.getString("GameCore.kill.noreveal"), bold(vote.getName()))); //$NON-NLS-1$
 			} else {
 				if (vote.isWolf()) {
 					vote.die(String
-							.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-									+ "A volunteer plunges the village's treasured silver dagger into their heart, and the wound catches fire! "
-									+ "A "+ Role.wolf.toStringColor() + " was lynched today, and the village is a little safer. %s the %s is dead!",
-									bold(vote.getName()), vote.getRole().toStringColor()));
+							.format(Messages.getString("GameCore.kill.reveal.wolf"),  //$NON-NLS-1$
+									Role.wolf.toStringColor(), bold(vote.getName()), vote.getRole().toStringColor()));
 				} else {
 					vote.die(String
-							.format("The lynched gets dragged by the mob to the village square and tied up to a tree. "
-									+ "A volunteer plunges the village's treasured silver dagger into their heart. "
-									+ "They scream in agony as life and blood leave their body. %s the %s is dead!",
+							.format(Messages.getString("GameCore.kill.reveal.notwolf"), //$NON-NLS-1$
 									bold(vote.getName()), vote.getRole().toStringColor()));
 				}
 			}
@@ -194,8 +190,7 @@ public class GameCore {
 		data.setState(State.Night);
 		data.getWolfBot().deVoiceAll();
 		data.getWolfBot().sendIrcMessage( data.getChannel(),
-				"It is now night, and most villagers can only sleep. " +
-				"Some forces are busily at work, however...");
+				Messages.getString("GameCore.nightstart")); //$NON-NLS-1$
 		data.getPlayers().clearVotes();
 		data.getWolfBot().sendNightStartMessages();
 	}
@@ -223,16 +218,16 @@ public class GameCore {
 			data.getStartGameTimer().cancel(); // Kill the existing timer, if we have one
 			if (data.getState() == State.Starting)
 			{
-				data.getWolfBot().sendIrcMessage(data.getChannel(), "Start cancelled.");
+				data.getWolfBot().sendIrcMessage(data.getChannel(), Messages.getString("GameCore.startCancled")); //$NON-NLS-1$
 			}
 			else
 			{
 				printCast (data);
 				data.getPlayers().reset();
-				data.getWolfBot().setMode(data.getChannel(), "-m");
+				data.getWolfBot().setMode(data.getChannel(), "-m"); //$NON-NLS-1$
 				data.getWolfBot().deVoiceAll();
 				data.getWolfBot().sendIrcMessage(data.getChannel(), 
-						"Thanks for playing! Say !start to go again!");
+						Messages.getString("GameCore.thanks")); //$NON-NLS-1$
 			}
 			
 			data.setState(State.None);
@@ -262,7 +257,7 @@ public class GameCore {
 			{
 				// It's possible this string is going to be too long for IRC. Will have to see.
 				String rolesForTeam = StringHandler.playersListToStringWithRoles (sortedList);
-				data.getWolfBot().sendIrcMessage(data.getChannel(), team.getColored() + ": " + rolesForTeam);
+				data.getWolfBot().sendIrcMessage(data.getChannel(), team.getColored() + ": " + rolesForTeam); //$NON-NLS-1$
 			}
 		}
 	}
@@ -277,17 +272,12 @@ public class GameCore {
 				if (baner.getVote().equals(baner)) {
 					data.getWolfBot().sendIrcMessage(
 							baner.getName(),
-							"You hear a wolf yelp as they step in your cleverly concealed beartrap. "
-									+ "You rush out trying to finish the job, but the monster has already escaped! "
-									+ "It seems as if you will both live to fight another day.");
+							Messages.getString("GameCore.vigilanti.multualTarget")); //$NON-NLS-1$
 				} else {
 					data.getWolfBot().sendIrcMessage(
 							baner.getName(),
 							String.format(
-									"Your detective skills have paid off!"
-											+ "As you spot a wolf about to break into %s house, you pounce upon him from the rooftop and brawl valiantly. "
-											+ "Clearly not expecting resitance tonight, the wolf flees in surprise."
-											+ "The purple avenger has done a good deed tonight!",
+									Messages.getString("GameCore.vigilanti.killWolf"), //$NON-NLS-1$
 									baner.getVote()));
 				}
 			}
@@ -295,19 +285,16 @@ public class GameCore {
 		if (wolfVote == null
 				|| data.getPlayers().getPlayerTargeting(wolfVote, Role.baner) != null) {
 			data.getWolfBot().sendIrcMessage(data.getChannel(),
-					"It appears the wolves didn't kill anybody tonight.");
+					Messages.getString("GameCore.noWolfKill")); //$NON-NLS-1$
 		} else {
 			if (WolfBotModel.getInstance().getSilentMode()) {
 				wolfVote.die(String.format(
-						"As the villagers gather, they notice someone missing. "
-								+ "After some searching, their mauled corpse is found in their home. "
-								+ "%s is dead!", bold(wolfVote.getName())));		
+						Messages.getString("GameCore.wolfKill.noReveal"), //$NON-NLS-1$
+						bold(wolfVote.getName())));		
 			} else {
 				wolfVote.die(String.format(
-						"As the villagers gather, they notice someone missing. "
-								+ "After some searching, their mauled corpse is found in their home. "
-								+ "%s the %s is dead!", bold(wolfVote.getName()),
-								wolfVote.getRole().toStringColor()));
+						Messages.getString("GameCore.wolfKill.reveal"), //$NON-NLS-1$
+						bold(wolfVote.getName()), wolfVote.getRole().toStringColor()));
 			}
 		}
 	}

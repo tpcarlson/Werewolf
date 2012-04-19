@@ -36,4 +36,11 @@ public class WolfVictory extends Victory
 		}
 	}
 
+	@Override
+	public boolean inhibitsOthersVictory(PlayerList players) {
+		return false;
+	}
+
+	
+	
 }

@@ -216,10 +216,10 @@ public class WolfBot extends PircBot {
 			if (! (data.getState() == State.None || data.getState() == State.Starting))
 			{
 				if (data.getSilentMode()) {
-					sendIrcMessage(data.getChannel(), String.format(Messages.getString("WolfBot.fled.noReveal"),  //$NON-NLS-1$
+					sendIrcMessage(data.getChannel(), Messages.getString("WolfBot.fled.noReveal",  //$NON-NLS-1$
 							bold(sourceNick)));
 				} else {
-					sendIrcMessage(data.getChannel(), String.format(Messages.getString("WolfBot.fled.Reveal"),  //$NON-NLS-1$
+					sendIrcMessage(data.getChannel(), Messages.getString("WolfBot.fled.Reveal",  //$NON-NLS-1$
 							bold(sourceNick), player.getRole().toStringColor()));
 				}
 			}
@@ -258,18 +258,21 @@ public class WolfBot extends PircBot {
 			switch (team) {
 			case Wolves:
 				sendIrcMessage(player.getName(), 
-						String.format(Messages.getString("WolfBot.intro.wolf"),  //$NON-NLS-1$
-								new Object[] {StringHandler.colorise(Team.Wolves.getColor(), "wolf"),  //$NON-NLS-1$
-								StringHandler.colorise(Team.Villagers.getColor(), "villagers")})); //$NON-NLS-1$
+						Messages.getString("WolfBot.intro.wolf",  //$NON-NLS-1$
+								StringHandler.colorise(Team.Wolves.getColor(), "wolf"),  //$NON-NLS-1$
+								StringHandler.colorise(Team.Villagers.getColor(), "villagers"))); //$NON-NLS-1$
 				break;
 			case Villagers:
 				sendIrcMessage(player.getName(), 
-						String.format(Messages.getString("WolfBot.intro.villagers"), //$NON-NLS-1$
-								StringHandler.colorise(Team.Wolves.getColor(), "wolf"), Role.villager.toStringColor())); //$NON-NLS-1$
+						Messages.getString("WolfBot.intro.villagers", //$NON-NLS-1$
+								Role.villager.toStringColor(),
+								StringHandler.colorise(Team.Wolves.getColor(), "wolf"))); //$NON-NLS-1$
 				break;
 			case LoneWolf:
-				sendIrcMessage(player.getName(), String.format(Messages.getString("WolfBot.intro.LoneWolf"),  //$NON-NLS-1$
+				sendIrcMessage(player.getName(),
+						Messages.getString("WolfBot.intro.LoneWolf",  //$NON-NLS-1$
 						StringHandler.colorise(Team.LoneWolf.getColor(), "OWN"))); //$NON-NLS-1$
+				break;
 			default:
 				sendIrcMessage(player.getName(),
 						Messages.getString("WolfBot.intro.unknown")); //$NON-NLS-1$

@@ -4,6 +4,7 @@ import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.WolfBotModel;
 
 public class Vigilante extends Player {
 	
@@ -67,7 +68,12 @@ public class Vigilante extends Player {
 			return null;
 		else if (isAlive){
 			if (vote.isAlive()){
-				vote.die(Messages.getString("Vigilante.killed", vote, vote.getRole())); //$NON-NLS-1$
+				if (WolfBotModel.getInstance().getSilentMode()) {
+					vote.die(Messages.getString("Vigilante.killed.noreveal", vote, vote.getRole())); //$NON-NLS-1$
+				} else {
+					vote.die(Messages.getString("Vigilante.killed.reveal", vote, vote.getRole())); //$NON-NLS-1$
+				}
+				
 				if (vote.isWolf()){
 					return Messages.getString("Vigilante.killedWolf", new Object[]{vote}); //$NON-NLS-1$
 				} else{

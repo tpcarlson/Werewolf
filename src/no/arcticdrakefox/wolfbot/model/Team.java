@@ -1,16 +1,23 @@
 package no.arcticdrakefox.wolfbot.model;
 
+import no.arcticdrakefox.wolfbot.management.victory.LoneWolfVictory;
+import no.arcticdrakefox.wolfbot.management.victory.Victory;
+import no.arcticdrakefox.wolfbot.management.victory.VillagerVictory;
+import no.arcticdrakefox.wolfbot.management.victory.WolfVictory;
+
 import org.jibble.pircbot.Colors;
 
 public enum Team {
-	Villagers (Colors.GREEN),
-	Wolves (Colors.RED),
-	LoneWolf (Colors.BROWN);
+	Villagers (Colors.GREEN, new VillagerVictory(0)),
+	Wolves (Colors.RED, new WolfVictory(0)),
+	LoneWolf (Colors.BROWN, new LoneWolfVictory(1));
 	
 	private String color;
+	private Victory victory;
 
-	private Team(String color) {
+	private Team(String color, Victory victory) {
 		this.color = color;
+		this.victory = victory;
 	}
 	
 	public String getColored() {
@@ -19,5 +26,9 @@ public enum Team {
 	
 	public String getColor () {
 		return color;
+	}
+	
+	public Victory getVictory() {
+		return victory;
 	}
 }
