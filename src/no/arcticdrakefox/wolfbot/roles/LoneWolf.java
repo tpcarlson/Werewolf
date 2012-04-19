@@ -1,5 +1,7 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import no.arcticdrakefox.wolfbot.model.Role;
+
 
 public class LoneWolf extends Wolf {
 
@@ -7,6 +9,10 @@ public class LoneWolf extends Wolf {
 		super(name);
 	}
 
+	@Override
+	public Role getRole() {
+		return Role.lonewolf;
+	}
 	
 	
 }

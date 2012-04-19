@@ -19,6 +19,15 @@ public abstract class Victory implements Comparable<Victory>
 	 * isVictory must be called before getVictoryMessage
 	 */
 	public abstract boolean isVictory (PlayerList players);
+	
+	
+	/**
+	 * Some Teams victory conditions might inhibit other teams from winning.
+	 * @param players
+	 * @return true if no one else can win at the moment
+	 */
+	public abstract boolean inhibitsOthersVictory (PlayerList players);
+	
 	/*
 	 * isVictory must be called before getVictoryMessage
 	 */
