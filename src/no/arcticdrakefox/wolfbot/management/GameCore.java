@@ -24,25 +24,25 @@ public class GameCore {
 		Player sender = data.getPlayers().getPlayer(senderS);
 		Player target = data.getPlayers().getPlayer(targetS);
 		if (sender == null) {
-			Commands.sendIrcMessage(data.getChannel(), String.format(
-					Messages.getString("GameCore.error.youAreNotInGame"), bold(senderS)), senderS, type); //$NON-NLS-1$
+			Commands.sendIrcMessage(data.getChannel(), 
+					Messages.getString("GameCore.error.youAreNotInGame", //$NON-NLS-1$
+					bold(senderS)), senderS, type); 
 		} else if (!sender.isAlive()) {
 			Commands.sendIrcMessage(data.getChannel(),
-					String.format(Messages.getString("GameCore.error.youAreDead"), bold(senderS)), senderS, type); //$NON-NLS-1$
+					Messages.getString("GameCore.error.youAreDead", //$NON-NLS-1$
+					bold(senderS)), senderS, type); 
 		} else if (target == null) {
 			Commands.sendIrcMessage(
 					data.getChannel(),
-					String.format(
-							Messages.getString("GameCore.error.target.notInGAme"), //$NON-NLS-1$
+							Messages.getString("GameCore.error.target.notInGAme", //$NON-NLS-1$
 							bold(senderS), bold(targetS)), senderS, type);
 		} else if (!target.isAlive()) {
-			Commands.sendIrcMessage(data.getChannel(), String.format(
-					Messages.getString("GameCore.error.target.dead"), //$NON-NLS-1$
+			Commands.sendIrcMessage(data.getChannel(), Messages.getString("GameCore.error.target.dead", //$NON-NLS-1$
 					bold(senderS), bold(targetS)), senderS, type);
 		} else {
 			sender.vote(target);
-			Commands.sendIrcMessage(data.getChannel(),
-					String.format(Messages.getString("GameCore.voted"), senderS, targetS), senderS, type); //$NON-NLS-1$
+			Commands.sendIrcMessage(data.getChannel(),Messages.getString("GameCore.voted",
+					senderS, targetS), senderS, type); //$NON-NLS-1$
 		}
 		if (checkLynchMajority(data))
 			endDay(data);
@@ -58,19 +58,17 @@ public class GameCore {
 				if (name.equals(sender))
 				{
 					// And send a neutral message:
-					data.getWolfBot().sendIrcMessage (data.getChannel(), 
-							String.format(Messages.getString("GameCore.retired.preGame"), bold(name))); //$NON-NLS-1$
+					data.getWolfBot().sendIrcMessage (data.getChannel(), Messages.getString("GameCore.retired.preGame", bold(name))); //$NON-NLS-1$
 				}
 				else
 				{
-					data.getWolfBot().sendIrcMessage(data.getChannel(), 
-							String.format( Messages.getString("GameCore.retired.someoneElse"), bold (sender), bold(name), bold(name)));  //$NON-NLS-1$
+					data.getWolfBot().sendIrcMessage(data.getChannel(),  Messages.getString("GameCore.retired.someoneElse", bold (sender), bold(name), bold(name)));  //$NON-NLS-1$
 				}
 			}
 			else
 			{
-				data.getWolfBot().sendIrcMessage(data.getChannel(), String.format(
-						Messages.getString("GameCore.errro.targetNotingame"), bold(name) )); //$NON-NLS-1$
+				data.getWolfBot().sendIrcMessage(data.getChannel(), 
+						Messages.getString("GameCore.errro.targetNotingame", bold(name) )); //$NON-NLS-1$
 			}
 			return;
 		}
@@ -79,15 +77,18 @@ public class GameCore {
 		if (data.getPlayers().removePlayer(name)) {
 			if (name.equals(sender))
 			{
-				data.getWolfBot().sendIrcMessage(data.getChannel(), String.format(Messages.getString("GameCore.hasretired"),  bold(name))); //$NON-NLS-1$
+				data.getWolfBot().sendIrcMessage(data.getChannel(), 
+						Messages.getString("GameCore.hasretired",  bold(name))); //$NON-NLS-1$
 			}
 			else
 			{
-				data.getWolfBot().sendIrcMessage(data.getChannel(), String.format(Messages.getString("GameCore.wasretired"), bold(name), bold(sender))); //$NON-NLS-1$
+				data.getWolfBot().sendIrcMessage(data.getChannel(), 
+						Messages.getString("GameCore.wasretired", bold(name), bold(sender))); //$NON-NLS-1$
 			}
 			data.getWolfBot().setMode(data.getChannel(), "-v " + name); //$NON-NLS-1$
 		} else {
-			data.getWolfBot().sendIrcMessage(data.getChannel(), String.format(Messages.getString("GameCore.error.target.notPlaying"), bold(name))); //$NON-NLS-1$
+			data.getWolfBot().sendIrcMessage(data.getChannel(), 
+					Messages.getString("GameCore.error.target.notPlaying", bold(name))); //$NON-NLS-1$
 		}
 		
 		// Two stages here - we want to check the lynch majority to 
@@ -165,17 +166,14 @@ public class GameCore {
 		else
 		{
 			if (WolfBotModel.getInstance().getSilentMode()) {
-				vote.die(String
-						.format(Messages.getString("GameCore.kill.noreveal"), bold(vote.getName()))); //$NON-NLS-1$
+				vote.die(Messages.getString("GameCore.kill.noreveal", bold(vote.getName()))); //$NON-NLS-1$
 			} else {
 				if (vote.isWolf()) {
-					vote.die(String
-							.format(Messages.getString("GameCore.kill.reveal.wolf"),  //$NON-NLS-1$
-									Role.wolf.toStringColor(), bold(vote.getName()), vote.getRole().toStringColor()));
+					vote.die(Messages.getString("GameCore.kill.reveal.wolf",  //$NON-NLS-1$
+							Role.wolf.toStringColor(), bold(vote.getName()), vote.getRole().toStringColor()));
 				} else {
-					vote.die(String
-							.format(Messages.getString("GameCore.kill.reveal.notwolf"), //$NON-NLS-1$
-									bold(vote.getName()), vote.getRole().toStringColor()));
+					vote.die(Messages.getString("GameCore.kill.reveal.notwolf", //$NON-NLS-1$
+							bold(vote.getName()), vote.getRole().toStringColor()));
 				}
 			}
 		}
@@ -275,9 +273,7 @@ public class GameCore {
 							Messages.getString("GameCore.vigilanti.multualTarget")); //$NON-NLS-1$
 				} else {
 					data.getWolfBot().sendIrcMessage(
-							baner.getName(),
-							String.format(
-									Messages.getString("GameCore.vigilanti.killWolf"), //$NON-NLS-1$
+							baner.getName(), Messages.getString("GameCore.vigilanti.killWolf", //$NON-NLS-1$
 									baner.getVote()));
 				}
 			}
@@ -288,12 +284,10 @@ public class GameCore {
 					Messages.getString("GameCore.noWolfKill")); //$NON-NLS-1$
 		} else {
 			if (WolfBotModel.getInstance().getSilentMode()) {
-				wolfVote.die(String.format(
-						Messages.getString("GameCore.wolfKill.noReveal"), //$NON-NLS-1$
+				wolfVote.die(Messages.getString("GameCore.wolfKill.noReveal", //$NON-NLS-1$
 						bold(wolfVote.getName())));		
 			} else {
-				wolfVote.die(String.format(
-						Messages.getString("GameCore.wolfKill.reveal"), //$NON-NLS-1$
+				wolfVote.die(Messages.getString("GameCore.wolfKill.reveal", //$NON-NLS-1$
 						bold(wolfVote.getName()), wolfVote.getRole().toStringColor()));
 			}
 		}
