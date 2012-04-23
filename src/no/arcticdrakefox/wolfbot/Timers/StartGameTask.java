@@ -24,6 +24,14 @@ public class StartGameTask extends TimerTask {
 		players.assignRoles();
 		model.getWolfBot ().sendRoleMessages();
 		model.getWolfBot ().setMode(model.getChannel (), "+m");
+		
+		// Verify that we have enough players to start during the night:
+		if (model.isStartOnNight() && players.getList().size() < 4)
+		{
+			model.setStartOnNight(false);
+			model.sendIrcMessage(model.getChannel(), "Night start disabled - not enough players (Need 4+)");
+		}
+		
 		if (model.isStartOnNight())
 		{
 			GameCore.startNight (model);
