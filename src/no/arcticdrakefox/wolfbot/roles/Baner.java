@@ -1,9 +1,14 @@
 package no.arcticdrakefox.wolfbot.roles;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.management.PlayerList;
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.State;
+import no.arcticdrakefox.wolfbot.management.Pair;
 
 public class Baner extends Player {
 	
@@ -60,6 +65,19 @@ public class Baner extends Player {
 			return null;
 	}
 	
+	
+	@Override
+	public void save(State time, Collection<Pair<Player, String>> players)  {
+		super.save(time, players);
+		
+		for (Iterator<Pair<Player, String>> iterator = players.iterator(); iterator.hasNext();) {
+			Pair<Player, String> pair = (Pair<Player, String>) iterator.next();
+			if (pair.fst().equals(getVote())) {
+				players.remove(pair);
+			}
+		}
+	}
+
 	@Override
 	public String nightEnd() {
 		return null;
