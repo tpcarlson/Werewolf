@@ -1,6 +1,9 @@
 package no.arcticdrakefox.wolfbot.management;
 
+import java.util.Collection;
+
 import no.arcticdrakefox.wolfbot.model.Role;
+import no.arcticdrakefox.wolfbot.model.State;
 
 public abstract class Player {
 	
@@ -55,4 +58,16 @@ public abstract class Player {
 	public abstract String nightEnd();
 	
 	public abstract String helpText();
+	
+	/**
+	 * Does this player kill someone?
+	 * @param time
+	 * @return
+	 */
+	public Pair<Player, String> kill(State time) {
+		return null;
+	}
+		
+	public void save(State time, Collection<Pair<Player, String>> players) {	}
+
 }
