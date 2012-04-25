@@ -102,7 +102,8 @@ public class WolfBot extends PircBot {
 			sendIrcMessage(data.getChannel(), Messages.getString("WolfBot.error.multipleCommands")); //$NON-NLS-1$
 			return;
 		}
-		else if (validCommands.isEmpty())
+		else if (validCommands.isEmpty() &&
+			WolfBotModel.getInstance().isShowInvalidCommandEnabled())
 		{
 			sendIrcMessage(data.getChannel(), Messages.getString("WolfBot.error.unknownCommand")); //$NON-NLS-1$
 			return;

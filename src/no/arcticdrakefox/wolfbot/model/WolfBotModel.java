@@ -33,6 +33,7 @@ public class WolfBotModel {
 		commands.add(Commands.REVEAL_COMMAND);
 		commands.add(Commands.END_COMMAND);
 		commands.add(Commands.START_ON_NIGHT_COMMAND);
+		commands.add(Commands.TOGGLE_SHOW_INVALID_COMMAND);
 	}
 	
 	private void initVictoryConditions ()
@@ -56,9 +57,25 @@ public class WolfBotModel {
 	private Timer startGameTimer;
 	private boolean enableNotices;
 	private boolean silentMode = false;
+	private boolean showInvalidCommandMessage = true;
 	
 	private Collection<Command> commands;
 	private Collection<Victory> victoryConditions;
+	
+	/**
+	 * @return True if the bot is to report invalid commands
+	 */
+	public boolean isShowInvalidCommandEnabled(){
+	    return showInvalidCommandMessage;
+	}
+	
+	/**
+	 * Sets if the bot should report invalid commands or not
+	 * @param status True if the invalid commands are to be reported
+	 */
+	public void setShowInvalidCommandEnabled(boolean status){
+	    this.showInvalidCommandMessage = status;
+	}
 	
 	public Collection<Victory> getVictoryConditions() {
 		return victoryConditions;
