@@ -221,10 +221,10 @@ public class Commands
 
 		@Override
 		public void runCommand(String[] args, String sender, MessageType type) {
-			if (args.length == 2 && args[1].trim().equalsIgnoreCase("off")) {
+			if (args.length == 2 && args[1].trim().equalsIgnoreCase("on")) {
 				WolfBotModel.getInstance().setShowInvalidCommandEnabled(false);
 				sendIrcMessage(model.getChannel(), "Invalid commands will not be reported.", sender, type);
-			} else if (args.length == 2 && args[1].equals("on")) {
+			} else if (args.length == 2 && args[1].equals("off")) {
 				WolfBotModel.getInstance().setShowInvalidCommandEnabled(true);	
 				sendIrcMessage(model.getChannel(), "Invalid commands will be reported.", sender, type);
 			} else
