@@ -27,7 +27,7 @@ public class Messages {
 			try {
 				return MessageFormat.format(RESOURCE_BUNDLE.getString(key), args);
 			} catch (MissingResourceException ex) {
-				return "Missing String in properties file.";
+				return "Missing String in properties file. \"" + key + "\" not found.";
 			}
 		}
 	}
