@@ -213,6 +213,30 @@ public class Commands
 		
 	};
 	
+	//Allows the user to disable and enable the "invalid command" message
+	public static final Command TOGGLE_SHOW_INVALID_COMMAND = new Command ("!silentfail",
+			Lists.newArrayList(State.None, State.Starting),
+			Lists.newArrayList(MessageType.CHANNEL))
+	{
+
+		@Override
+		public void runCommand(String[] args, String sender, MessageType type) {
+			if (args.length == 2 && args[1].trim().equalsIgnoreCase("on")) {
+				WolfBotModel.getInstance().setShowInvalidCommandEnabled(false);
+				sendIrcMessage(model.getChannel(), "Invalid commands will not be reported.", sender, type);
+			} else if (args.length == 2 && args[1].equals("off")) {
+				WolfBotModel.getInstance().setShowInvalidCommandEnabled(true);	
+				sendIrcMessage(model.getChannel(), "Invalid commands will be reported.", sender, type);
+			} else
+				sendIrcMessage(model.getChannel(), "Correct usage is: !silentfail on|off", sender, type);
+		}
+
+		@Override
+		public void runInvalidCommand(String[] args, String sender,
+				MessageType type) {	}
+		
+	};
+	
 	public static final Command START_COMMAND = new Command ("!start",
 			Lists.newArrayList(State.None),
 			Lists.newArrayList(MessageType.CHANNEL))
