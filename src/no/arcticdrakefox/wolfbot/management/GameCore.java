@@ -349,13 +349,19 @@ public class GameCore {
 			p.save(data.getState(), kills);
 		}
 
-		for(Pair<Player, String> k: kills) {
-			k.fst().die(k.snd());
+		
+		if (kills.isEmpty()) {
+			data.getWolfBot().sendIrcMessage(data.getChannel(),
+					Messages.getString("GameCore.noWolfKill")); //$NON-NLS-1$
+		} else {
+			for(Pair<Player, String> k: kills) {
+				k.fst().die(k.snd());
+			}
 		}
 		
 		
 //		
-//		if (wolfVote != null) {
+//		if (wolfVote != ns) {
 //			Player baner = data.getPlayers().getPlayerTargeting(wolfVote,
 //					Role.baner);
 //			if (baner != null) {
