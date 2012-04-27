@@ -337,10 +337,12 @@ public class GameCore {
 		ret_k:
 		for (Player p : livingPlayers) {
 			Pair<Player, String> kill = p.kill(data.getState());
-			for (Pair<Player, String > k : kills) {
-				if (k.fst() == kill.fst()) continue ret_k;
+			if (kill != null) {
+				for (Pair<Player, String > k : kills) {
+					if (k.fst().equals(kill.fst())) continue ret_k;
+				}
+				kills.add(kill);
 			}
-			kills.add(kill);
 		}
 		
 		for (Player p : livingPlayers) {
