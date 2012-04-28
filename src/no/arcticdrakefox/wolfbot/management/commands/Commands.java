@@ -528,6 +528,48 @@ public class Commands
 		
 	};
 	
+	public static final Command PROD_COMMAND = new Command (Lists.newArrayList("!prod"),
+			Lists.newArrayList(State.None, State.Starting),
+			Lists.newArrayList(MessageType.values()))
+	{
+
+		@Override
+		public void runCommand(String[] args, String sender, MessageType type) {
+			
+			if (args.length == 2)
+			{
+				String recipient = args[1];
+				// Being dumb?
+				if (sender.equalsIgnoreCase(recipient))
+				{
+					sendIrcMessage (model.getChannel(), "You can't prod yourself!", sender, type);
+				}
+				// Check whether the player is already playing:
+				else if (model.getPlayers().getPlayer(recipient) != null)
+				{
+					sendIrcMessage(model.getChannel(), recipient + " is already in the game, silly.", sender, type);
+				}
+				
+				else
+				{
+					// PM for maximum annoyance...
+					sendIrcMessage(recipient, "AROOOOOOOOO! " + sender + " would like you to join " + model.getChannel() + " and play Werewolf...", recipient, MessageType.PRIVATE);
+					sendIrcMessage(model.getChannel(), recipient + " has been prodded.", sender, type);
+				}
+			}
+			else
+			{
+				sendIrcMessage(model.getChannel(), "Correct usage is: !prod <player>", sender, type);
+			}
+		}
+
+		@Override
+		public void runInvalidCommand(String[] args, String sender,
+				MessageType type) {
+			// Silently drop.
+		}	
+	};
+	
 	// Shorthand for model.sendIrcMessage.
 	public static void sendIrcMessage (String channel, String message, String sender, MessageType type)
 	{

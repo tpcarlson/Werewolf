@@ -34,6 +34,7 @@ public class WolfBotModel {
 		commands.add(Commands.END_COMMAND);
 		commands.add(Commands.START_ON_NIGHT_COMMAND);
 		commands.add(Commands.TOGGLE_SHOW_INVALID_COMMAND);
+		commands.add(Commands.PROD_COMMAND);
 	}
 	
 	private void initVictoryConditions ()
