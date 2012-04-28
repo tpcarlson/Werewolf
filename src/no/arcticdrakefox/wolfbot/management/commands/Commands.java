@@ -22,7 +22,7 @@ public class Commands
 {
 	// Ctrl-shift-/ and Ctrl-shift-* are your friend.
 	// (Note: numpad / and *)
-	public static final Command JOIN_COMMAND = new Command ("!join",
+	public static final Command JOIN_COMMAND = new Command (Lists.newArrayList("!join", "!j"),
 			Lists.newArrayList(State.None, State.Starting),
 			Lists.newArrayList(MessageType.values()))
 	{			
