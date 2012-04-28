@@ -27,7 +27,8 @@ public class Mason extends Player {
 		Object[] tmp = new Object[] {StringHandler.listToString(players.getRole(Role.mason))};
 		
 		return Messages.getString("Mason.intro") //$NON-NLS-1$
-				+ Messages.getString("Mason.theMasons", tmp);//$NON-NLS-1$
+			 + " "
+			 + Messages.getString("Mason.theMasons", tmp);//$NON-NLS-1$
 	}
 
 	@Override
