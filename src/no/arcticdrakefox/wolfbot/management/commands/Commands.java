@@ -528,7 +528,7 @@ public class Commands
 		
 	};
 	
-	// Really annoying command.
+	// Really annoying command. Damn you Bob!
 	public static final Command PROD_COMMAND = new Command (Lists.newArrayList("!prod"),
 			Lists.newArrayList(State.None, State.Starting),
 			Lists.newArrayList(MessageType.CHANNEL))
