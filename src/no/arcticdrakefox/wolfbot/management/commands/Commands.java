@@ -285,8 +285,17 @@ public class Commands
 	{
 
 		@Override
-		public void runCommand(String[] args, String sender, MessageType type) {
-			GameCore.endGame(model);
+		public void runCommand(String[] args, String sender, MessageType type)
+		{
+			// Check whether the sender is actually playing...:
+			if (model.getPlayers().getPlayer(sender) != null)
+			{	
+				GameCore.endGame(model);
+			}
+			else
+			{
+				sendIrcMessage(model.getChannel(), "You may not end the game.", sender, type);
+			}
 		}
 
 		@Override
