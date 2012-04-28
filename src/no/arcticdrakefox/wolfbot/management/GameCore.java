@@ -164,7 +164,7 @@ public class GameCore {
 		// Kick off a new task to endNight after 2 minutes:
 		TimerTask endDayTask = new EndDayTask (data);
 		endDayTimer = new Timer ();
-		endDayTimer.schedule (endDayTask, 5*60*1000); // Should this be configurable?
+		endDayTimer.schedule (endDayTask, 3*60*1000); // Should this be configurable?
 		endDayWarningTimer = new Timer ();
 		endDayWarningTimer.schedule(new TimerTask ()
 		{
@@ -172,7 +172,7 @@ public class GameCore {
 			public void run() {
 				data.getWolfBot().sendIrcMessage(data.getChannel(), "The sun is setting - come to a verdict, villagers! " + Colors.BOLD + "One minute" + Colors.NORMAL + " remaining.");
 			}
-		}, 4*60*1000); // 4 minutes time - 1 minute before the time is up
+		}, 2*60*1000); // 4 minutes time - 1 minute before the time is up
 	}
 
 	public static void endDay(boolean villagersVoted, WolfBotModel data) {
