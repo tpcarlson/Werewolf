@@ -7,6 +7,7 @@ import java.util.Random;
 import no.arcticdrakefox.wolfbot.model.Role;
 import no.arcticdrakefox.wolfbot.roles.Villager;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class PlayerList{
@@ -201,12 +202,40 @@ public class PlayerList{
 		);
 		List<Player> targets = table.getTargets();
 		int targetCount = targets.size();
-		if (targetCount < 1){
+		if (targetCount == 0){ // No targets were picked
 			return null;
-		} else if (targetCount == 1){
-			return targets.get(0);
-		} else {
-			return targets.get(new Random().nextInt(targetCount));
+		} else if (targetCount == 1){ // Exactly one target was picked
+			return Iterables.getFirst(targets, null);
+		} else { // Multiple targets were picked (Perhaps NOT ok for Wolves)
+			if (justWolves)
+			{
+				return getMajorityVoteFromVoteTable(table);
+			}
+			else
+			{
+				return targets.get(new Random().nextInt(targetCount));
+			}
+		}
+	}
+	
+	/*
+	 * This MUST be called with a VoteTable that has a series of votes in
+	 * As the only caller of this method is getVote () this is safe.
+	 */
+	private Player getMajorityVoteFromVoteTable (VoteTable table)
+	{
+		if (table.getTargets().isEmpty()) // Called wrongly
+		{
+			throw new RuntimeException ("getMajorityVoteFromVoteTable must be called with a non-empty vote table");
+		}
+		
+		if (table.getTargets().size() > 1) // Majority not reached
+		{
+			return null;
+		}
+		else // There is a majority (But this could be 2 of 3 wolves)
+		{
+			return Iterables.getFirst(table.getTargets(), null);
 		}
 	}
 	
