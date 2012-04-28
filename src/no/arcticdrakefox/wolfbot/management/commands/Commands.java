@@ -530,7 +530,7 @@ public class Commands
 	
 	public static final Command PROD_COMMAND = new Command (Lists.newArrayList("!prod"),
 			Lists.newArrayList(State.None, State.Starting),
-			Lists.newArrayList(MessageType.values()))
+			Lists.newArrayList(MessageType.CHANNEL))
 	{
 
 		@Override
@@ -540,7 +540,11 @@ public class Commands
 			{
 				String recipient = args[1];
 				// Being dumb?
-				if (sender.equalsIgnoreCase(recipient))
+				if (recipient.startsWith("#"))
+				{
+					sendIrcMessage(model.getChannel(), "You may not spam other channels. Naughty.", sender, type);
+				}
+				else if (sender.equalsIgnoreCase(recipient))
 				{
 					sendIrcMessage (model.getChannel(), "You can't prod yourself!", sender, type);
 				}
@@ -549,7 +553,6 @@ public class Commands
 				{
 					sendIrcMessage(model.getChannel(), recipient + " is already in the game, silly.", sender, type);
 				}
-				
 				else
 				{
 					// PM for maximum annoyance...
