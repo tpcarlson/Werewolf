@@ -13,6 +13,9 @@ public class BotConstants {
 	     "!join, !drop [player], !start, !end, !set <role> <count>, reveal on|off "
        + "!list, !roles, !autorole, !lynch/!vote/!kill, !votes, !time, !help, !nightstart";
 	
+	// Retry every 15s
+	public static final int RECONNECT_POLL = 15;
+	
 	// TODO: Roles should handle help?
 	public static String help(String command, String arg) {
 		switch (command) {

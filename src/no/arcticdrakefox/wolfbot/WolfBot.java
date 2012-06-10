@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Timer;
 
+import no.arcticdrakefox.wolfbot.management.BotConstants;
 import no.arcticdrakefox.wolfbot.management.GameCore;
 import no.arcticdrakefox.wolfbot.management.Messages;
 import no.arcticdrakefox.wolfbot.management.Player;
@@ -78,6 +79,33 @@ public class WolfBot extends PircBot {
 		this.data.setPassword(password);
 	}
 
+	@Override
+	protected void onDisconnect ()
+	{
+		int reconnectCount = 0;
+		while (! isConnected ())
+		{
+			reconnectCount++;
+			try
+			{
+				System.err.println("Attempting to reconnect... (Attempt# " + reconnectCount + ")");
+				reconnect ();
+			}
+			catch (Exception e)
+			{
+				try
+				{
+					Thread.sleep(BotConstants.RECONNECT_POLL * 1000);
+				}
+				catch (InterruptedException ie)
+				{
+					System.err.println("Something is very wrong. Quitting.");
+					System.exit(1);
+				}
+			}
+		}
+	}
+	
 	@Override
 	protected void onJoin(String channel, String sender, String login,
 			String hostname) {
