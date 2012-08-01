@@ -32,7 +32,7 @@ public class WolfBot extends PircBot {
 
 	public static void main(String[] args) throws Exception {
 		
-		String server = "irc.lessthan3.net"; //$NON-NLS-1$
+		String server = "irc.twigathy.com"; //$NON-NLS-1$
 		String nick = "Wolfbot"; //$NON-NLS-1$
 		String channel = "#wolfbot"; //$NON-NLS-1$
 	
