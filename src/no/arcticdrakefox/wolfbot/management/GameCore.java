@@ -24,6 +24,7 @@ import org.jibble.pircbot.Colors;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class GameCore {
 	public static void lynchVote(String senderS, String targetS, WolfBotModel data, MessageType type) {
@@ -53,6 +54,8 @@ public class GameCore {
 		if (checkLynchMajority(data))
 			endDay(true, data);
 	}
+	
+	
 	
 	public static void drop(String name, String sender, WolfBotModel data){
 		if (data.getState() == State.None || data.getState() == State.Starting)
@@ -234,7 +237,7 @@ public class GameCore {
 	public static void endNight(WolfBotModel data) {
 		// Kill the timer first:
 		endNightTimer.cancel(); // Javadoc says this is safe when called by a TimerTask. We'll see.
-		killWolfVote(data);
+		calculateNightKills(data);
 		data.getWolfBot().sendNightEndMessages();
 		checkDead(data);
 		if (!checkVictory(data))
@@ -304,36 +307,88 @@ public class GameCore {
 		}
 	}
 	
-	public static void killWolfVote(WolfBotModel data) {
-		Player wolfVote = data.getPlayers().getVote(true);
-		if (wolfVote != null) {
-			Player baner = data.getPlayers().getPlayerTargeting(wolfVote,
-					Role.baner);
-			if (baner != null) {
-				wolfVote = null;
-				if (baner.getVote().equals(baner)) {
-					data.getWolfBot().sendIrcMessage(
-							baner.getName(),
-							Messages.getString("GameCore.vigilanti.multualTarget")); //$NON-NLS-1$
-				} else {
-					data.getWolfBot().sendIrcMessage(
-							baner.getName(), Messages.getString("GameCore.vigilanti.killWolf", //$NON-NLS-1$
-									baner.getVote()));
+
+	
+	/**
+	 * 
+	 * @param data
+	 */
+	public static void calculateNightKills(WolfBotModel data) {
+		Collection<Pair<Player, String>> kills = Sets.newHashSet();
+
+		
+		// Wolf stuff.
+		{
+			Player wolfVote = data.getPlayers().getVote(true);
+			String deathMessage;
+			if (WolfBotModel.getInstance().getSilentMode()) {
+				deathMessage = Messages.getString("GameCore.wolfKill.noReveal", //$NON-NLS-1$
+						bold(wolfVote.getName()));		
+			} else {
+				deathMessage = Messages.getString("GameCore.wolfKill.reveal", //$NON-NLS-1$
+						bold(wolfVote.getName()), wolfVote.getRole().toStringColor());
+			}
+			
+			kills.add(new Pair<Player, String>(wolfVote,deathMessage));
+		}
+
+		List<Player> livingPlayers = data.getPlayers().getLivingPlayers();
+		
+		ret_k:
+		for (Player p : livingPlayers) {
+			Pair<Player, String> kill = p.kill(data.getState());
+			if (kill != null) {
+				for (Pair<Player, String > k : kills) {
+					if (k.fst().equals(kill.fst())) continue ret_k;
 				}
+				kills.add(kill);
 			}
 		}
-		if (wolfVote == null
-				|| data.getPlayers().getPlayerTargeting(wolfVote, Role.baner) != null) {
+		
+		for (Player p : livingPlayers) {
+			p.save(data.getState(), kills);
+		}
+
+		
+		if (kills.isEmpty()) {
 			data.getWolfBot().sendIrcMessage(data.getChannel(),
 					Messages.getString("GameCore.noWolfKill")); //$NON-NLS-1$
 		} else {
-			if (WolfBotModel.getInstance().getSilentMode()) {
-				wolfVote.die(Messages.getString("GameCore.wolfKill.noReveal", //$NON-NLS-1$
-						bold(wolfVote.getName())));		
-			} else {
-				wolfVote.die(Messages.getString("GameCore.wolfKill.reveal", //$NON-NLS-1$
-						bold(wolfVote.getName()), wolfVote.getRole().toStringColor()));
+			for(Pair<Player, String> k: kills) {
+				k.fst().die(k.snd());
 			}
 		}
+		
+		
+//		
+//		if (wolfVote != ns) {
+//			Player baner = data.getPlayers().getPlayerTargeting(wolfVote,
+//					Role.baner);
+//			if (baner != null) {
+//				wolfVote = null;
+//				if (baner.getVote().equals(baner)) {
+//					data.getWolfBot().sendIrcMessage(
+//							baner.getName(),
+//							Messages.getString("GameCore.vigilanti.multualTarget")); //$NON-NLS-1$
+//				} else {
+//					data.getWolfBot().sendIrcMessage(
+//							baner.getName(), Messages.getString("GameCore.vigilanti.killWolf", //$NON-NLS-1$
+//									baner.getVote()));
+//				}
+//			}
+//		}
+//		if (wolfVote == null
+//				|| data.getPlayers().getPlayerTargeting(wolfVote, Role.baner) != null) {
+//			data.getWolfBot().sendIrcMessage(data.getChannel(),
+//					Messages.getString("GameCore.noWolfKill")); //$NON-NLS-1$
+//		} else {
+//			if (WolfBotModel.getInstance().getSilentMode()) {
+//				wolfVote.die(Messages.getString("GameCore.wolfKill.noReveal", //$NON-NLS-1$
+//						bold(wolfVote.getName())));		
+//			} else {
+//				wolfVote.die(Messages.getString("GameCore.wolfKill.reveal", //$NON-NLS-1$
+//						bold(wolfVote.getName()), wolfVote.getRole().toStringColor()));
+//			}
+//		}
 	}
 }

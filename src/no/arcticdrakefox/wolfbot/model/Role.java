@@ -7,6 +7,7 @@ import no.arcticdrakefox.wolfbot.management.Player;
 import no.arcticdrakefox.wolfbot.roles.ApprenticeScry;
 import no.arcticdrakefox.wolfbot.roles.AuraScry;
 import no.arcticdrakefox.wolfbot.roles.Baner;
+import no.arcticdrakefox.wolfbot.roles.BodyGuard;
 import no.arcticdrakefox.wolfbot.roles.Devil;
 import no.arcticdrakefox.wolfbot.roles.Diseased;
 import no.arcticdrakefox.wolfbot.roles.Ghost;
@@ -24,6 +25,7 @@ import no.arcticdrakefox.wolfbot.roles.Wolf;
 import org.jibble.pircbot.Colors;
 
 public enum Role {	
+	bodyguard (BodyGuard.class, Team.Villagers),
 	villager (Villager.class, Team.Villagers), 
 	wolf (Wolf.class, Team.Wolves), 
 	scry (Scry.class, Team.Villagers),

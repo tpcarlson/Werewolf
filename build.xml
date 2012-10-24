@@ -51,8 +51,15 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
+    <target name="WolfBot2">
+        <java classname="no.arcticdrakefox.wolfbot.WolfBot" failonerror="true" fork="yes">
+            <arg line="-c#Wolfbot2 -nWolfbot2"/>
+            <classpath refid="WereWolf.classpath"/>
+        </java>
+    </target>
     <target name="WolfBot">
         <java classname="no.arcticdrakefox.wolfbot.WolfBot" failonerror="true" fork="yes">
+            <arg line="-sirc.cs.kent.ac.uk"/>
             <classpath refid="WereWolf.classpath"/>
         </java>
     </target>
